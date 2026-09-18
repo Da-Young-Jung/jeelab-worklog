@@ -1886,7 +1886,7 @@ window.makeSupabaseDb = function (url, anonKey) {
       A: [[[0, 5], [1.5, 0], [3, 5]], [[0.75, 2.5], [2.25, 2.5]]],
       B: [[[0, 0], [0, 5], [2, 5], [3, 4], [2, 2.5], [0, 2.5]], [[0, 0], [2, 0], [3, 1], [2, 2.5]]],
     };
-    const lines = [], stars = new Map(); const sx = 1.6, sy = 1.4, gap = 7, x0 = 6, y0 = 14;
+    const lines = [], stars = new Map(); const sx = 1.6, sy = 1.4, gap = 7, x0 = 0, y0 = 0;   // origin is added at draw time (fraction of the canvas)
     [...'JEELAB'].forEach((ch, i) => L[ch].forEach(pl => {
       const pts = pl.map(([x, y]) => [x0 + i * gap + x * sx, y0 + y * sy]);
       // a star at every vertex plus one every ~2 units along each stroke, so the letters read as dotted lines
@@ -1912,7 +1912,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (WX.kind === 'fog' || WX.kind === 'storm') a *= 0.5;
     CONST.stars.forEach((p, i) => {
       const tw = reduce ? 1 : 0.75 + 0.25 * Math.sin(t / 3 + i * 1.7);
-      const x = Math.round(p[0]), y = Math.round(p[1]);
+      const x = Math.round(p[0] + W * 0.34), y = Math.round(p[1] + H * 0.14);
       ctx.fillStyle = 'rgba(255,255,255,' + (a * tw).toFixed(2) + ')'; ctx.fillRect(x, y, 1, 1);
       if (i % 3 === 0) { ctx.fillStyle = 'rgba(255,255,255,' + (a * tw * 0.45).toFixed(2) + ')'; ctx.fillRect(x - 1, y, 1, 1); ctx.fillRect(x + 1, y, 1, 1); ctx.fillRect(x, y - 1, 1, 1); ctx.fillRect(x, y + 1, 1, 1); }
     });
@@ -2051,6 +2051,7 @@ window.makeSupabaseDb = function (url, anonKey) {
         ctx.fillStyle = css(c); ctx.fillRect(x, y, 1, 1);
       }
     }
+    drawBurrow(P);
     // trees
     T.trees.forEach(tr => {
       const gy = Math.round(T.near[tr.x]); if (gy > T.water) return;
@@ -2078,6 +2079,39 @@ window.makeSupabaseDb = function (url, anonKey) {
   function line(x0, y0, x1, y1, fill) {
     let dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1, dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1, err = dx + dy;
     for (let n = 0; n < 200; n++) { fill(x0, y0); if (x0 === x1 && y0 === y1) break; const e2 = 2 * err; if (e2 >= dy) { err += dy; x0 += sx; } if (e2 <= dx) { err += dx; y0 += sy; } }
+  }
+  // ---- a mouse burrow dug into the bottom-left of the field: entrance hole, shaft, and a chamber with a few mice
+  const MICE = [ { x: 4, c: '#F2F2F2', dir: 1 }, { x: 11, c: '#C9C9C9', dir: -1 }, { x: 17, c: '#F2F2F2', dir: 1 }, { x: 8, c: '#B08968', dir: 1, sleep: true } ];
+  function burrowGeom() {
+    const x0 = 6, w = 26, top = Math.round(H * 0.82), h = 7, ex = 15;   // chamber box + entrance column
+    return { x0, x1: x0 + w, top, bot: top + h, ex, gy: groundAt(ex) };
+  }
+  function drawBurrow(P) {
+    const g = burrowGeom(), L = Math.max(0.6, P.light);
+    const cav = css([34 * L, 24 * L, 16 * L]), edge = css([96 * L, 66 * L, 42 * L]);
+    // entrance: a hole in the grass with a little mound each side, then a shaft with one jog down to the chamber
+    ctx.fillStyle = cav; ctx.fillRect(g.ex - 1, g.gy, 4, 2);
+    ctx.fillStyle = edge; ctx.fillRect(g.ex - 3, g.gy - 1, 2, 1); ctx.fillRect(g.ex + 3, g.gy - 1, 2, 1);
+    const jog = Math.round((g.gy + g.top) / 2);
+    ctx.fillStyle = cav; ctx.fillRect(g.ex, g.gy + 2, 2, jog - g.gy - 1); ctx.fillRect(g.ex - 3, jog, 5, 2); ctx.fillRect(g.ex - 3, jog + 2, 2, g.top - jog);
+    // chamber: rounded box, lit rim at the top
+    for (let y = g.top; y <= g.bot; y++) { const r = (y === g.top || y === g.bot) ? 2 : 0; ctx.fillStyle = cav; ctx.fillRect(g.x0 + r, y, g.x1 - g.x0 - 2 * r, 1); }
+    ctx.fillStyle = edge; ctx.fillRect(g.x0 + 2, g.top - 1, g.x1 - g.x0 - 4, 1);
+    // straw bedding on the right, a seed pile on the left
+    const straw = css([200 * L, 160 * L, 70 * L]); ctx.fillStyle = straw; ctx.fillRect(g.x1 - 8, g.bot - 1, 6, 1); ctx.fillRect(g.x1 - 7, g.bot - 2, 4, 1);
+    ctx.fillStyle = css([150 * L, 110 * L, 60 * L]); ctx.fillRect(g.x0 + 2, g.bot - 1, 2, 1);
+    // mice: sleepers curl up on the straw, the others wander the floor and pause to sniff
+    const fy = g.bot - 1, minX = g.x0 + 1, maxX = g.x1 - 4;
+    MICE.forEach((m, i) => {
+      if (m.sleep) { const x = g.x1 - 6; ctx.fillStyle = css(hex(m.c).map(v => v * L)); ctx.fillRect(x, fy - 1, 2, 1); ctx.fillRect(x - 1, fy - 1, 1, 1); ctx.fillStyle = css([242 * L, 184 * L, 198 * L]); ctx.fillRect(x + 1, fy - 2, 1, 1); if (!reduce && (t + i) % 14 < 2) { ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fillRect(x + 3, fy - 3, 1, 1); } return; }
+      if (!reduce && Math.random() < 0.25) { m.x += m.dir; if (m.x <= minX || m.x >= maxX) m.dir = -m.dir; if (Math.random() < 0.08) m.dir = -m.dir; }
+      m.x = Math.min(maxX, Math.max(minX, m.x));
+      const x = g.x0 + m.x - g.x0, d = m.dir, body = css(hex(m.c).map(v => v * L));
+      ctx.fillStyle = body; ctx.fillRect(x, fy - 1, 3, 1); ctx.fillRect(x + (d > 0 ? 2 : 0), fy - 2, 1, 1);           // body + head bump
+      ctx.fillStyle = css([242 * L, 184 * L, 198 * L]); ctx.fillRect(x + (d > 0 ? 1 : 1), fy - 2, 1, 1);               // ear
+      ctx.fillStyle = css([40 * L, 40 * L, 40 * L]); ctx.fillRect(x + (d > 0 ? 2 : 0), fy - 1, 1, 1);                 // eye
+      ctx.fillStyle = css([170 * L, 170 * L, 170 * L]); ctx.fillRect(x + (d > 0 ? -1 : 3), fy - 1, 1, 1);             // tail
+    });
   }
   function drawSwingFrame(P) {
     const g = swingGeom(), wood = P.trunk, hi = mix(P.trunk, [255, 230, 190], 0.25);
