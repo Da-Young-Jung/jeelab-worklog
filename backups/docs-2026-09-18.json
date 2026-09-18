@@ -1,0 +1,1898 @@
+{
+ "exported": "2026-09-18T21:13:36.381910+09:00",
+ "count": 95,
+ "docs": [
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-01",
+   "data": {
+    "date": "2026-09-01",
+    "rows": [
+     {
+      "id": "rauto0901",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-01T09:00:00Z",
+      "updatedAt": "2026-09-01T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-01T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-02",
+   "data": {
+    "date": "2026-09-02",
+    "rows": [
+     {
+      "id": "rauto0902",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-02T09:00:00Z",
+      "updatedAt": "2026-09-02T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-02T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-03",
+   "data": {
+    "date": "2026-09-03",
+    "rows": [
+     {
+      "id": "rauto0903",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-03T09:00:00Z",
+      "updatedAt": "2026-09-03T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-03T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-04",
+   "data": {
+    "date": "2026-09-04",
+    "rows": [
+     {
+      "id": "rauto0904",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-04T09:00:00Z",
+      "updatedAt": "2026-09-04T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-04T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-07",
+   "data": {
+    "date": "2026-09-07",
+    "rows": [
+     {
+      "id": "rauto0907",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-07T09:00:00Z",
+      "updatedAt": "2026-09-07T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-07T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-08",
+   "data": {
+    "date": "2026-09-08",
+    "rows": [
+     {
+      "id": "rauto0908",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-08T09:00:00Z",
+      "updatedAt": "2026-09-08T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-08T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-09",
+   "data": {
+    "date": "2026-09-09",
+    "rows": [
+     {
+      "id": "rauto0909",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-09T09:00:00Z",
+      "updatedAt": "2026-09-09T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-09T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-10",
+   "data": {
+    "date": "2026-09-10",
+    "rows": [
+     {
+      "id": "rauto0910",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-10T09:00:00Z",
+      "updatedAt": "2026-09-10T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-10T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-11",
+   "data": {
+    "date": "2026-09-11",
+    "rows": [
+     {
+      "id": "rauto0911",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-11T09:00:00Z",
+      "updatedAt": "2026-09-11T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-11T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-14",
+   "data": {
+    "date": "2026-09-14",
+    "rows": [
+     {
+      "id": "rauto0914",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-14T09:00:00Z",
+      "updatedAt": "2026-09-14T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-14T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-15",
+   "data": {
+    "date": "2026-09-15",
+    "rows": [
+     {
+      "id": "rauto0915",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-15T09:00:00Z",
+      "updatedAt": "2026-09-15T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-15T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-16",
+   "data": {
+    "date": "2026-09-16",
+    "rows": [
+     {
+      "id": "rauto0916",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-16T09:00:00Z",
+      "updatedAt": "2026-09-16T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-16T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-17",
+   "data": {
+    "date": "2026-09-17",
+    "rows": [
+     {
+      "id": "rauto0917",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-17T09:00:00Z",
+      "updatedAt": "2026-09-17T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-17T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:54:27.915496+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jssetjhhf_2026-09-18",
+   "data": {
+    "date": "2026-09-18",
+    "rows": [
+     {
+      "id": "rmu6ufnc7rns5",
+      "note": "케이반셋팅, 쥐물밥",
+      "hours": 5,
+      "quest": "쥐 물밥 제공",
+      "typeId": "t02",
+      "createdAt": "2026-09-18T10:56:35.814Z",
+      "updatedAt": "2026-09-18T12:01:06.291Z"
+     },
+     {
+      "id": "rmu6wq7lmq56q",
+      "note": "행정",
+      "hours": 1,
+      "quest": "행정",
+      "typeId": "t05",
+      "createdAt": "2026-09-18T12:00:47.866Z",
+      "updatedAt": "2026-09-18T12:00:47.866Z"
+     }
+    ],
+    "memberId": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-18T12:01:06.291Z"
+   },
+   "updated_at": "2026-09-18T12:01:06.291+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-08-18",
+   "data": {
+    "date": "2026-08-18",
+    "rows": [
+     {
+      "id": "rauto0818",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-08-18T09:00:00Z",
+      "updatedAt": "2026-08-18T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-08-18T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-08-19",
+   "data": {
+    "date": "2026-08-19",
+    "rows": [
+     {
+      "id": "rauto0819",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-08-19T09:00:00Z",
+      "updatedAt": "2026-08-19T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-08-19T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-08-20",
+   "data": {
+    "date": "2026-08-20",
+    "rows": [
+     {
+      "id": "rauto0820",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-08-20T09:00:00Z",
+      "updatedAt": "2026-08-20T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-08-20T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-08-21",
+   "data": {
+    "date": "2026-08-21",
+    "rows": [
+     {
+      "id": "rauto0821",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-08-21T09:00:00Z",
+      "updatedAt": "2026-08-21T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-08-21T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-08-24",
+   "data": {
+    "date": "2026-08-24",
+    "rows": [
+     {
+      "id": "rauto0824",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-08-24T09:00:00Z",
+      "updatedAt": "2026-08-24T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-08-24T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-08-25",
+   "data": {
+    "date": "2026-08-25",
+    "rows": [
+     {
+      "id": "rauto0825",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-08-25T09:00:00Z",
+      "updatedAt": "2026-08-25T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-08-25T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-08-26",
+   "data": {
+    "date": "2026-08-26",
+    "rows": [
+     {
+      "id": "rauto0826",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-08-26T09:00:00Z",
+      "updatedAt": "2026-08-26T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-08-26T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-08-27",
+   "data": {
+    "date": "2026-08-27",
+    "rows": [
+     {
+      "id": "rauto0827",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-08-27T09:00:00Z",
+      "updatedAt": "2026-08-27T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-08-27T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-08-28",
+   "data": {
+    "date": "2026-08-28",
+    "rows": [
+     {
+      "id": "rauto0828",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-08-28T09:00:00Z",
+      "updatedAt": "2026-08-28T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-08-28T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-08-31",
+   "data": {
+    "date": "2026-08-31",
+    "rows": [
+     {
+      "id": "rauto0831",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-08-31T09:00:00Z",
+      "updatedAt": "2026-08-31T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-08-31T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-01",
+   "data": {
+    "date": "2026-09-01",
+    "rows": [
+     {
+      "id": "rauto0901",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-01T09:00:00Z",
+      "updatedAt": "2026-09-01T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-01T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-02",
+   "data": {
+    "date": "2026-09-02",
+    "rows": [
+     {
+      "id": "rauto0902",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-02T09:00:00Z",
+      "updatedAt": "2026-09-02T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-02T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-03",
+   "data": {
+    "date": "2026-09-03",
+    "rows": [
+     {
+      "id": "rauto0903",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-03T09:00:00Z",
+      "updatedAt": "2026-09-03T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-03T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-04",
+   "data": {
+    "date": "2026-09-04",
+    "rows": [
+     {
+      "id": "rauto0904",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-04T09:00:00Z",
+      "updatedAt": "2026-09-04T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-04T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-07",
+   "data": {
+    "date": "2026-09-07",
+    "rows": [
+     {
+      "id": "rauto0907",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-07T09:00:00Z",
+      "updatedAt": "2026-09-07T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-07T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-08",
+   "data": {
+    "date": "2026-09-08",
+    "rows": [
+     {
+      "id": "rauto0908",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-08T09:00:00Z",
+      "updatedAt": "2026-09-08T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-08T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-09",
+   "data": {
+    "date": "2026-09-09",
+    "rows": [
+     {
+      "id": "rauto0909",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-09T09:00:00Z",
+      "updatedAt": "2026-09-09T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-09T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-10",
+   "data": {
+    "date": "2026-09-10",
+    "rows": [
+     {
+      "id": "rauto0910",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-10T09:00:00Z",
+      "updatedAt": "2026-09-10T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-10T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-11",
+   "data": {
+    "date": "2026-09-11",
+    "rows": [
+     {
+      "id": "rauto0911",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-11T09:00:00Z",
+      "updatedAt": "2026-09-11T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-11T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-14",
+   "data": {
+    "date": "2026-09-14",
+    "rows": [
+     {
+      "id": "rauto0914",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-14T09:00:00Z",
+      "updatedAt": "2026-09-14T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-14T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-15",
+   "data": {
+    "date": "2026-09-15",
+    "rows": [
+     {
+      "id": "rauto0915",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-15T09:00:00Z",
+      "updatedAt": "2026-09-15T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-15T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-16",
+   "data": {
+    "date": "2026-09-16",
+    "rows": [
+     {
+      "id": "rauto0916",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-16T09:00:00Z",
+      "updatedAt": "2026-09-16T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-16T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-17",
+   "data": {
+    "date": "2026-09-17",
+    "rows": [
+     {
+      "id": "rauto0917",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-17T09:00:00Z",
+      "updatedAt": "2026-09-17T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-17T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsumlk7w3_2026-09-18",
+   "data": {
+    "date": "2026-09-18",
+    "rows": [
+     {
+      "id": "rmu6uuhipfrjd",
+      "note": "OFT 영상 촬영",
+      "hours": 5.5,
+      "quest": "OFT",
+      "typeId": "t01",
+      "createdAt": "2026-09-18T11:08:08.113Z",
+      "updatedAt": "2026-09-18T11:14:13.228Z"
+     }
+    ],
+    "memberId": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-18T11:14:13.229Z"
+   },
+   "updated_at": "2026-09-18T11:14:13.229+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-02",
+   "data": {
+    "date": "2026-09-02",
+    "rows": [
+     {
+      "id": "rauto0902",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-02T09:00:00Z",
+      "updatedAt": "2026-09-02T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-02T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-03",
+   "data": {
+    "date": "2026-09-03",
+    "rows": [
+     {
+      "id": "rauto0903",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-03T09:00:00Z",
+      "updatedAt": "2026-09-03T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-03T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-04",
+   "data": {
+    "date": "2026-09-04",
+    "rows": [
+     {
+      "id": "rauto0904",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-04T09:00:00Z",
+      "updatedAt": "2026-09-04T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-04T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-07",
+   "data": {
+    "date": "2026-09-07",
+    "rows": [
+     {
+      "id": "rauto0907",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-07T09:00:00Z",
+      "updatedAt": "2026-09-07T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-07T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-08",
+   "data": {
+    "date": "2026-09-08",
+    "rows": [
+     {
+      "id": "rauto0908",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-08T09:00:00Z",
+      "updatedAt": "2026-09-08T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-08T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-09",
+   "data": {
+    "date": "2026-09-09",
+    "rows": [
+     {
+      "id": "rauto0909",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-09T09:00:00Z",
+      "updatedAt": "2026-09-09T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-09T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-10",
+   "data": {
+    "date": "2026-09-10",
+    "rows": [
+     {
+      "id": "rauto0910",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-10T09:00:00Z",
+      "updatedAt": "2026-09-10T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-10T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-11",
+   "data": {
+    "date": "2026-09-11",
+    "rows": [
+     {
+      "id": "rauto0911",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-11T09:00:00Z",
+      "updatedAt": "2026-09-11T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-11T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-14",
+   "data": {
+    "date": "2026-09-14",
+    "rows": [
+     {
+      "id": "rauto0914",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-14T09:00:00Z",
+      "updatedAt": "2026-09-14T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-14T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-15",
+   "data": {
+    "date": "2026-09-15",
+    "rows": [
+     {
+      "id": "rauto0915",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-15T09:00:00Z",
+      "updatedAt": "2026-09-15T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-15T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-16",
+   "data": {
+    "date": "2026-09-16",
+    "rows": [
+     {
+      "id": "rauto0916",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-16T09:00:00Z",
+      "updatedAt": "2026-09-16T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-16T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-17",
+   "data": {
+    "date": "2026-09-17",
+    "rows": [
+     {
+      "id": "rauto0917",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-17T09:00:00Z",
+      "updatedAt": "2026-09-17T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-17T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jsxpt490p_2026-09-18",
+   "data": {
+    "date": "2026-09-18",
+    "rows": [
+     {
+      "id": "rauto0918",
+      "note": "웹 제작 전 자동기입",
+      "hours": 4,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-18T09:00:00Z",
+      "updatedAt": "2026-09-18T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jsxpt490p",
+    "updatedAt": "2026-09-18T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:53:16.98706+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-01",
+   "data": {
+    "date": "2026-09-01",
+    "rows": [
+     {
+      "id": "rauto0901",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-01T09:00:00Z",
+      "updatedAt": "2026-09-01T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-01T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-02",
+   "data": {
+    "date": "2026-09-02",
+    "rows": [
+     {
+      "id": "rauto0902",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-02T09:00:00Z",
+      "updatedAt": "2026-09-02T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-02T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-03",
+   "data": {
+    "date": "2026-09-03",
+    "rows": [
+     {
+      "id": "rauto0903",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-03T09:00:00Z",
+      "updatedAt": "2026-09-03T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-03T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-04",
+   "data": {
+    "date": "2026-09-04",
+    "rows": [
+     {
+      "id": "rauto0904",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-04T09:00:00Z",
+      "updatedAt": "2026-09-04T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-04T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-07",
+   "data": {
+    "date": "2026-09-07",
+    "rows": [
+     {
+      "id": "rauto0907",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-07T09:00:00Z",
+      "updatedAt": "2026-09-07T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-07T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-08",
+   "data": {
+    "date": "2026-09-08",
+    "rows": [
+     {
+      "id": "rauto0908",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-08T09:00:00Z",
+      "updatedAt": "2026-09-08T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-08T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-09",
+   "data": {
+    "date": "2026-09-09",
+    "rows": [
+     {
+      "id": "rauto0909",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-09T09:00:00Z",
+      "updatedAt": "2026-09-09T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-09T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-10",
+   "data": {
+    "date": "2026-09-10",
+    "rows": [
+     {
+      "id": "rauto0910",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-10T09:00:00Z",
+      "updatedAt": "2026-09-10T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-10T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-11",
+   "data": {
+    "date": "2026-09-11",
+    "rows": [
+     {
+      "id": "rauto0911",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-11T09:00:00Z",
+      "updatedAt": "2026-09-11T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-11T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-14",
+   "data": {
+    "date": "2026-09-14",
+    "rows": [
+     {
+      "id": "rauto0914",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-14T09:00:00Z",
+      "updatedAt": "2026-09-14T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-14T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-15",
+   "data": {
+    "date": "2026-09-15",
+    "rows": [
+     {
+      "id": "rauto0915",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-15T09:00:00Z",
+      "updatedAt": "2026-09-15T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-15T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-16",
+   "data": {
+    "date": "2026-09-16",
+    "rows": [
+     {
+      "id": "rauto0916",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-16T09:00:00Z",
+      "updatedAt": "2026-09-16T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-16T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-17",
+   "data": {
+    "date": "2026-09-17",
+    "rows": [
+     {
+      "id": "rauto0917",
+      "note": "웹 제작 전 자동기입",
+      "hours": 8,
+      "quest": "",
+      "typeId": "t06",
+      "createdAt": "2026-09-17T09:00:00Z",
+      "updatedAt": "2026-09-17T09:00:00Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-17T09:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:51:05.330917+00:00"
+  },
+  {
+   "collection": "days",
+   "id": "mmu6jt2icc7dz_2026-09-18",
+   "data": {
+    "date": "2026-09-18",
+    "rows": [
+     {
+      "id": "rmu6ww3vcsrq0",
+      "note": "K-barn 세팅, 마우스 핸들링",
+      "hours": 5.5,
+      "quest": "",
+      "typeId": "t02",
+      "createdAt": "2026-09-18T12:05:22.968Z",
+      "updatedAt": "2026-09-18T12:05:22.968Z"
+     },
+     {
+      "id": "rmu6wxg5cwqe3",
+      "note": "OFT 영상 촬영",
+      "hours": 1,
+      "quest": "OFT",
+      "typeId": "t01",
+      "createdAt": "2026-09-18T12:06:25.536Z",
+      "updatedAt": "2026-09-18T12:07:53.866Z"
+     },
+     {
+      "id": "rmu6wz3ccaaxl",
+      "note": "room3 night 영상 관리 & 제작(?)",
+      "hours": 2,
+      "quest": "소프트웨어 제작",
+      "typeId": "t03",
+      "createdAt": "2026-09-18T12:07:42.252Z",
+      "updatedAt": "2026-09-18T12:08:03.226Z"
+     }
+    ],
+    "memberId": "mmu6jt2icc7dz",
+    "updatedAt": "2026-09-18T12:08:03.226Z"
+   },
+   "updated_at": "2026-09-18T12:08:03.226+00:00"
+  },
+  {
+   "collection": "events",
+   "id": "emu6nrgf5hy2w",
+   "data": {
+    "end": "2026-09-18",
+    "note": "",
+    "span": 0,
+    "color": "green",
+    "start": "2026-09-18",
+    "title": "Open field test",
+    "until": "",
+    "assignees": [
+     "mmu6jsumlk7w3",
+     "mmu6jsxpt490p"
+    ],
+    "createdAt": "2026-09-18T07:49:49.408Z",
+    "createdBy": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-18T11:59:02.927Z",
+    "repeatDays": []
+   },
+   "updated_at": "2026-09-18T11:59:03.102+00:00"
+  },
+  {
+   "collection": "events",
+   "id": "emu6nrwrhl0i6",
+   "data": {
+    "end": "2026-09-17",
+    "note": "",
+    "span": 0,
+    "color": "green",
+    "start": "2026-09-17",
+    "title": "Elevated Plus Maze",
+    "until": "",
+    "assignees": [
+     "mmu6jsumlk7w3"
+    ],
+    "createdAt": "2026-09-18T07:50:10.589Z",
+    "createdBy": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-18T11:58:55.854Z",
+    "repeatDays": []
+   },
+   "updated_at": "2026-09-18T11:58:56.051+00:00"
+  },
+  {
+   "collection": "events",
+   "id": "emu6nsjig1jtz",
+   "data": {
+    "end": "2026-09-20",
+    "note": "",
+    "span": 0,
+    "color": "green",
+    "start": "2026-09-19",
+    "title": "Tube test habituation & training",
+    "until": "",
+    "assignees": [
+     "mmu6jssetjhhf"
+    ],
+    "createdAt": "2026-09-18T07:50:40.072Z",
+    "createdBy": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-18T11:59:05.960Z",
+    "repeatDays": []
+   },
+   "updated_at": "2026-09-18T11:59:06.14+00:00"
+  },
+  {
+   "collection": "events",
+   "id": "emu6nsvrntosr",
+   "data": {
+    "end": "2026-09-23",
+    "note": "",
+    "span": 0,
+    "color": "green",
+    "start": "2026-09-21",
+    "title": "Tube test",
+    "until": "",
+    "assignees": [
+     "mmu6jssetjhhf",
+     "mmu6jsumlk7w3",
+     "mmu6jt2icc7dz",
+     "mmu6jsxpt490p"
+    ],
+    "createdAt": "2026-09-18T07:50:55.955Z",
+    "createdBy": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-18T11:59:13.528Z",
+    "repeatDays": []
+   },
+   "updated_at": "2026-09-18T11:59:13.693+00:00"
+  },
+  {
+   "collection": "events",
+   "id": "emu6nt54oety4",
+   "data": {
+    "end": "2026-09-16",
+    "note": "",
+    "span": 0,
+    "color": "gray",
+    "start": "2026-09-16",
+    "title": "Ear punch",
+    "until": "",
+    "assignees": [
+     "mmu6jsumlk7w3",
+     "mmu6jt2icc7dz"
+    ],
+    "createdAt": "2026-09-18T07:51:08.088Z",
+    "createdBy": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-18T11:58:50.245Z",
+    "repeatDays": []
+   },
+   "updated_at": "2026-09-18T11:58:50.465+00:00"
+  },
+  {
+   "collection": "events",
+   "id": "emu6p06air1q3",
+   "data": {
+    "end": "2026-09-23",
+    "note": "",
+    "span": 0,
+    "color": "gray",
+    "start": "2026-09-18",
+    "title": "Mouse handling",
+    "until": "",
+    "assignees": [
+     "mmu6jt2icc7dz",
+     "mmu6jssetjhhf"
+    ],
+    "createdAt": "2026-09-18T08:24:35.802Z",
+    "createdBy": "mmu6jsumlk7w3",
+    "updatedAt": "2026-09-18T11:58:59.961Z",
+    "repeatDays": []
+   },
+   "updated_at": "2026-09-18T11:59:00.159+00:00"
+  },
+  {
+   "collection": "events",
+   "id": "emu6pfand7h9i",
+   "data": {
+    "end": "2026-09-24",
+    "note": "tube test 결과에 따라 결정",
+    "span": 0,
+    "color": "orange",
+    "start": "2026-09-24",
+    "title": "K-barn recording start",
+    "until": "",
+    "assignees": [
+     "mmu6jssetjhhf",
+     "mmu6jsumlk7w3",
+     "mmu6jt2icc7dz",
+     "mmu6jsxpt490p"
+    ],
+    "createdAt": "2026-09-18T08:36:21.289Z",
+    "createdBy": "mmu6jssetjhhf",
+    "updatedAt": "2026-09-18T12:02:30.053Z",
+    "repeatDays": []
+   },
+   "updated_at": "2026-09-18T12:02:30.252+00:00"
+  },
+  {
+   "collection": "members",
+   "id": "madmin",
+   "data": {
+    "pos": 0.907,
+    "name": "관리자",
+    "order": 0,
+    "active": true,
+    "avatar": {
+     "acc": "beanie",
+     "pet": "bird",
+     "top": "shirt",
+     "eyes": "blue",
+     "hair": "curly",
+     "item": "flask",
+     "skin": "s5",
+     "bottom": "skirt",
+     "topColor": "blue",
+     "hairColor": "gray",
+     "bottomColor": "black"
+    },
+    "status": {
+     "at": "2026-09-18T11:42:17.408Z",
+     "text": "수영&그네 업데이트"
+    },
+    "createdAt": "2026-09-18T07:00:00Z"
+   },
+   "updated_at": "2026-09-18T12:13:05.945+00:00"
+  },
+  {
+   "collection": "members",
+   "id": "mmu6jssetjhhf",
+   "data": {
+    "pos": 0.237,
+    "name": "유정년",
+    "order": 4,
+    "active": true,
+    "avatar": {
+     "acc": "goggles",
+     "pet": "cat",
+     "top": "hoodie",
+     "eyes": "gray",
+     "hair": "bun",
+     "item": "notebook",
+     "skin": "s4",
+     "bottom": "shorts",
+     "topColor": "yellow",
+     "hairColor": "pink",
+     "bottomColor": "green"
+    },
+    "status": {
+     "at": "2026-09-18T09:01:25.706Z",
+     "text": ""
+    },
+    "createdAt": "2026-09-18T05:58:53.141Z"
+   },
+   "updated_at": "2026-09-18T10:03:46.162+00:00"
+  },
+  {
+   "collection": "members",
+   "id": "mmu6jsumlk7w3",
+   "data": {
+    "pos": 0.717,
+    "name": "강병현",
+    "order": 1,
+    "active": true,
+    "avatar": {
+     "acc": "none",
+     "pet": "turtle",
+     "top": "labcoat",
+     "eyes": "red",
+     "hair": "mohawk",
+     "item": "mouse",
+     "skin": "s2",
+     "bottom": "pants",
+     "topColor": "black",
+     "hairColor": "red",
+     "bottomColor": "black"
+    },
+    "status": {
+     "at": "2026-09-18T11:12:58.360Z",
+     "text": "신기해"
+    },
+    "createdAt": "2026-09-18T05:58:56.013Z"
+   },
+   "updated_at": "2026-09-18T12:04:00.917+00:00"
+  },
+  {
+   "collection": "members",
+   "id": "mmu6jsxpt490p",
+   "data": {
+    "pos": 0.446,
+    "name": "방지현",
+    "order": 3,
+    "active": true,
+    "avatar": {
+     "acc": "cap",
+     "pet": "rabbit",
+     "top": "stripe",
+     "eyes": "gray",
+     "hair": "bald",
+     "item": "none",
+     "skin": "s1",
+     "bottom": "shorts",
+     "topColor": "red",
+     "hairColor": "green",
+     "bottomColor": "gray"
+    },
+    "createdAt": "2026-09-18T05:59:00.017Z"
+   },
+   "updated_at": "2026-09-18T08:37:32+00:00"
+  },
+  {
+   "collection": "members",
+   "id": "mmu6jt2icc7dz",
+   "data": {
+    "pos": 0.492,
+    "name": "김서경",
+    "order": 2,
+    "active": true,
+    "avatar": {
+     "acc": "goggles",
+     "pet": "cat",
+     "top": "tee",
+     "eyes": "brown",
+     "hair": "bob",
+     "item": "mouse",
+     "skin": "s2",
+     "bottom": "pants",
+     "topColor": "black",
+     "hairColor": "black",
+     "bottomColor": "black"
+    },
+    "status": {
+     "at": "2026-09-18T12:08:48.991Z",
+     "text": "우하하"
+    },
+    "createdAt": "2026-09-18T05:59:06.228Z"
+   },
+   "updated_at": "2026-09-18T12:09:13.208+00:00"
+  },
+  {
+   "collection": "posts",
+   "id": "pmu6uva9ekhtw",
+   "data": {
+    "text": "병현씨가 그린 jeelab 이어펀칭 규칙입니다!",
+    "author": "madmin",
+    "edited": true,
+    "images": [
+     "https://kqcmkzflzvjllckqcpbq.supabase.co/storage/v1/object/public/board/2026-09-18/mu6uv9n3wu4ng0.jpg"
+    ],
+    "pinned": false,
+    "createdAt": "2026-09-18T11:08:45.362Z",
+    "updatedAt": "2026-09-18T11:14:09.942Z"
+   },
+   "updated_at": "2026-09-18T11:14:22.958+00:00"
+  },
+  {
+   "collection": "quests",
+   "id": "2gca7d2ohqmu6wq32k",
+   "data": {
+    "name": "행정",
+    "order": 9,
+    "active": true,
+    "createdAt": "2026-09-18T12:00:41.996Z",
+    "createdBy": "mmu6jssetjhhf"
+   },
+   "updated_at": "2026-09-18T12:00:41.996+00:00"
+  },
+  {
+   "collection": "quests",
+   "id": "76cda588wc16c4tmd6q7",
+   "data": {
+    "name": "K-barn 청소",
+    "order": 1,
+    "active": true,
+    "createdAt": "2026-09-18T05:59:15.893Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "quests",
+   "id": "8fcq86b13t3eue8r2chg",
+   "data": {
+    "name": "소프트웨어 제작",
+    "order": 6,
+    "active": true,
+    "createdAt": "2026-09-18T05:59:46.526Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "quests",
+   "id": "aocbv406c31dbnj1op9m",
+   "data": {
+    "name": "OFT",
+    "order": 3,
+    "active": true,
+    "createdAt": "2026-09-18T05:59:26.649Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "quests",
+   "id": "ch63zt80l1upx435vir7",
+   "data": {
+    "name": "구매",
+    "order": 7,
+    "active": true,
+    "createdAt": "2026-09-18T06:02:53.178Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "quests",
+   "id": "cpuhg53du9mu6wply6",
+   "data": {
+    "name": "쥐 물밥 제공",
+    "order": 8,
+    "active": true,
+    "createdAt": "2026-09-18T12:00:19.806Z",
+    "createdBy": "mmu6jssetjhhf"
+   },
+   "updated_at": "2026-09-18T12:00:19.806+00:00"
+  },
+  {
+   "collection": "quests",
+   "id": "mqztk524ccrahyidn2ud",
+   "data": {
+    "name": "EPM",
+    "order": 4,
+    "active": true,
+    "createdAt": "2026-09-18T05:59:42.173Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "quests",
+   "id": "nsyrky2v7yzp91xp2i0h",
+   "data": {
+    "name": "쥐 무게측정",
+    "order": 5,
+    "active": true,
+    "createdAt": "2026-09-18T06:00:02.086Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "quests",
+   "id": "p5clt1v8lor54ylwrlh5",
+   "data": {
+    "name": "Tube test",
+    "order": 2,
+    "active": true,
+    "createdAt": "2026-09-18T05:59:24.628Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "quests",
+   "id": "zpddlkdiz2mu6wrh0o",
+   "data": {
+    "name": "쥐 케이지 관리",
+    "order": 10,
+    "active": true,
+    "createdAt": "2026-09-18T12:01:46.728Z"
+   },
+   "updated_at": "2026-09-18T12:01:46.728+00:00"
+  },
+  {
+   "collection": "settings",
+   "id": "admin",
+   "data": {
+    "hash": "0ffe1abd1a08215353c233d6e009613e95eec4253832a761af28ff37ac5a150c",
+    "updatedAt": "2026-09-18T06:44:22.528Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "taskTypes",
+   "id": "t01",
+   "data": {
+    "name": "실험",
+    "order": 2,
+    "active": true,
+    "createdAt": "2026-09-18T05:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "taskTypes",
+   "id": "t02",
+   "data": {
+    "name": "마우스 관리",
+    "order": 1,
+    "active": true,
+    "createdAt": "2026-09-18T05:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "taskTypes",
+   "id": "t03",
+   "data": {
+    "name": "분석",
+    "order": 3,
+    "active": true,
+    "createdAt": "2026-09-18T05:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "taskTypes",
+   "id": "t04",
+   "data": {
+    "name": "청소",
+    "order": 4,
+    "active": true,
+    "createdAt": "2026-09-18T05:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "taskTypes",
+   "id": "t05",
+   "data": {
+    "name": "행정",
+    "order": 5,
+    "active": true,
+    "createdAt": "2026-09-18T05:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  },
+  {
+   "collection": "taskTypes",
+   "id": "t06",
+   "data": {
+    "name": "기타",
+    "order": 6,
+    "active": true,
+    "createdAt": "2026-09-18T05:00:00Z"
+   },
+   "updated_at": "2026-09-18T08:05:41.97045+00:00"
+  }
+ ]
+}
