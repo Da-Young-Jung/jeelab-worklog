@@ -234,7 +234,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   /* Minecraft-style speech bubble: notched pixel border (side shadows only, so corners stay open) + stepped tail */
   .hero .bubble { position: absolute; transform: translateX(-50%); max-width: 180px; font-size: 11.5px; line-height: 1.3; font-weight: 600; color: #1E2A33; background: #fff; padding: 5px 8px; border-radius: 0; white-space: normal; text-align: center;
     box-shadow: 3px 0 0 0 #2A2A2A, -3px 0 0 0 #2A2A2A, 0 3px 0 0 #2A2A2A, 0 -3px 0 0 #2A2A2A, 0 0 0 3px #fff inset; margin-bottom: 9px; image-rendering: pixelated; }
-  .hero .bubble::after { content: ""; position: absolute; left: 50%; bottom: -9px; width: 12px; height: 6px; margin-left: -6px; background: #fff; box-shadow: 3px 0 0 0 #2A2A2A, -3px 0 0 0 #2A2A2A; }
+  .hero .bubble::after { content: ""; position: absolute; left: 50%; bottom: -9px; width: 12px; height: 9px; margin-left: -6px; background: #fff; box-shadow: 3px 0 0 0 #2A2A2A, -3px 0 0 0 #2A2A2A; }  /* 9px tall: covers the box's bottom border so the tail joins the bubble */
   .hero .bubble::before { content: ""; position: absolute; left: 50%; bottom: -15px; width: 6px; height: 6px; margin-left: -3px; background: #fff; box-shadow: 3px 0 0 0 #2A2A2A, -3px 0 0 0 #2A2A2A, 0 3px 0 0 #2A2A2A; }
   .hero canvas { cursor: pointer; }
   /* on-screen ◀ ▲ ▶ for touch devices (keyboard arrows do the same on desktop) */
