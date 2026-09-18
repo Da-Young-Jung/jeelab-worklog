@@ -855,7 +855,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (t === 'cal') { ensureEventsSub(); renderCal(); }
     if (t === 'admin') { refreshAdminUI(); if (!isAdmin) el.unlockPw.focus(); }
     if (t === 'stats') { el.myStatsWho.textContent = S.memberId ? memberName(S.memberId) : '작성자를 먼저 고르세요'; MY.load(); }
-    if (t === 'board') { ensurePostsSub(); el.boardWho.textContent = S.memberId ? memberName(S.memberId) + ' 으로 게시' : '작성자를 먼저 고르세요'; }
+    if (t === 'board') { ensurePostsSub(); renderBoardWho(); }
   }
   document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
 
@@ -892,7 +892,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     db.collection('members').orderBy('order').onSnapshot(snap => {
       S.members = snap.docs.map(x => ({ id: x.id, ...x.data() }));
       renderMembers(); renderAdminList('members', el.members, S.members); render();
-      renderStatusBtn(); if (tab === 'board') renderFeed(); if (window.__redrawScene) window.__redrawScene();
+      renderStatusBtn(); renderBoardWho(); if (tab === 'board') renderFeed(); if (window.__redrawScene) window.__redrawScene();
     }, err => showBanner('작성자 목록을 불러오지 못했습니다 (' + err.code + ').'));
     db.collection('taskTypes').orderBy('order').onSnapshot(snap => {
       S.types = snap.docs.map(x => ({ id: x.id, ...x.data() }));
@@ -935,7 +935,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     el.listTitle.textContent = isToday ? '오늘 한 일' : S.date.slice(5).replace('-', '/') + ' 한 일';
     el.todayBtn.hidden = isToday;
   }
-  function memberName(id) { const m = S.members.find(x => x.id === id); return m ? m.name : '(삭제된 작성자)'; }
+  function memberName(id) { const m = S.members.find(x => x.id === id); return m ? m.name : (S.members.length ? '(삭제된 작성자)' : '…'); }
   function typeName(id) { const t = S.types.find(x => x.id === id); return t ? t.name : '(삭제된 종류)'; }
   function typeInactive(id) { const t = S.types.find(x => x.id === id); return t ? t.active === false : false; }
 
@@ -956,7 +956,7 @@ window.makeSupabaseDb = function (url, anonKey) {
 
   function selectMember(id) {
     S.memberId = id; try { localStorage.setItem('worklog.member', S.memberId); } catch (e) {}
-    posU = null; if (window.__sceneSelect) window.__sceneSelect(id); renderStatusBtn();
+    posU = null; if (window.__sceneSelect) window.__sceneSelect(id); renderStatusBtn(); renderBoardWho(); if (tab === 'board') renderFeed();
     stopEditing(); S.week = []; subscribedKey = null; ensureWeekSub(); renderMembers(); render();
     if (tab === 'stats') { el.myStatsWho.textContent = S.memberId ? memberName(S.memberId) : '작성자를 먼저 고르세요'; MY.load(); }
   }
@@ -1305,7 +1305,8 @@ window.makeSupabaseDb = function (url, anonKey) {
   }
 
   // ---- board: posts/<id> = {text, images:[url], author, pinned, createdAt}; photos go to Supabase Storage bucket "board"
-  const BOARD = { posts: [], pending: [], unsub: null, editingId: null, keep: [] };   // keep = existing image urls kept while editing
+  const BOARD = { posts: [], pending: [], unsub: null, editingId: null, keep: [] };
+  function renderBoardWho() { el.boardWho.textContent = S.memberId ? memberName(S.memberId) + ' 으로 게시' : '작성자를 먼저 고르세요'; }   // keep = existing image urls kept while editing
   el.postForm.addEventListener('submit', submitPost);
   el.postText.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); el.postForm.requestSubmit(); } });
   el.postFiles.addEventListener('change', async () => {
