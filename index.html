@@ -888,7 +888,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (t === 'cal') { ensureEventsSub(); renderCal(); }
     if (t === 'admin') { refreshAdminUI(); if (!isAdmin) el.unlockPw.focus(); }
     if (t === 'stats') { el.myStatsWho.textContent = S.memberId ? memberName(S.memberId) : '작성자를 먼저 고르세요'; MY.load(); }
-    if (t === 'board') { ensurePostsSub(); renderBoardWho(); }
+    if (t === 'board') { ensurePostsSub(); renderBoardWho(); renderFeed(); }
   }
   document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
 
@@ -1424,7 +1424,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   el.postCancel.addEventListener('click', resetComposer);
   function ensurePostsSub() {
     if (!db || BOARD.unsub) return;
-    BOARD.unsub = db.collection('posts').orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => { BOARD.posts = snap.docs.map(x => ({ id: x.id, ...x.data() })); if (tab === 'board') renderFeed(); },
+    BOARD.unsub = db.collection('posts').orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => { BOARD.posts = snap.docs.map(x => ({ id: x.id, ...x.data() })); renderFeed(); },
       err => showBanner('게시글을 불러오지 못했습니다 (' + err.code + ').'));
   }
   function linkify(text, node) {
