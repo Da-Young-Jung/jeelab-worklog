@@ -73,5 +73,6 @@ html += f'<p style="margin-top:20px;font-size:12px;color:#888">업무일지: <a 
 msg = MIMEMultipart('alternative'); msg['Subject'] = f'[랩 업무일지] {label} 요약'; msg['From'] = f'랩 업무일지 <{os.environ["GMAIL_USER"]}>'; msg['To'] = ', '.join(TO)
 msg.attach(MIMEText(html, 'html', 'utf-8'))
 with smtplib.SMTP_SSL('smtp.gmail.com', 465) as s:
-    s.login(os.environ['GMAIL_USER'], os.environ['GMAIL_APP_PASSWORD']); s.sendmail(msg['From'], TO, msg.as_string())
+    # app passwords are shown as 4x4 groups; strip spaces/newlines that come along when pasting
+    s.login(os.environ['GMAIL_USER'].strip(), os.environ['GMAIL_APP_PASSWORD'].replace(' ', '').strip()); s.sendmail(msg['From'], TO, msg.as_string())
 print(f'sent {label}: {h(grand)} h, {len(rows)} rows, {len(people)} people')
