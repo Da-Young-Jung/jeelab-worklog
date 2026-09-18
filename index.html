@@ -221,7 +221,13 @@ window.makeSupabaseDb = function (url, anonKey) {
   body { overflow-x: hidden; }
 
   /* hero: procedural voxel landscape; the page theme and the scene both follow the viewer's clock (day / dusk / night) */
-  .hero { position: relative; margin-inline: -16px; height: 320px; overflow: hidden; background: var(--bg); }
+  .hero { position: relative; margin-inline: -16px; height: 400px; overflow: hidden; background: var(--bg); }
+  /* a little plane tows the notice (pinned board posts) across the sky */
+  .hero .flyer { position: absolute; top: 46px; left: 0; z-index: 5; display: flex; align-items: center; pointer-events: none; will-change: transform; }
+  .hero .flyer .banner { white-space: nowrap; font-size: 13.5px; font-weight: 700; color: #1E2A33; background: #FFF8E1; border: 3px solid #2A2A2A; box-shadow: inset 0 0 0 2px #FFD35C; padding: 5px 12px; }
+  .hero .flyer .rope { width: 22px; height: 3px; background: #2A2A2A; }
+  .hero .flyer canvas { width: 60px; height: 32px; image-rendering: pixelated; image-rendering: crisp-edges; margin-bottom: 10px; }
+  .hero .wx { position: absolute; top: 10px; left: 12px; z-index: 6; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .9); background: rgba(10, 18, 28, .45); padding: 4px 9px; border-radius: 999px; backdrop-filter: blur(2px); }
   .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
   .hero .tags { position: absolute; inset: 0; pointer-events: none; }
   .hero .theme-pick { position: absolute; top: 10px; right: 12px; z-index: 6; display: inline-flex; gap: 2px; padding: 3px; background: rgba(10, 18, 28, .45); border-radius: 999px; backdrop-filter: blur(2px); }
@@ -348,7 +354,9 @@ window.makeSupabaseDb = function (url, anonKey) {
     .top .who .av-btn { min-height: 42px; }
     .top .who .status-btn { grid-column: 2 / -1; max-width: none; text-align: left; }
     .mlabel { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
-    .hero { height: 240px; }
+    .hero { height: 300px; }
+    .hero .flyer { top: 50px; } .hero .flyer .banner { font-size: 12px; padding: 4px 9px; }
+    .hero .wx { top: 46px; }
     .top h1 { font-size: 21px; }
     .tabs { gap: 0; }
     .tabs button { font-size: 13.5px; padding: 9px 8px; white-space: nowrap; flex: 1 1 0; text-align: center; }
@@ -517,6 +525,20 @@ window.makeSupabaseDb = function (url, anonKey) {
   .post .body a { color: var(--accent); }
   .post .pics { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; }
   .post .pics figure { margin: 0; display: grid; gap: 4px; }
+  .post .react { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+  .post .react button { font-size: 13px; line-height: 1; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--text); }
+  .post .react button.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, transparent); }
+  .post .react button small { font-size: 11px; color: var(--muted); margin-left: 3px; }
+  .post .react .more { color: var(--muted); }
+  .post .comments { display: grid; gap: 6px; border-top: 1px solid var(--line); padding-top: 8px; font-size: 13.5px; }
+  .post .comment { display: grid; grid-template-columns: max-content 1fr auto; gap: 8px; align-items: baseline; }
+  .post .comment .who { font-weight: 700; }
+  .post .comment .txt { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .post .comment .meta { color: var(--muted); font-size: 11.5px; white-space: nowrap; }
+  .post .comment .meta button { font-size: 11px; padding: 0 4px; }
+  .post .cform { display: flex; gap: 6px; }
+  .post .cform input { flex: 1; min-width: 0; font-size: 13.5px; padding: 6px 10px; }
+  .post .cform button { font-size: 13px; padding: 6px 10px; }
   .post .pics img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); cursor: zoom-in; }
   .post .pics figcaption { font-size: 12.5px; color: var(--muted); overflow-wrap: anywhere; }
   .post .pics.one { grid-template-columns: 1fr; } .post .pics.one img { aspect-ratio: auto; max-height: 480px; object-fit: contain; background: var(--surface-2); }
@@ -533,6 +555,8 @@ window.makeSupabaseDb = function (url, anonKey) {
   <canvas id="sky" aria-hidden="true"></canvas>
   <div class="tags" id="tags" aria-hidden="true"></div>
   <div class="pop" id="pop" hidden></div>
+  <div class="flyer" id="flyer" hidden aria-live="polite"><span class="banner" id="bannerText"></span><span class="rope"></span><canvas id="plane" width="15" height="8" aria-hidden="true"></canvas></div>
+  <div class="wx" id="wx" hidden title="서울 현재 날씨 (Open-Meteo)"></div>
   <div class="pad" id="pad" hidden aria-label="아바타 이동"><button type="button" data-k="ArrowLeft" aria-label="왼쪽">◀</button><button type="button" data-k="ArrowUp" aria-label="점프">▲</button><button type="button" data-k="ArrowRight" aria-label="오른쪽">▶</button></div>
   <div class="theme-pick" id="themePick" role="group" aria-label="테마">
     <button type="button" data-mode="auto">자동</button><button type="button" data-mode="day">낮</button><button type="button" data-mode="dusk">저녁</button><button type="button" data-mode="night">밤</button>
@@ -623,7 +647,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   </section>
 
   <section class="card lift" data-tab="log">
-    <h2><span id="listTitle">한 일</span><span class="sub" id="listSub"></span></h2>
+    <h2><span><span id="listTitle">한 일</span> <span class="sub" id="listSub"></span></span><button type="button" class="ghost" id="copyPrev" hidden title="가장 최근 기록한 날(7일 이내)의 줄들을 오늘에 추가">↧ 어제 기록 복사</button></h2>
     <div class="tbl">
       <div class="trow thead" aria-hidden="true"><span>종류</span><span>관련 퀘스트</span><span>시간</span><span>한 일 (특이사항 포함)</span><span></span></div>
       <div id="rows"></div>
@@ -797,6 +821,10 @@ window.makeSupabaseDb = function (url, anonKey) {
   const EV_COLORS = [
     { key: 'blue', hex: '#2F6FB5', name: '파랑' }, { key: 'green', hex: '#2E8B62', name: '초록' }, { key: 'orange', hex: '#D9782B', name: '주황' },
     { key: 'purple', hex: '#7A4FB8', name: '보라' }, { key: 'red', hex: '#C4403F', name: '빨강' }, { key: 'gray', hex: '#6B7683', name: '회색' },
+    { key: 'sky', hex: '#3AA0D8', name: '하늘' }, { key: 'teal', hex: '#1F9E9E', name: '청록' }, { key: 'lime', hex: '#7CB342', name: '연두' },
+    { key: 'yellow', hex: '#D4A017', name: '노랑' }, { key: 'coral', hex: '#E8674A', name: '코랄' }, { key: 'pink', hex: '#D9559A', name: '분홍' },
+    { key: 'rose', hex: '#E0708A', name: '장미' }, { key: 'indigo', hex: '#4C4FC7', name: '남보라' }, { key: 'navy', hex: '#2B3A67', name: '남색' },
+    { key: 'olive', hex: '#7A8A2E', name: '올리브' }, { key: 'brown', hex: '#8D5A3C', name: '갈색' }, { key: 'black', hex: '#2A2A2A', name: '검정' },
   ];
 
   // ---- state
@@ -916,7 +944,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     }, err => showBanner('퀘스트 목록을 불러오지 못했습니다 (' + err.code + ').'));
     ensureWeekSub();
     if (tab === 'cal') ensureEventsSub();
-    if (tab === 'board') ensurePostsSub();
+    ensurePostsSub();   // always: pinned posts feed the billboard above
   }
 
   function ensureWeekSub() {
@@ -1101,6 +1129,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     el.dayTotal.textContent = fmtHours(total);
     el.dayTotal.classList.toggle('over', total > 12);
     el.listSub.textContent = (S.memberId ? memberName(S.memberId) : '') + (list.length ? ' · ' + list.length + '건' : '');
+    document.getElementById('copyPrev').hidden = !(S.memberId && db);
   }
 
   function renderWeek() {
@@ -1126,6 +1155,27 @@ window.makeSupabaseDb = function (url, anonKey) {
   // ---- entry CRUD (read-modify-write of the member's day document)
   function setMsg(t, kind) { el.formMsg.textContent = t; el.formMsg.className = 'msg ' + (kind || ''); if (t) setTimeout(() => { if (el.formMsg.textContent === t) el.formMsg.textContent = ''; }, 4000); }
 
+  // "어제 기록 복사": the most recent day with rows (within a week) is appended to the selected day
+  document.getElementById('copyPrev').addEventListener('click', async () => {
+    if (!db || !S.memberId) return;
+    const btn = document.getElementById('copyPrev'); btn.disabled = true;
+    try {
+      let src = null, srcDate = '';
+      for (let i = 1; i <= 7 && !src; i++) {
+        const d = addDays(S.date, -i); const snap = await db.doc('days/' + dayId(S.memberId, d)).get();
+        if (snap.exists && Array.isArray(snap.data().rows) && snap.data().rows.length) { src = snap.data().rows; srcDate = d; }
+      }
+      if (!src) { setMsg('지난 7일 동안 기록이 없습니다.', 'err'); return; }
+      const now = new Date().toISOString(), rows = currentRows().slice();
+      const seen = new Set(rows.map(r => [r.typeId, r.quest || '', r.note || '', r.hours].join('\u0001')));
+      const added = src.filter(r => !seen.has([r.typeId, r.quest || '', r.note || '', r.hours].join('\u0001')))
+        .map(r => ({ id: newId('r'), typeId: r.typeId, hours: r.hours, note: r.note || '', quest: r.quest || '', createdAt: now, updatedAt: now }));
+      if (!added.length) { setMsg(srcDate.slice(5).replace('-', '/') + ' 기록은 이미 모두 들어 있습니다.', 'ok'); return; }
+      await writeDay(rows.concat(added));
+      setMsg(srcDate.slice(5).replace('-', '/') + ' 기록 ' + added.length + '건을 복사했습니다. 시간·내용을 오늘에 맞게 고쳐 주세요.', 'ok');
+    } catch (e) { handleWriteError(e); }
+    finally { btn.disabled = false; }
+  });
   async function writeDay(rows) {
     const ref = db.doc('days/' + dayId(S.memberId, S.date));
     if (!rows.length) await ref.delete();
@@ -1382,7 +1432,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   el.postCancel.addEventListener('click', resetComposer);
   function ensurePostsSub() {
     if (!db || BOARD.unsub) return;
-    BOARD.unsub = db.collection('posts').orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => { BOARD.posts = snap.docs.map(x => ({ id: x.id, ...x.data() })); renderFeed(); },
+    BOARD.unsub = db.collection('posts').orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => { BOARD.posts = snap.docs.map(x => ({ id: x.id, ...x.data() })); renderSign(); if (tab === 'board') renderFeed(); },
       err => showBanner('게시글을 불러오지 못했습니다 (' + err.code + ').'));
   }
   function linkify(text, node) {
@@ -1424,8 +1474,89 @@ window.makeSupabaseDb = function (url, anonKey) {
         });
         card.append(pics);
       }
+      renderReactions(p, card); renderComments(p, card);
       el.feed.append(card);
     });
+  }
+  // ---- notice plane: pinned posts' first lines on a towed banner, flying left → right every so often
+  const FLY = { anim: null, text: '' };
+  (function drawPlane() {
+    const cv = document.getElementById('plane'); if (!cv) return; const c = cv.getContext('2d');
+    const rows = ['...........##..', '...........#k..', '..###########..', '.#wwww#######p.', '.############p.', '..#########....', '....####.......', '.......##......'];
+    const col = { '#': '#E0503F', k: '#A83A2C', w: '#BFE3FF', p: '#444444' };
+    rows.forEach((r, y) => [...r].forEach((ch, x) => { if (col[ch]) { c.fillStyle = col[ch]; c.fillRect(x, y, 1, 1); } }));
+  })();
+  function renderBanner() {
+    const fl = document.getElementById('flyer'), txt = document.getElementById('bannerText'), hero = document.getElementById('hero'); if (!fl || !txt) return;
+    const pinned = BOARD.posts.filter(p => p.pinned && p.text).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+    const parts = pinned.map(p => String(p.text).split('\n').map(x => x.trim()).filter(Boolean)[0]).filter(Boolean).map(x => x.length > 70 ? x.slice(0, 69) + '…' : x);
+    const text = parts.join('   ✦   ');
+    if (!text) { fl.hidden = true; if (FLY.anim) { FLY.anim.cancel(); FLY.anim = null; } FLY.text = ''; return; }
+    if (text === FLY.text && FLY.anim && !fl.hidden) return;
+    FLY.text = text; txt.textContent = '📢 ' + text; fl.hidden = false;
+    if (FLY.anim) FLY.anim.cancel();
+    const w = fl.offsetWidth, hw = hero.clientWidth, flight = (w + hw) / 42 * 1000, pause = 9000;
+    FLY.anim = fl.animate([
+      { transform: 'translateX(' + (-w) + 'px)', offset: 0 },
+      { transform: 'translateX(' + hw + 'px)', offset: flight / (flight + pause) },
+      { transform: 'translateX(' + hw + 'px)', offset: 1 },
+    ], { duration: flight + pause, iterations: Infinity });
+  }
+  function renderSign() { renderBanner(); }
+  addEventListener('resize', () => { FLY.text = ''; renderBanner(); });
+
+  // ---- reactions + comments live inside the post document (small arrays; read-modify-write)
+  const REACTS = ['👍', '❤️', '🎉', '😂', '😮', '🙏'];
+  function renderReactions(p, card) {
+    const bar = document.createElement('div'); bar.className = 'react';
+    const rx = p.reactions && typeof p.reactions === 'object' ? p.reactions : {};
+    const used = REACTS.filter(e => (rx[e] || []).length), unused = REACTS.filter(e => !(rx[e] || []).length);
+    const mk = (e, on) => {
+      const b = document.createElement('button'); b.type = 'button'; b.textContent = e; const ids = rx[e] || [];
+      if (ids.length) { const c = document.createElement('small'); c.textContent = ids.length; b.append(c); b.title = ids.map(memberName).join(', '); }
+      if (S.memberId && ids.includes(S.memberId)) b.classList.add('on');
+      b.addEventListener('click', () => {
+        if (!S.memberId) { showBanner('먼저 작성자(본인 이름)를 고르세요.'); return; }
+        const next = Object.assign({}, rx); const cur = (next[e] || []).slice();
+        const i = cur.indexOf(S.memberId); if (i >= 0) cur.splice(i, 1); else cur.push(S.memberId);
+        if (cur.length) next[e] = cur; else delete next[e];
+        safe(() => db.doc('posts/' + p.id).update({ reactions: next }));
+      });
+      return b;
+    };
+    used.forEach(e => bar.append(mk(e)));
+    const more = document.createElement('button'); more.type = 'button'; more.className = 'more'; more.textContent = used.length ? '+' : '😊 반응';
+    const tray = document.createElement('span'); tray.hidden = true; unused.forEach(e => tray.append(mk(e)));
+    more.addEventListener('click', () => { tray.hidden = !tray.hidden; });
+    if (unused.length) bar.append(more, tray);
+    card.append(bar);
+  }
+  function renderComments(p, card) {
+    const list = Array.isArray(p.comments) ? p.comments : [];
+    const box = document.createElement('div'); box.className = 'comments';
+    list.forEach(c => {
+      const row = document.createElement('div'); row.className = 'comment';
+      const who = document.createElement('span'); who.className = 'who'; who.textContent = memberName(c.author);
+      const txt = document.createElement('span'); txt.className = 'txt'; linkify(String(c.text || ''), txt);
+      const meta = document.createElement('span'); meta.className = 'meta'; meta.textContent = fmtWhen(c.createdAt);
+      if (c.author === S.memberId || isAdmin) {
+        const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = '삭제';
+        del.addEventListener('click', () => safe(() => db.doc('posts/' + p.id).update({ comments: list.filter(x => x.id !== c.id) })));
+        meta.append(' ', del);
+      }
+      row.append(who, txt, meta); box.append(row);
+    });
+    const form = document.createElement('form'); form.className = 'cform';
+    const inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = S.memberId ? '댓글 달기…' : '댓글을 달려면 작성자를 고르세요'; inp.maxLength = 500; inp.disabled = !S.memberId;
+    const btn = document.createElement('button'); btn.type = 'submit'; btn.textContent = '댓글'; btn.disabled = !S.memberId;
+    form.append(inp, btn);
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault(); const text = inp.value.trim(); if (!text || !S.memberId) return;
+      btn.disabled = true;
+      safe(() => db.doc('posts/' + p.id).update({ comments: list.concat([{ id: newId('c'), author: S.memberId, text, createdAt: new Date().toISOString() }]) })).finally(() => { btn.disabled = false; });
+      inp.value = '';
+    });
+    box.append(form); card.append(box);
   }
   function openLightbox(u) { const lb = document.createElement('div'); lb.className = 'lightbox'; const im = document.createElement('img'); im.src = u; lb.append(im); lb.addEventListener('click', () => lb.remove()); document.body.append(lb); }
 
@@ -1784,6 +1915,35 @@ window.makeSupabaseDb = function (url, anonKey) {
   function css(c) { return 'rgb(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ')'; }
   function phaseNow() { return (window.__worklogPhase && window.__worklogPhase()) || document.documentElement.getAttribute('data-phase') || 'day'; }
 
+  // ---- live weather for the field (Seoul, Open-Meteo, no key; refreshed every 20 min)
+  const WX = { kind: 'clear', temp: null, code: 0 };
+  const WX_KIND = (c) => c >= 95 ? 'storm' : (c >= 71 && c <= 77) || c === 85 || c === 86 ? 'snow' : (c >= 51 && c <= 67) || (c >= 80 && c <= 82) ? 'rain' : c === 45 || c === 48 ? 'fog' : c >= 2 ? 'cloudy' : 'clear';
+  const WX_ICON = { clear: '☀️', cloudy: '☁️', fog: '🌫️', rain: '🌧️', snow: '❄️', storm: '⛈️' };
+  async function loadWeather() {
+    try {
+      const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=37.60&longitude=127.05&current=temperature_2m,weather_code&timezone=Asia%2FSeoul', { cache: 'no-store' });
+      const j = await r.json(); const c = j.current || {};
+      WX.code = Number(c.weather_code) || 0; WX.temp = c.temperature_2m; WX.kind = WX_KIND(WX.code);
+      const chip = document.getElementById('wx'); if (chip) { chip.textContent = WX_ICON[WX.kind] + (WX.temp != null ? ' ' + Math.round(WX.temp) + '°' : ''); chip.hidden = false; }
+      if (terrain) draw();
+    } catch (e) { /* offline: keep the last weather */ }
+  }
+  loadWeather(); setInterval(loadWeather, 20 * 60 * 1000);
+  function drawWeather(P) {
+    const T = terrain, J = T.jitter, k = WX.kind; if (k === 'clear' || k === 'cloudy') return;
+    if (k === 'fog') { ctx.fillStyle = 'rgba(225,230,236,.38)'; ctx.fillRect(0, Math.round(H * 0.42), W, Math.round(H * 0.34)); return; }
+    const n = Math.round(W * H / (k === 'snow' ? 60 : 28)), speed = k === 'snow' ? 0.9 : 3.2;
+    ctx.fillStyle = k === 'snow' ? 'rgba(255,255,255,.9)' : 'rgba(205,225,255,.65)';
+    for (let i = 0; i < n; i++) {
+      const j = J[(i * 7919) % J.length], j2 = J[(i * 104729 + 13) % J.length];
+      const y = ((j2 * H * 4 + t * speed + i) % (H + 4)) - 2;
+      const x = ((j * W + (k === 'snow' ? Math.sin((t + i) / 6) * 2 : -t * 0.4 - y * 0.25)) % W + W) % W | 0;
+      if (y < 0 || y >= Math.round(T.near[x])) continue;
+      if (k === 'snow') ctx.fillRect(x, y | 0, 1, 1); else ctx.fillRect(x, y | 0, 1, 2);
+    }
+    if (k === 'storm' && ((t % 53) === 0 || (t % 53) === 2)) { ctx.fillStyle = 'rgba(255,255,255,.28)'; ctx.fillRect(0, 0, W, H); }
+  }
+
   function buildTerrain() {
     const r = rng(20260918);
     const far = [], near = [], trees = [], stars = [], clouds = [];
@@ -1825,7 +1985,9 @@ window.makeSupabaseDb = function (url, anonKey) {
         light: 0.5, warm: 0.0, stars: 1, cloud: 'rgba(140,150,190,.35)', cloudLo: 'rgba(60,70,110,.35)',
       },
     };
-    const P = PAL[ph] || PAL.day;
+    const P = Object.assign({}, PAL[ph] || PAL.day);
+    const dim = { rain: 0.78, storm: 0.7, snow: 0.9, fog: 0.85, cloudy: 0.93 }[WX.kind] || 1; P.light *= dim;
+    if (dim < 1) { P.glowA *= dim * dim; P.skyTop = mix(P.skyTop, [120, 130, 145], 1 - dim); P.skyMid = mix(P.skyMid, [150, 160, 172], 1 - dim); P.skyHor = mix(P.skyHor, [190, 196, 205], (1 - dim) * 0.8); P.cloud = WX.kind === 'cloudy' ? 'rgba(225,228,232,.95)' : 'rgba(150,158,170,.9)'; P.cloudLo = 'rgba(110,118,132,.85)'; }
     const T = terrain, J = T.jitter;
     const sunX = Math.round(W * P.sunX), sunY = Math.round(H * P.sunY);
     // sky
@@ -1841,9 +2003,9 @@ window.makeSupabaseDb = function (url, anonKey) {
     }
     // stars (dark only)
     if (P.stars) T.stars.forEach(s => { if (s.y < T.far[Math.floor(s.x)] - 2 && s.b < 0.4 + 0.6 * P.stars) { const tw = night && ((s.x + s.y + t) | 0) % 23 === 0 ? 0.3 : 1; ctx.fillStyle = 'rgba(255,255,255,' + ((0.35 + 0.6 * s.b) * P.stars * tw).toFixed(2) + ')'; ctx.fillRect(s.x | 0, s.y | 0, 1, 1); } });
-    // sun block
-    ctx.fillStyle = css(P.sun); ctx.fillRect(sunX - 2, sunY - 2, 5, 5);
-    if (night) { ctx.fillStyle = css(P.skyTop); ctx.fillRect(sunX + 1, sunY - 2, 2, 3); ctx.fillRect(sunX, sunY - 2, 1, 1); } // crescent bite
+    // sun block (hidden in rain / snow / fog)
+    if (!{ rain: 1, storm: 1, snow: 1, fog: 1 }[WX.kind]) ctx.fillStyle = css(P.sun), ctx.fillRect(sunX - 2, sunY - 2, 5, 5);
+    if ({ rain: 1, storm: 1, snow: 1, fog: 1 }[WX.kind]) {} else if (night) { ctx.fillStyle = css(P.skyTop); ctx.fillRect(sunX + 1, sunY - 2, 2, 3); ctx.fillRect(sunX, sunY - 2, 1, 1); } // crescent bite
     else { ctx.fillStyle = 'rgba(255,255,255,.9)'; ctx.fillRect(sunX - 1, sunY - 1, 3, 3); }
     // clouds
     T.clouds.forEach(c => {
@@ -1897,6 +2059,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     });
     drawSwingFrame(P);
     drawMembers(P);
+    drawWeather(P);
   }
 
   // ---- the swing: an A-frame with two seats; an author standing at a seat sits down and swings (max two riders)
