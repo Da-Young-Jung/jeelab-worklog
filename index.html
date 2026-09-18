@@ -2196,7 +2196,7 @@ window.__I18N = {
 (function () {
   const cv = document.getElementById('sky'); if (!cv) return;
   const ctx = cv.getContext('2d');
-  const B = 4;                       // css px per voxel
+  let B = 4;                         // css px per voxel (3 on phones, so the field and the avatars take up less of the screen)
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let W = 0, H = 0, t = 0, raf = 0, terrain = null;
 
@@ -2728,7 +2728,7 @@ window.__I18N = {
   };
 
   function resize() {
-    const r = cv.getBoundingClientRect();
+    const r = cv.getBoundingClientRect(); B = r.width <= 680 ? 3 : 4;
     W = Math.max(60, Math.ceil(r.width / B)); H = Math.ceil(r.height / B);
     cv.width = W; cv.height = H; buildTerrain(); draw();
   }
