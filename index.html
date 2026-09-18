@@ -925,7 +925,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     el.admin.hidden = !(tab === 'admin' && isAdmin);
     el.adminLock.hidden = !(tab === 'admin' && !isAdmin);
     el.unlockHint.textContent = '';
-    if (isAdmin) { renderAdminList('members', el.members, S.members); renderAdminList('taskTypes', el.types, S.types); renderAdminList('quests', el.quests, S.quests); if (tab === 'admin' && !TEAM.loaded) TEAM.load(); }
+    if (isAdmin) { renderAdminList('members', el.members, S.members); renderAdminList('taskTypes', el.types, S.types); renderAdminList('quests', el.quests, S.quests); if (tab === 'admin') TEAM.load(); }
     el.pwForm.hidden = false;
     el.pwHint.textContent = adminHash ? '관리자 탭을 열 때 이 비밀번호를 묻습니다. 바꾸려면 새 비밀번호를 저장하세요.' : '아직 비밀번호가 없습니다. 지금 설정하세요 — 설정 전까지는 누구나 이 탭을 열 수 있습니다.';
   }
@@ -1057,8 +1057,9 @@ window.makeSupabaseDb = function (url, anonKey) {
 
   async function writeDay(rows) {
     const ref = db.doc('days/' + dayId(S.memberId, S.date));
-    if (!rows.length) { await ref.delete(); return; }
-    await ref.set({ memberId: S.memberId, date: S.date, rows, updatedAt: new Date().toISOString() });
+    if (!rows.length) await ref.delete();
+    else await ref.set({ memberId: S.memberId, date: S.date, rows, updatedAt: new Date().toISOString() });
+    if (TEAM.loaded) TEAM.load(); if (MY.loaded) MY.load();   // keep the stats tabs in step with this edit
   }
   function handleWriteError(e) {
     const code = e && e.code;
@@ -1440,7 +1441,8 @@ window.makeSupabaseDb = function (url, anonKey) {
     nav.append(prev, per, next);
     const date = document.createElement('input'); date.type = 'date'; date.value = V.anchor; date.setAttribute('aria-label', '기준 날짜');
     const msg = document.createElement('span'); msg.className = 'msg';
-    ctl.append(seg, nav, date, msg);
+    const rf = document.createElement('button'); rf.type = 'button'; rf.className = 'ghost'; rf.textContent = '↻ 새로고침'; rf.title = '다른 사람이 방금 쓴 기록까지 다시 불러오기'; rf.addEventListener('click', load);
+    ctl.append(seg, nav, date, rf, msg);
     const sums = document.createElement('div'); sums.className = 'sums'; sums.hidden = true;
     const wrap = document.createElement('div'); wrap.className = 'team-tbl-wrap'; wrap.hidden = true;
     const tbl = document.createElement('table'); tbl.className = 'team-tbl';
