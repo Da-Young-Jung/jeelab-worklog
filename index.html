@@ -584,7 +584,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   </section>
 
   <section class="card lift" data-tab="board" hidden>
-    <h2><span>새 글</span><span class="sub" id="boardWho"></span></h2>
+    <h2><span id="postFormTitle">새 글</span><span class="sub" id="boardWho"></span></h2>
     <form class="composer" id="postForm">
       <textarea id="postText" placeholder="노트, 소식, 공지, 사진 설명… (Ctrl/⌘+Enter 게시)" aria-label="글 내용"></textarea>
       <div class="thumbs" id="postThumbs"></div>
@@ -593,6 +593,7 @@ window.makeSupabaseDb = function (url, anonKey) {
         <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)"><input type="checkbox" id="postPin" style="width:auto"> 상단 고정</label>
         <span class="spacer"></span>
         <span class="msg" id="postMsg"></span>
+        <button type="button" class="ghost" id="postCancel" hidden>취소</button>
         <button type="submit" class="primary" id="postBtn">게시</button>
       </div>
     </form>
@@ -771,7 +772,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     admin: $('admin'), members: $('members'), addMember: $('addMember'), newMember: $('newMember'),
     types: $('types'), addType: $('addType'), newType: $('newType'),
     quests: $('quests'), addQuest: $('addQuest'), newQuest: $('newQuest'),
-    postForm: $('postForm'), postText: $('postText'), postThumbs: $('postThumbs'), postFiles: $('postFiles'), postPin: $('postPin'), postMsg: $('postMsg'), postBtn: $('postBtn'), boardWho: $('boardWho'), boardSub: $('boardSub'), feed: $('feed'), feedEmpty: $('feedEmpty'),
+    postForm: $('postForm'), postFormTitle: $('postFormTitle'), postCancel: $('postCancel'), postText: $('postText'), postThumbs: $('postThumbs'), postFiles: $('postFiles'), postPin: $('postPin'), postMsg: $('postMsg'), postBtn: $('postBtn'), boardWho: $('boardWho'), boardSub: $('boardSub'), feed: $('feed'), feedEmpty: $('feedEmpty'),
     teamStats: $('teamStats'), myStats: $('myStats'), myStatsWho: $('myStatsWho'),
     hero: $('hero'), avatarBtn: $('avatarBtn'), statusBtn: $('statusBtn'), pop: $('pop'), avBg: $('avBg'), avForm: $('avForm'), avTitle: $('avTitle'), avPreview: $('avPreview'), avRandom: $('avRandom'), avOpts: $('avOpts'), avMsg: $('avMsg'), avCancel: $('avCancel'), avSave: $('avSave'),
     unlockForm: $('unlockForm'), unlockPw: $('unlockPw'), unlockHint: $('unlockHint'), adminLock: $('adminLock'),
@@ -1304,7 +1305,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   }
 
   // ---- board: posts/<id> = {text, images:[url], author, pinned, createdAt}; photos go to Supabase Storage bucket "board"
-  const BOARD = { posts: [], pending: [], unsub: null };
+  const BOARD = { posts: [], pending: [], unsub: null, editingId: null, keep: [] };   // keep = existing image urls kept while editing
   el.postForm.addEventListener('submit', submitPost);
   el.postText.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); el.postForm.requestSubmit(); } });
   el.postFiles.addEventListener('change', async () => {
@@ -1314,6 +1315,12 @@ window.makeSupabaseDb = function (url, anonKey) {
   function setPostMsg(t, k) { el.postMsg.textContent = t; el.postMsg.className = 'msg ' + (k || ''); if (t && k) setTimeout(() => { if (el.postMsg.textContent === t) el.postMsg.textContent = ''; }, 4000); }
   function renderThumbs() {
     el.postThumbs.innerHTML = '';
+    BOARD.keep.forEach((u, i) => {
+      const t = document.createElement('div'); t.className = 't';
+      const img = document.createElement('img'); img.src = u; img.alt = '';
+      const x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.title = '빼기'; x.addEventListener('click', () => { BOARD.keep.splice(i, 1); renderThumbs(); });
+      t.append(img, x); el.postThumbs.append(t);
+    });
     BOARD.pending.forEach((p, i) => {
       const t = document.createElement('div'); t.className = 't';
       const img = document.createElement('img'); img.src = URL.createObjectURL(p.blob); img.alt = p.name;
@@ -1339,17 +1346,30 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (!db) { setPostMsg('저장소에 연결되지 않았습니다.', 'err'); return; }
     if (!S.memberId) { setPostMsg('먼저 작성자(본인 이름)를 고르세요.', 'err'); el.member.focus(); return; }
     const text = el.postText.value.trim();
-    if (!text && !BOARD.pending.length) { setPostMsg('내용이나 사진을 넣어 주세요.', 'err'); return; }
-    el.postBtn.disabled = true; setPostMsg('올리는 중…');
+    if (!text && !BOARD.pending.length && !BOARD.keep.length) { setPostMsg('내용이나 사진을 넣어 주세요.', 'err'); return; }
+    el.postBtn.disabled = true; setPostMsg(BOARD.editingId ? '저장 중…' : '올리는 중…');
     try {
-      const images = [];
+      const images = BOARD.keep.slice();
       for (const p of BOARD.pending) images.push(await window.__uploadImage(p.blob));
       const now = new Date().toISOString();
-      await db.collection('posts').doc(newId('p')).set({ text, images, author: S.memberId, pinned: el.postPin.checked, createdAt: now, updatedAt: now });
-      el.postText.value = ''; el.postPin.checked = false; BOARD.pending = []; renderThumbs(); setPostMsg('게시했습니다.', 'ok');
+      if (BOARD.editingId) await db.doc('posts/' + BOARD.editingId).update({ text, images, pinned: el.postPin.checked, updatedAt: now, edited: true });
+      else await db.collection('posts').doc(newId('p')).set({ text, images, author: S.memberId, pinned: el.postPin.checked, createdAt: now, updatedAt: now });
+      setPostMsg(BOARD.editingId ? '수정했습니다.' : '게시했습니다.', 'ok'); resetComposer();
     } catch (e) { setPostMsg('올리지 못했습니다: ' + ((e && e.message) || (e && e.code) || ''), 'err'); }
     finally { el.postBtn.disabled = false; }
   }
+  function resetComposer() {
+    BOARD.editingId = null; BOARD.keep = []; BOARD.pending = [];
+    el.postText.value = ''; el.postPin.checked = false; renderThumbs();
+    el.postBtn.textContent = '게시'; el.postCancel.hidden = true; el.postFormTitle.textContent = '새 글';
+  }
+  function startEditPost(p) {
+    BOARD.editingId = p.id; BOARD.keep = Array.isArray(p.images) ? p.images.slice() : []; BOARD.pending = [];
+    el.postText.value = p.text || ''; el.postPin.checked = !!p.pinned; renderThumbs();
+    el.postBtn.textContent = '수정 저장'; el.postCancel.hidden = false; el.postFormTitle.textContent = '글 수정';
+    el.postForm.scrollIntoView({ behavior: 'smooth', block: 'start' }); el.postText.focus();
+  }
+  el.postCancel.addEventListener('click', resetComposer);
   function ensurePostsSub() {
     if (!db || BOARD.unsub) return;
     BOARD.unsub = db.collection('posts').orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => { BOARD.posts = snap.docs.map(x => ({ id: x.id, ...x.data() })); renderFeed(); },
@@ -1368,11 +1388,12 @@ window.makeSupabaseDb = function (url, anonKey) {
       const card = document.createElement('article'); card.className = 'post' + (p.pinned ? ' pinned' : '');
       const head = document.createElement('div'); head.className = 'head';
       const who = document.createElement('span'); who.className = 'who'; who.textContent = memberName(p.author);
-      const when = document.createElement('span'); when.textContent = fmtWhen(p.createdAt);
+      const when = document.createElement('span'); when.textContent = fmtWhen(p.createdAt) + (p.edited ? ' · 수정됨' : '');
       head.append(who, when);
       if (p.pinned) { const pin = document.createElement('span'); pin.className = 'pin'; pin.textContent = '📌 고정'; head.append(pin); }
       const sp = document.createElement('span'); sp.className = 'spacer'; head.append(sp);
       if (p.author === S.memberId || isAdmin) {
+        const ed = document.createElement('button'); ed.type = 'button'; ed.className = 'ghost'; ed.textContent = '수정'; ed.addEventListener('click', () => startEditPost(p)); head.append(ed);
         const pinBtn = document.createElement('button'); pinBtn.type = 'button'; pinBtn.className = 'ghost'; pinBtn.textContent = p.pinned ? '고정 해제' : '고정';
         pinBtn.addEventListener('click', () => safe(() => db.doc('posts/' + p.id).update({ pinned: !p.pinned })));
         const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = '삭제';
