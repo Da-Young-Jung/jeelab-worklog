@@ -550,7 +550,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   <div class="tags" id="tags" aria-hidden="true"></div>
   <div class="pop" id="pop" hidden></div>
   <div class="wx" id="wx" hidden title="서울 현재 날씨 (Open-Meteo)"></div>
-  <div class="pad" id="pad" hidden aria-label="아바타 이동"><button type="button" data-k="ArrowLeft" aria-label="왼쪽">◀</button><button type="button" data-k="ArrowUp" aria-label="점프">▲</button><button type="button" data-k="ArrowRight" aria-label="오른쪽">▶</button></div>
+  <div class="pad" id="pad" hidden aria-label="아바타 이동"><button type="button" data-k="ArrowLeft" aria-label="왼쪽">◀</button><button type="button" data-k="ArrowUp" aria-label="점프">▲</button><button type="button" data-k="ArrowDown" aria-label="앉기">▼</button><button type="button" data-k="ArrowRight" aria-label="오른쪽">▶</button></div>
   <div class="theme-pick" id="themePick" role="group" aria-label="테마">
     <button type="button" data-mode="auto">자동</button><button type="button" data-mode="day">낮</button><button type="button" data-mode="dusk">저녁</button><button type="button" data-mode="night">밤</button>
   </div>
@@ -570,7 +570,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     <select id="member" aria-label="작성자 선택"></select>
     <button type="button" class="av-btn" id="avatarBtn">내 아바타</button>
     <button type="button" class="av-btn status-btn" id="statusBtn" title="내 상태 메시지">💬 상태</button>
-    <span class="keys" title="키보드 ←/→ 로 걷기, ↑ 점프 · 아바타 클릭 = 상태 보기">← → 걷기 · ↑ 점프 · 클릭 = 상태</span>
+    <span class="keys" title="키보드 ←/→ 로 걷기, ↑ 점프, ↓ 앉기 · 아바타 클릭 = 상태 보기">← → 걷기 · ↑ 점프 · ↓ 앉기 · 클릭 = 상태</span>
   </div>
 </header>
 
@@ -1535,6 +1535,10 @@ window.makeSupabaseDb = function (url, anonKey) {
       if (u == null) return false;
       posU = u; clearTimeout(posTimer); posTimer = setTimeout(savePos, 600); return true;
     }
+    if (key === 'ArrowDown') {
+      const on = window.__sceneSit ? window.__sceneSit(S.memberId) : null; if (on == null) return false;
+      if (db) db.doc('members/' + S.memberId).update({ sit: on }).catch(() => {}); return true;
+    }
     if (window.__sceneJump) window.__sceneJump(S.memberId); return true;
   }
   function stopWalk() { clearInterval(walkTimer); walkTimer = null; }
@@ -1550,20 +1554,20 @@ window.makeSupabaseDb = function (url, anonKey) {
     const tag = (e.target && e.target.tagName) || '';
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable) return;
     if (!el.sheetBg.hidden || !el.avBg.hidden || !S.memberId) return;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === ' ') { e.preventDefault(); stopWalk(); steer(e.key === ' ' ? 'ArrowUp' : e.key); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); stopWalk(); steer(e.key === ' ' ? 'ArrowUp' : e.key); }
   });
   // touch pad: press = one step, hold = keep walking
   document.querySelectorAll('#pad button').forEach(b => {
     let rep = null; const k = b.dataset.k;
     const stop = () => { clearInterval(rep); rep = null; };
-    b.addEventListener('pointerdown', (e) => { e.preventDefault(); stopWalk(); steer(k); stop(); if (k !== 'ArrowUp') rep = setInterval(() => steer(k), 90); });
+    b.addEventListener('pointerdown', (e) => { e.preventDefault(); stopWalk(); steer(k); stop(); if (k === 'ArrowLeft' || k === 'ArrowRight') rep = setInterval(() => steer(k), 90); });
     ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, stop));
     b.addEventListener('contextmenu', (e) => e.preventDefault());
   });
   function renderPad() { const pad = document.getElementById('pad'); if (pad) pad.hidden = !S.memberId; }
   async function savePos() {
     if (!db || !S.memberId || posU == null) return;
-    const u = posU; try { await db.doc('members/' + S.memberId).update({ pos: Math.round(u * 1000) / 1000 }); } catch (e) {}
+    const u = posU; try { await db.doc('members/' + S.memberId).update({ pos: Math.round(u * 1000) / 1000, sit: false }); } catch (e) {}
   }
 
   // ---- status messages (speech bubbles); clicking an avatar shows name + status
@@ -2023,7 +2027,6 @@ window.makeSupabaseDb = function (url, anonKey) {
         ctx.fillStyle = css(c); ctx.fillRect(x, y, 1, 1);
       }
     }
-    drawBurrow(P);
     // trees
     T.trees.forEach(tr => {
       const gy = Math.round(T.near[tr.x]); if (gy > T.water) return;
@@ -2051,39 +2054,6 @@ window.makeSupabaseDb = function (url, anonKey) {
   function line(x0, y0, x1, y1, fill) {
     let dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1, dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1, err = dx + dy;
     for (let n = 0; n < 200; n++) { fill(x0, y0); if (x0 === x1 && y0 === y1) break; const e2 = 2 * err; if (e2 >= dy) { err += dy; x0 += sx; } if (e2 <= dx) { err += dx; y0 += sy; } }
-  }
-  // ---- a mouse burrow dug into the bottom-left of the field: entrance hole, shaft, and a chamber with a few mice
-  const MICE = [ { x: 4, c: '#F2F2F2', dir: 1 }, { x: 11, c: '#C9C9C9', dir: -1 }, { x: 17, c: '#F2F2F2', dir: 1 }, { x: 8, c: '#B08968', dir: 1, sleep: true } ];
-  function burrowGeom() {
-    const x0 = 6, w = 26, top = Math.round(H * 0.82), h = 7, ex = 15;   // chamber box + entrance column
-    return { x0, x1: x0 + w, top, bot: top + h, ex, gy: groundAt(ex) };
-  }
-  function drawBurrow(P) {
-    const g = burrowGeom(), L = Math.max(0.6, P.light);
-    const cav = css([34 * L, 24 * L, 16 * L]), edge = css([96 * L, 66 * L, 42 * L]);
-    // entrance: a hole in the grass with a little mound each side, then a shaft with one jog down to the chamber
-    ctx.fillStyle = cav; ctx.fillRect(g.ex - 1, g.gy, 4, 2);
-    ctx.fillStyle = edge; ctx.fillRect(g.ex - 3, g.gy - 1, 2, 1); ctx.fillRect(g.ex + 3, g.gy - 1, 2, 1);
-    const jog = Math.round((g.gy + g.top) / 2);
-    ctx.fillStyle = cav; ctx.fillRect(g.ex, g.gy + 2, 2, jog - g.gy - 1); ctx.fillRect(g.ex - 3, jog, 5, 2); ctx.fillRect(g.ex - 3, jog + 2, 2, g.top - jog);
-    // chamber: rounded box, lit rim at the top
-    for (let y = g.top; y <= g.bot; y++) { const r = (y === g.top || y === g.bot) ? 2 : 0; ctx.fillStyle = cav; ctx.fillRect(g.x0 + r, y, g.x1 - g.x0 - 2 * r, 1); }
-    ctx.fillStyle = edge; ctx.fillRect(g.x0 + 2, g.top - 1, g.x1 - g.x0 - 4, 1);
-    // straw bedding on the right, a seed pile on the left
-    const straw = css([200 * L, 160 * L, 70 * L]); ctx.fillStyle = straw; ctx.fillRect(g.x1 - 8, g.bot - 1, 6, 1); ctx.fillRect(g.x1 - 7, g.bot - 2, 4, 1);
-    ctx.fillStyle = css([150 * L, 110 * L, 60 * L]); ctx.fillRect(g.x0 + 2, g.bot - 1, 2, 1);
-    // mice: sleepers curl up on the straw, the others wander the floor and pause to sniff
-    const fy = g.bot - 1, minX = g.x0 + 1, maxX = g.x1 - 4;
-    MICE.forEach((m, i) => {
-      if (m.sleep) { const x = g.x1 - 6; ctx.fillStyle = css(hex(m.c).map(v => v * L)); ctx.fillRect(x, fy - 1, 2, 1); ctx.fillRect(x - 1, fy - 1, 1, 1); ctx.fillStyle = css([242 * L, 184 * L, 198 * L]); ctx.fillRect(x + 1, fy - 2, 1, 1); if (!reduce && (t + i) % 14 < 2) { ctx.fillStyle = 'rgba(255,255,255,.7)'; ctx.fillRect(x + 3, fy - 3, 1, 1); } return; }
-      if (!reduce && Math.random() < 0.25) { m.x += m.dir; if (m.x <= minX || m.x >= maxX) m.dir = -m.dir; if (Math.random() < 0.08) m.dir = -m.dir; }
-      m.x = Math.min(maxX, Math.max(minX, m.x));
-      const x = g.x0 + m.x - g.x0, d = m.dir, body = css(hex(m.c).map(v => v * L));
-      ctx.fillStyle = body; ctx.fillRect(x, fy - 1, 3, 1); ctx.fillRect(x + (d > 0 ? 2 : 0), fy - 2, 1, 1);           // body + head bump
-      ctx.fillStyle = css([242 * L, 184 * L, 198 * L]); ctx.fillRect(x + (d > 0 ? 1 : 1), fy - 2, 1, 1);               // ear
-      ctx.fillStyle = css([40 * L, 40 * L, 40 * L]); ctx.fillRect(x + (d > 0 ? 2 : 0), fy - 1, 1, 1);                 // eye
-      ctx.fillStyle = css([170 * L, 170 * L, 170 * L]); ctx.fillRect(x + (d > 0 ? -1 : 3), fy - 1, 1, 1);             // tail
-    });
   }
   function drawSwingFrame(P) {
     const g = swingGeom(), wood = P.trunk, hi = mix(P.trunk, [255, 230, 190], 0.25);
@@ -2117,6 +2087,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   const AV_DEFAULT = { skin: 's2', hair: 'short', hairColor: 'black', eyes: 'brown', top: 'tee', topColor: 'blue', bottom: 'pants', bottomColor: 'jeans', item: 'none', pet: 'none', acc: 'none' };
   function drawAvatar(ctx, c0, fy, av, light, warm, bob, opts) {
     av = Object.assign({}, AV_DEFAULT, av || {}); fy -= (bob || 0); opts = opts || {};
+    const gy = fy; if (opts.sit) fy += 4;   // sitting: torso and head drop by the leg height, legs fold out in front
     const L = light == null ? 1 : light, Wm = warm || 0;
     const px = (x, y, hexc) => { const c = hex(hexc); ctx.fillStyle = css([c[0] * L + 40 * Wm, c[1] * L + 10 * Wm, c[2] * L]); ctx.fillRect(x, y, 1, 1); };
     const rect = (x, y, w, h, hexc) => { for (let i = 0; i < w; i++) for (let j = 0; j < h; j++) px(x + i, y + j, hexc); };
@@ -2124,10 +2095,11 @@ window.makeSupabaseDb = function (url, anonKey) {
     const skin = AV.skin[av.skin] || AV.skin.s2, hairC = AV.hairC[av.hairColor] || AV.hairC.black, eye = AV.eyes[av.eyes] || AV.eyes.brown;
     const topC = AV.topC[av.topColor] || AV.topC.blue, botC = AV.botC[av.bottomColor] || AV.botC.jeans;
     // legs + shoes
-    if (av.bottom === 'skirt') { rect(c0 - 1, fy - 5, 6, 3, botC); rect(c0, fy - 2, 1, 1, skin); rect(c0 + 3, fy - 2, 1, 1, skin); }
+    if (opts.sit) { /* drawn after the body */ }
+    else if (av.bottom === 'skirt') { rect(c0 - 1, fy - 5, 6, 3, botC); rect(c0, fy - 2, 1, 1, skin); rect(c0 + 3, fy - 2, 1, 1, skin); }
     else if (av.bottom === 'shorts') { rect(c0, fy - 5, 4, 2, botC); rect(c0, fy - 3, 1, 2, skin); rect(c0 + 3, fy - 3, 1, 2, skin); rect(c0 + 1, fy - 3, 2, 2, dark(skin, .92)); }
     else { rect(c0, fy - 5, 4, 4, botC); rect(c0 + 1, fy - 5, 1, 4, dark(botC, .85)); }
-    rect(c0, fy - 1, 4, 1, '#2A2A2A');
+    if (!opts.sit) rect(c0, fy - 1, 4, 1, '#2A2A2A');
     // body + arms
     rect(c0, fy - 10, 4, 5, topC);
     if (av.top === 'labcoat') { rect(c0, fy - 10, 4, 5, '#F2F2F2'); rect(c0 + 1, fy - 10, 2, 1, topC); rect(c0 + 1, fy - 9, 2, 4, dark('#F2F2F2', .9)); rect(c0 + 1, fy - 7, 1, 1, topC); }
@@ -2136,6 +2108,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     else if (av.top === 'shirt') { rect(c0 + 1, fy - 10, 2, 1, '#F2F2F2'); rect(c0 + 1, fy - 9, 2, 4, dark(topC, .85)); }
     const sleeve = av.top === 'labcoat' ? '#F2F2F2' : topC;
     [c0 - 1, c0 + 4].forEach(x => { rect(x, fy - 10, 1, 3, sleeve); rect(x, fy - 7, 1, 2, skin); });
+    if (opts.sit) { rect(c0 - 1, gy - 2, 7, 1, botC); rect(c0 + 5, gy - 1, 2, 1, '#2A2A2A'); if (av.bottom === 'shorts' || av.bottom === 'skirt') rect(c0 + 4, gy - 2, 2, 1, skin); }   // lap + feet
     // head
     rect(c0 - 1, fy - 14, 6, 4, skin);
     px(c0, fy - 12, eye); px(c0 + 3, fy - 12, eye);
@@ -2176,7 +2149,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (I === 'phone') { rect(x0, fy - 9, 2, 3, '#2A2A2A'); px(x0, fy - 8, '#8FB4E8'); px(x0 + 1, fy - 8, '#8FB4E8'); }
     if (I === 'microscope') { rect(x0 + 1, fy - 10, 1, 3, '#3A3F47'); px(x0 + 2, fy - 10, '#3A3F47'); px(x0, fy - 8, '#3A3F47'); rect(x0, fy - 7, 3, 1, '#9AA0A8'); }
     // pet, on the ground to the right (or a bird on the shoulder)
-    const p0 = c0 + 8, P = opts.noPet ? '' : av.pet;
+    const p0 = c0 + 8, P = opts.noPet ? '' : av.pet; fy = gy;   // pets sit on the ground either way
     if (P === 'cat') { rect(p0, fy - 2, 4, 2, '#D9782B'); rect(p0 + 3, fy - 3, 2, 1, '#D9782B'); px(p0 + 3, fy - 4, '#D9782B'); px(p0 + 4, fy - 4, '#D9782B'); px(p0 - 1, fy - 3, '#D9782B'); px(p0 + 4, fy - 3, '#2E8B57'); }
     if (P === 'dog') { rect(p0, fy - 2, 4, 2, '#8D5A3C'); rect(p0 + 3, fy - 3, 2, 1, '#8D5A3C'); px(p0 + 5, fy - 3, '#5C3A26'); px(p0 - 1, fy - 3, '#8D5A3C'); px(p0 + 4, fy - 3, '#111111'); }
     if (P === 'mouse') { rect(p0, fy - 1, 2, 1, '#F2F2F2'); px(p0 + 1, fy - 2, '#F2B8C6'); px(p0 - 1, fy - 1, '#C9C9C9'); }
@@ -2230,7 +2203,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   // members standing on the near ground, spread over the two land stretches either side of the lake
   const tagsEl = document.getElementById('tags'); let tagSig = '';
   // live state for the author being steered with the arrow keys (position is also saved to the member doc)
-  const MOVE = { id: null, u: null, lastMove: 0, jumpAt: 0, pumpAt: 0, dir: 1 };
+  const MOVE = { id: null, u: null, lastMove: 0, jumpAt: 0, pumpAt: 0, dir: 1, sit: null };
   function groundAt(x) { return Math.round(terrain.near[Math.min(W - 1, Math.max(0, x))]); }
   // dry columns of the near ground (the lake and any other dip below the waterline are excluded)
   function landColumns() {
@@ -2251,8 +2224,9 @@ window.makeSupabaseDb = function (url, anonKey) {
       else if (typeof m.pos === 'number' && m.pos >= 0 && m.pos <= 1) x = Math.min(W - 10, Math.max(3, Math.round(m.pos * W)));
       else x = land.length ? land[Math.min(land.length - 1, Math.floor((i + 0.5) / ms.length * land.length))] : Math.round(W * 0.2);
       const fy = groundAt(x), wy = terrain.water | 0, swim = fy > terrain.water;
+      const sit = !swim && (MOVE.id === m.id && MOVE.sit != null ? MOVE.sit : !!m.sit);
       // swimmers float on the surface row; `top` is where the name tag hangs
-      return { m, x, fy: swim ? wy + 2 : fy, swim, top: swim ? wy - 6 : fy - 18 };
+      return { m, x, fy: swim ? wy + 2 : fy, swim, sit, top: swim ? wy - 6 : fy - (sit ? 14 : 18) };
     }).map(sl => {
       // standing at a swing seat (and it is free) = riding it
       if (!sl.swim) { const g = swingGeom(); SWING.seats.forEach((d, k) => { if (sl.seat == null && !taken.has(k) && Math.abs(sl.x - (g.xs + d)) <= 1) { taken.add(k); sl.seat = k; sl.top = sl.fy - 22; } }); }
@@ -2293,7 +2267,7 @@ window.makeSupabaseDb = function (url, anonKey) {
         if (now - MOVE.lastMove < 350) bob = (Math.floor(now / 120) % 2);          // walking: quick step bob
         const j = (now - MOVE.jumpAt) / 520; if (j >= 0 && j < 1) bob += Math.round(16 * j * (1 - j)); // jump arc, 4 units high
       }
-      drawAvatar(ctx, sl.x - 2, sl.fy, sl.m.avatar, P.light, warm, bob);
+      drawAvatar(ctx, sl.x - 2, sl.fy, sl.m.avatar, P.light, warm, sl.sit ? 0 : bob, { sit: sl.sit });
     });
     const statusOf = window.__worklogStatusOf || (() => '');
     const sig = W + '|' + slots.map(s => s.m.id + ':' + s.m.name + ':' + s.x + ':' + s.fy + ':' + statusOf(s.m.id)).join(',');
@@ -2326,15 +2300,21 @@ window.makeSupabaseDb = function (url, anonKey) {
     MOVE.id = id; const cur = u == null ? (memberSlots().find(s => s.m.id === id) || { x: Math.round(W * 0.2) }).x : Math.round(u * W);
     const nx = cur + dir;
     if (nx < 3 || nx > W - 10) return null;
-    MOVE.u = nx / W; MOVE.dir = dir; MOVE.lastMove = Date.now(); draw(); return MOVE.u;
+    MOVE.u = nx / W; MOVE.dir = dir; MOVE.sit = false; MOVE.lastMove = Date.now(); draw(); return MOVE.u;
   };
   window.__sceneJump = (id) => {
     MOVE.id = id; if (RIDERS.has(id)) { MOVE.pumpAt = Date.now(); return; }
-    MOVE.jumpAt = Date.now(); if (reduce) return; let n = 0; const tick = () => { draw(); if (++n < 10) setTimeout(tick, 55); }; tick();
+    MOVE.sit = false; MOVE.jumpAt = Date.now(); if (reduce) return; let n = 0; const tick = () => { draw(); if (++n < 10) setTimeout(tick, 55); }; tick();
   };
   window.__scenePosOf = (id) => { if (!terrain) return null; const sl = memberSlots().find(s => s.m.id === id); return sl ? sl.x / W : null; };
   Object.defineProperty(window, '__sceneW', { get: () => W });
-  window.__sceneSelect = (id) => { if (MOVE.id !== id) { MOVE.id = id; MOVE.u = null; } };
+  window.__sceneSelect = (id) => { if (MOVE.id !== id) { MOVE.id = id; MOVE.u = null; MOVE.sit = null; } };
+  // ↓ sits down (again = stand up); returns the new state, or null when it does not apply (swimming / on the swing)
+  window.__sceneSit = (id) => {
+    if (!terrain) return null; MOVE.id = id; const sl = memberSlots().find(s => s.m.id === id);
+    if (!sl || sl.swim || sl.seat != null) return null;
+    MOVE.sit = !sl.sit; draw(); return MOVE.sit;
+  };
 
   function resize() {
     const r = cv.getBoundingClientRect();
