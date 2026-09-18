@@ -222,20 +222,17 @@ window.makeSupabaseDb = function (url, anonKey) {
 
   /* hero: procedural voxel landscape; the page theme and the scene both follow the viewer's clock (day / dusk / night) */
   .hero { position: relative; margin-inline: -16px; height: 400px; overflow: hidden; background: var(--bg); }
-  /* a little plane tows the notice (pinned board posts) across the sky */
-  .hero .flyer { position: absolute; top: 46px; left: 0; z-index: 5; display: flex; align-items: center; pointer-events: none; will-change: transform; }
-  /* the towed flag: translucent white cloth, black pixel edge, stair-stepped swallow-tail; the top/bottom edges ripple in 4px steps */
-  .hero .flyer .banner { display: block; white-space: nowrap; font-size: 13.5px; font-weight: 700; color: #1E2A33; background: rgba(42, 42, 42, .85); padding: 4px 3px;
-    clip-path: polygon(0 0, calc(100% - 0px) 0%,  calc(100% - 0px) 18%,  calc(100% - 4px) 18%,  calc(100% - 4px) 32%,  calc(100% - 8px) 32%,  calc(100% - 8px) 46%,  calc(100% - 12px) 46%,  calc(100% - 12px) 54%,  calc(100% - 8px) 54%,  calc(100% - 8px) 68%,  calc(100% - 4px) 68%,  calc(100% - 4px) 82%,  calc(100% - 0px) 82%,  calc(100% - 0px) 100%, 0 100%); transform-origin: 0 50%;
-    -webkit-mask: linear-gradient(#000, #000) 0 4px / 100% calc(100% - 8px) no-repeat, linear-gradient(90deg, #000 0 12px, transparent 12px) 0 0 / 24px 4px repeat-x, linear-gradient(90deg, #000 0 12px, transparent 12px) 12px 100% / 24px 4px repeat-x;
-    mask: linear-gradient(#000, #000) 0 4px / 100% calc(100% - 8px) no-repeat, linear-gradient(90deg, #000 0 12px, transparent 12px) 0 0 / 24px 4px repeat-x, linear-gradient(90deg, #000 0 12px, transparent 12px) 12px 100% / 24px 4px repeat-x;
-    animation: ripple .5s steps(2) infinite, flap .7s ease-in-out infinite; }
-  .hero .flyer .banner span { display: block; background: rgba(255, 255, 255, .74); padding: 5px 26px 5px 11px; clip-path: polygon(0 0, calc(100% - 0px) 0%,  calc(100% - 0px) 18%,  calc(100% - 4px) 18%,  calc(100% - 4px) 32%,  calc(100% - 8px) 32%,  calc(100% - 8px) 46%,  calc(100% - 12px) 46%,  calc(100% - 12px) 54%,  calc(100% - 8px) 54%,  calc(100% - 8px) 68%,  calc(100% - 4px) 68%,  calc(100% - 4px) 82%,  calc(100% - 0px) 82%,  calc(100% - 0px) 100%, 0 100%); }
-  @keyframes ripple { from { -webkit-mask-position: 0 4px, 0 0, 12px 100%; mask-position: 0 4px, 0 0, 12px 100%; } to { -webkit-mask-position: 0 4px, 24px 0, 36px 100%; mask-position: 0 4px, 24px 0, 36px 100%; } }
-  @keyframes flap { 0%, 100% { transform: skewY(1.4deg); } 50% { transform: skewY(-1.4deg); } }
-  @media (prefers-reduced-motion: reduce) { .hero .flyer .banner { animation: none; } }
-  .hero .flyer .rope { width: 22px; height: 3px; background: #2A2A2A; }
-  .hero .flyer canvas { width: 60px; height: 32px; image-rendering: pixelated; image-rendering: crisp-edges; margin-bottom: 10px; }
+  /* notice board hanging in the sky: pale yellow, Minecraft pixel frame; long text scrolls */
+  .hero .sign { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: min(64%, 640px); z-index: 5; pointer-events: none; }
+  .hero .sign .chain { display: flex; justify-content: space-between; padding: 0 36px; height: 16px; }
+  .hero .sign .chain i { display: block; width: 4px; height: 16px; background: repeating-linear-gradient(#2A2A2A 0 4px, #5A5F66 4px 8px); }
+  .hero .sign .panel { background: rgba(255, 251, 224, .93); padding: 8px 14px; overflow: hidden; border-radius: 0;
+    box-shadow: 3px 0 0 0 #2A2A2A, -3px 0 0 0 #2A2A2A, 0 3px 0 0 #2A2A2A, 0 -3px 0 0 #2A2A2A, 0 0 0 3px #FFF3B0 inset; image-rendering: pixelated; }
+  .hero .sign .txt { display: block; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; font-weight: 700; color: #1E2A33; }
+  .hero .sign .txt.scroll { display: inline-block; text-overflow: clip; overflow: visible; padding-left: 100%; animation: marquee var(--dur, 20s) linear infinite; }
+  .hero .sign .panel:has(.scroll) { text-align: left; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+  @media (prefers-reduced-motion: reduce) { .hero .sign .txt.scroll { animation: none; padding-left: 0; display: block; text-overflow: ellipsis; overflow: hidden; } }
   .hero .wx { position: absolute; top: 10px; left: 12px; z-index: 6; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .9); background: rgba(10, 18, 28, .45); padding: 4px 9px; border-radius: 999px; backdrop-filter: blur(2px); }
   .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
   .hero .tags { position: absolute; inset: 0; pointer-events: none; }
@@ -364,7 +361,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     .top .who .status-btn { grid-column: 2 / -1; max-width: none; text-align: left; }
     .mlabel { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
     .hero { height: 300px; }
-    .hero .flyer { top: 50px; } .hero .flyer .banner { font-size: 12px; padding: 4px 9px; }
+    .hero .sign { width: 80%; top: 46px; } .hero .sign .txt { font-size: 12.5px; } .hero .sign .panel { padding: 6px 9px; } .hero .sign .chain { padding: 0 24px; height: 12px; } .hero .sign .chain i { height: 12px; }
     .hero .wx { top: 46px; }
     .top h1 { font-size: 21px; }
     .tabs { gap: 0; }
@@ -564,7 +561,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   <canvas id="sky" aria-hidden="true"></canvas>
   <div class="tags" id="tags" aria-hidden="true"></div>
   <div class="pop" id="pop" hidden></div>
-  <div class="flyer" id="flyer" hidden aria-live="polite"><canvas id="plane" width="15" height="8" aria-hidden="true"></canvas><span class="rope"></span><span class="banner"><span id="bannerText"></span></span></div>
+  <div class="sign" id="sign" hidden aria-live="polite"><div class="chain"><i></i><i></i></div><div class="panel"><span class="txt" id="signText"></span></div></div>
   <div class="wx" id="wx" hidden title="서울 현재 날씨 (Open-Meteo)"></div>
   <div class="pad" id="pad" hidden aria-label="아바타 이동"><button type="button" data-k="ArrowLeft" aria-label="왼쪽">◀</button><button type="button" data-k="ArrowUp" aria-label="점프">▲</button><button type="button" data-k="ArrowRight" aria-label="오른쪽">▶</button></div>
   <div class="theme-pick" id="themePick" role="group" aria-label="테마">
@@ -1517,30 +1514,21 @@ window.makeSupabaseDb = function (url, anonKey) {
       el.feed.append(card);
     });
   }
-  // ---- notice plane: the admin notices on a towed banner, flying right → left every so often
-  const FLY = { anim: null, text: '' };
-  (function drawPlane() {
-    const cv = document.getElementById('plane'); if (!cv) return; const c = cv.getContext('2d');
-    const rows = ['..##...........', '..k#...........', '..###########..', '.p#######wwww#.', '.p############.', '....#########..', '.......####....', '......##.......'];
-    const col = { '#': '#F4F4F4', k: '#B8BEC6', w: '#7FB0E0', p: '#444444' };
-    rows.forEach((r, y) => [...r].forEach((ch, x) => { if (col[ch]) { c.fillStyle = col[ch]; c.fillRect(x, y, 1, 1); } }));
-  })();
+  // ---- notice board in the sky: the admin notices, scrolling when they do not fit
+  const SIGN = { text: '' };
   function renderBanner() {
-    const fl = document.getElementById('flyer'), txt = document.getElementById('bannerText'), hero = document.getElementById('hero'); if (!fl || !txt) return;
+    const sign = document.getElementById('sign'), txt = document.getElementById('signText'); if (!sign || !txt) return;
     const parts = (S.notices || []).map(n => String(n.text || '').trim()).filter(Boolean);
-    const text = parts.join('   ✦   ');
-    if (!text) { fl.hidden = true; if (FLY.anim) { FLY.anim.cancel(); FLY.anim = null; } FLY.text = ''; return; }
-    if (text === FLY.text && FLY.anim && !fl.hidden) return;
-    FLY.text = text; txt.textContent = '📢 ' + text; fl.hidden = false;
-    if (FLY.anim) FLY.anim.cancel();
-    const w = fl.offsetWidth, hw = hero.clientWidth, flight = (w + hw) / 42 * 1000, pause = 9000;
-    FLY.anim = fl.animate([
-      { transform: 'translateX(' + hw + 'px)', offset: 0 },
-      { transform: 'translateX(' + (-w) + 'px)', offset: flight / (flight + pause) },
-      { transform: 'translateX(' + (-w) + 'px)', offset: 1 },
-    ], { duration: flight + pause, iterations: Infinity });
+    const text = parts.map(x => '📢 ' + x).join('      ✦      ');
+    sign.hidden = !text; if (!text) { SIGN.text = ''; return; }
+    if (text === SIGN.text) return;
+    SIGN.text = text; txt.textContent = text; txt.className = 'txt';
+    requestAnimationFrame(() => {
+      const box = txt.parentElement.clientWidth;
+      if (txt.scrollWidth > box) { txt.style.setProperty('--dur', Math.max(12, Math.round((txt.scrollWidth + box) / 45)) + 's'); txt.classList.add('scroll'); }
+    });
   }
-  addEventListener('resize', () => { FLY.text = ''; renderBanner(); });
+  addEventListener('resize', () => { SIGN.text = ''; renderBanner(); });
 
   // ---- reactions + comments live inside the post document (small arrays; read-modify-write)
   const REACTS = ['👍', '❤️', '🎉', '😂', '😮', '🙏'];
