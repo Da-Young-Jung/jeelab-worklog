@@ -209,7 +209,9 @@ window.makeSupabaseDb = function (url, anonKey) {
     padding-block: 0 48px;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 20px; padding-top: 16px; }
+  .wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 20px; padding-top: 16px; min-width: 0; }
+  .wrap > *, .card, .sum, .sums { min-width: 0; }   /* grid children must not inherit the wide table's min-content width */
+  body { overflow-x: hidden; }
 
   /* hero: procedural voxel landscape; the page theme and the scene both follow the viewer's clock (day / dusk / night) */
   .hero { position: relative; margin-inline: -16px; height: 320px; overflow: hidden; background: var(--bg); }
@@ -371,7 +373,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   .team-ctl .seg button.on { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
   .team-ctl .nav { display: inline-flex; align-items: center; gap: 4px; }
   .team-ctl .nav button { padding: 5px 9px; font-size: 13px; }
-  .team-ctl .period { font-weight: 600; min-width: 9em; text-align: center; }
+  .team-ctl .period { font-weight: 600; min-width: 7em; text-align: center; }
   .team-ctl input[type="date"] { width: auto; padding: 5px 8px; font-size: 13px; }
   .team-ctl .msg { margin-left: auto; }
   .sums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
@@ -385,7 +387,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   .sum .bar .lab span { position: relative; }
   .sum .bar .num { font-size: 13px; }
   .sum .more { font-size: 12px; color: var(--muted); padding-top: 2px; }
-  .team-tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+  .team-tbl-wrap { overflow-x: auto; max-width: 100%; border: 1px solid var(--line); border-radius: 8px; -webkit-overflow-scrolling: touch; }
   table.team-tbl { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 640px; }
   table.team-tbl th, table.team-tbl td { text-align: left; padding: 7px 10px; border-top: 1px solid var(--line); vertical-align: top; }
   table.team-tbl th { border-top: 0; background: var(--surface-2); font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .03em; white-space: nowrap; cursor: pointer; user-select: none; }
