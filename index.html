@@ -228,6 +228,8 @@ window.makeSupabaseDb = function (url, anonKey) {
   .hero .theme-pick { position: absolute; top: 10px; right: 12px; z-index: 6; display: inline-flex; gap: 2px; padding: 3px; background: rgba(10, 18, 28, .45); border-radius: 999px; backdrop-filter: blur(2px); }
   .hero .theme-pick button { border: 0; border-radius: 999px; background: transparent; color: rgba(255, 255, 255, .85); font-size: 12px; font-weight: 600; padding: 4px 9px; }
   .hero .theme-pick button.on { background: rgba(255, 255, 255, .92); color: #1E2A33; }
+  .hero .lang-pick { right: 196px; }
+  .hero .lang-pick button { font-size: 11.5px; padding: 4px 8px; }
   .hero .theme-pick button:hover { color: #fff; }
   .hero .theme-pick button.on:hover { color: #1E2A33; }
   .hero .tag { position: absolute; transform: translateX(-50%); font-size: 11px; font-weight: 600; color: #fff; background: rgba(10, 18, 28, .55); padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
@@ -351,6 +353,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     .mlabel { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
     .hero { height: 300px; }
     .hero .wx { top: 46px; }
+    .hero .lang-pick { right: 12px; top: 44px; }
     .top h1 { font-size: 21px; }
     .tabs { gap: 0; }
     .tabs button { font-size: 13.5px; padding: 9px 8px; white-space: nowrap; flex: 1 1 0; text-align: center; }
@@ -551,6 +554,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   <div class="pop" id="pop" hidden></div>
   <div class="wx" id="wx" hidden title="서울 현재 날씨 (Open-Meteo)"></div>
   <div class="pad" id="pad" hidden aria-label="아바타 이동"><button type="button" data-k="ArrowLeft" aria-label="왼쪽">◀</button><button type="button" data-k="ArrowUp" aria-label="점프">▲</button><button type="button" data-k="ArrowDown" aria-label="앉기">▼</button><button type="button" data-k="ArrowRight" aria-label="오른쪽">▶</button></div>
+  <div class="theme-pick lang-pick" id="langPick" role="group" aria-label="Language"><button type="button" data-lang="ko" class="on">한국어</button><button type="button" data-lang="en">EN</button></div>
   <div class="theme-pick" id="themePick" role="group" aria-label="테마">
     <button type="button" data-mode="auto">자동</button><button type="button" data-mode="day">낮</button><button type="button" data-mode="dusk">저녁</button><button type="button" data-mode="night">밤</button>
   </div>
@@ -789,6 +793,312 @@ window.makeSupabaseDb = function (url, anonKey) {
 </div>
 
 <script>
+window.__I18N = {
+" (나)": " (me)",
+" (비활성)": " (inactive)",
+" · 수정됨": " · edited",
+" 기록 ": " log: ",
+" 기록은 이미 모두 들어 있습니다.": " — all of those entries are already here.",
+" 아바타": "'s avatar",
+" 으로 게시": " · posting as",
+" 한 일": " — work log",
+"(삭제된 작성자)": "(deleted author)",
+"(삭제된 종류)": "(deleted type)",
+"(상태 메시지 없음)": "(no status)",
+"(퀘스트 없음)": "(no quest)",
+"+ 새 종류": "+ New type",
+"+ 새 종류 추가…": "+ Add a new type…",
+"+ 새 퀘스트 추가…": "+ Add a new quest…",
+"· 여러 명 선택 가능": "· pick as many as you like",
+"← → 걷기 · ↑ 점프 · ↓ 앉기 · 클릭 = 상태": "← → walk · ↑ jump · ↓ sit · click = status",
+"↧ 어제 기록 복사": "↧ Copy yesterday",
+"↻ 새로고침": "↻ Refresh",
+"가장 최근 기록한 날(7일 이내)의 줄들을 오늘에 추가": "Append the rows of the most recent logged day (within 7 days) to today",
+"갈색": "Brown",
+"강아지": "Dog",
+"개": " items",
+"거북": "Turtle",
+"건": " entries",
+"건을 복사했습니다. 시간·내용을 오늘에 맞게 고쳐 주세요.": " entries copied. Adjust the hours and notes for today.",
+"검정": "Black",
+"게시": "Post",
+"게시글을 불러오지 못했습니다 (": "Could not load posts (",
+"게시판": "Board",
+"게시했습니다.": "Posted.",
+"고글": "Goggles",
+"고양이": "Cat",
+"고정": "Pin",
+"고정 해제": "Unpin",
+"곱슬": "Curly",
+"관련 퀘스트": "Quest",
+"관리자": "Admin",
+"관리자 비밀번호": "Admin password",
+"관리자 비밀번호를 저장했습니다.": "Admin password saved.",
+"관리자 잠그기": "Lock admin",
+"관리자 탭을 열 때 이 비밀번호를 묻습니다. 바꾸려면 새 비밀번호를 저장하세요.": "This password is asked for when opening the Admin tab. Save a new one to change it.",
+"글 내용": "Post text",
+"글 수정": "Edit post",
+"금": "Fri",
+"기록": "Log",
+"기록 날짜": "Log date",
+"기록을 불러오지 못했습니다 (": "Could not load the log (",
+"기록할 때 목록에서 고릅니다. 작성자도 기록하면서 \"+ 새 퀘스트 추가…\"로 여기에 올릴 수 있습니다.": "Picked from this list when logging. Authors can also add one while logging via \"+ Add a new quest…\".",
+"기록했습니다.": "Logged.",
+"기준 날짜": "Reference date",
+"긴 머리": "Long",
+"긴바지": "Trousers",
+"꽃": "Flower",
+"끝 (포함)": "End (inclusive)",
+"끝 날짜가 시작보다 빠릅니다.": "The end date is before the start.",
+"날짜": "Date",
+"날짜별": "By date",
+"남보라": "Indigo",
+"남색": "Navy",
+"낮": "Day",
+"내 상태 메시지": "My status",
+"내 아바타": "My avatar",
+"내 통계": "My stats",
+"내용이나 사진을 넣어 주세요.": "Add some text or a photo.",
+"년 ": " ",
+"노랑": "Yellow",
+"노트북": "Laptop",
+"눈동자색": "Eye colour",
+"다가오는 일정": "Upcoming",
+"다른 사람이 방금 쓴 기록까지 다시 불러오기": "Reload, including entries others just wrote",
+"다시 연결": "Reconnect",
+"다음 기간": "Next period",
+"다음 달": "Next month",
+"단발": "Bob",
+"닫기": "Close",
+"담당자": "Assignees",
+"댓글": "Comment",
+"댓글 달기…": "Write a comment…",
+"댓글을 달려면 작성자를 고르세요": "Pick your name to comment",
+"들고 있는 것": "Holding",
+"등록된 작성자 없음": "No authors yet",
+"등록된 작성자가 없습니다.": "No authors registered.",
+"등록된 종류 없음": "No types yet",
+"랜덤": "Random",
+"마스크": "Mask",
+"마우스": "Mouse",
+"매주 반복": "Repeat weekly",
+"머리 스타일": "Hair style",
+"머리색": "Hair colour",
+"먼저 작성자(본인 이름)를 고르세요.": "Pick your name (author) first.",
+"메모": "Note",
+"명찰": "Badge",
+"모자": "Cap",
+"모히칸": "Mohawk",
+"목": "Thu",
+"목록에 추가": "Add to list",
+"민머리": "Bald",
+"반바지": "Shorts",
+"반복": "Repeat",
+"반복 종료일": "Repeat until",
+"반복 종료일이 시작보다 빠릅니다.": "The repeat end date is before the start.",
+"반복할 요일을 하나 이상 고르세요.": "Pick at least one weekday to repeat on.",
+"밤": "Night",
+"변경을 저장하지 못했습니다 (": "Could not save the change (",
+"보라": "Purple",
+"분홍": "Pink",
+"불러오는 중…": "Loading…",
+"불러오지 못했습니다 (": "Could not load (",
+"비니": "Beanie",
+"비밀번호가 다릅니다.": "Wrong password.",
+"비밀번호가 아직 설정되지 않았습니다.": "No password has been set yet.",
+"비밀번호가 필요합니다": "Password required",
+"비활성": "inactive",
+"비활성화": "Deactivate",
+"빨강": "Red",
+"빼기": "Remove",
+"뾰족": "Spiky",
+"사람": "Person",
+"사람별": "By person",
+"사진 설명": "Photo caption",
+"삭제": "Delete",
+"삭제하지 못했습니다.": "Could not delete.",
+"상단 고정": "Pin to top",
+"상의": "Top",
+"상의 색": "Top colour",
+"상태를 저장하지 못했습니다.": "Could not save the status.",
+"새 (어깨)": "Bird (shoulder)",
+"새 글": "New post",
+"새 비밀번호 (4자 이상)": "New password (4+ characters)",
+"새 업무 종류": "New task type",
+"새 업무 종류 이름": "Name of the new task type",
+"새 작성자 이름": "New author name",
+"새 퀘스트 (프로젝트·과제 이름)": "New quest (project / grant name)",
+"새 퀘스트 이름": "Name of the new quest",
+"색": "Colour",
+"생쥐": "Mouse",
+"서울 현재 날씨 (Open-Meteo)": "Current weather in Seoul (Open-Meteo)",
+"셔츠": "Shirt",
+"소요 시간": "Hours",
+"수": "Wed",
+"수정": "Edit",
+"수정 저장": "Save changes",
+"수정했습니다.": "Updated.",
+"시간": "Hours",
+"시간은 0.25–24 사이로 입력해 주세요.": "Hours must be between 0.25 and 24.",
+"시작": "Start",
+"실험 종류": "Task type",
+"실험 종류별": "By task type",
+"실험노트": "Lab notebook",
+"실험복": "Lab coat",
+"아바타": "Avatar",
+"아바타 미리보기": "Avatar preview",
+"아바타 이동": "Move avatar",
+"아바타를 저장했습니다.": "Avatar saved.",
+"아직 기록이 없습니다. 아래 줄에서 첫 기록을 추가하세요.": "Nothing logged yet. Add the first entry in the row below.",
+"아직 비밀번호가 없습니다. 지금 설정하세요 — 설정 전까지는 누구나 이 탭을 열 수 있습니다.": "No password yet. Set one now — until then anyone can open this tab.",
+"아직 없습니다. 아래에서 추가하세요.": "None yet. Add one below.",
+"아직 올라온 소식이 없어요. 오늘 있었던 일을 남겨 보세요!": "No posts yet. Share what happened today!",
+"악세사리": "Accessory",
+"안경": "Glasses",
+"앉기": "Sit",
+"어제 기록 복사": "Copy yesterday",
+"어항": "Fish bowl",
+"업무 종류": "Task types",
+"업무 종류를 불러오지 못했습니다 (": "Could not load task types (",
+"업무일지": "Work log",
+"없음": "None",
+"여기 등록된 이름 중에서 각자 본인을 골라 기록합니다. 비활성화하면 선택 목록에서 빠지고 지난 기록은 남습니다.": "Everyone picks their own name from this list to log. Deactivating removes a name from the picker but keeps their past entries.",
+"연두": "Lime",
+"열기": "Open",
+"예: 학회 출장, 동물실 소독, 랩미팅": "e.g. conference trip, animal room disinfection, lab meeting",
+"예정된 일정이 없습니다.": "No upcoming events.",
+"오늘": "Today",
+"오늘 ": "Today ",
+"오늘 있었던 새로운 일이나 JEELAB 소식을 공유해 주세요 🙂 (Ctrl/⌘+Enter 게시)": "Share what's new today or any JEELAB news 🙂 (Ctrl/⌘+Enter to post)",
+"오늘 한 일": "Today's work",
+"오늘부터 30일": "next 30 days",
+"오른쪽": "Right",
+"오른쪽 위에서 작성자(본인 이름)를 먼저 고르세요.": "Pick your name (author) at the top right first.",
+"오른쪽 위에서 작성자를 고르면 통계가 보입니다.": "Pick an author at the top right to see stats.",
+"올리는 중…": "Posting…",
+"올리브": "Olive",
+"올리지 못했습니다: ": "Could not post: ",
+"올림머리": "Bun",
+"왕관": "Crown",
+"외 ": "and ",
+"왼쪽": "Left",
+"요일": "Weekdays",
+"월": "Mon",
+"월별": "Monthly",
+"이 기간에는 기록이 없습니다.": "No entries in this period.",
+"이 페이지에 기록할 권한이 없습니다.": "You do not have permission to write here.",
+"이 페이지에 일정을 쓸 권한이 없습니다.": "You do not have permission to write events here.",
+"이름": "Name",
+"이름을 고르세요…": "Pick your name…",
+"이미지를 읽지 못했습니다: ": "Could not read the image: ",
+"이번 달": "This month",
+"이번 주": "This week",
+"이전 기간": "Previous period",
+"이전 달": "Previous month",
+"일": "Sun",
+"일별": "Daily",
+"일정 수정": "Edit event",
+"일정 추가": "Add event",
+"일정을 불러오지 못했습니다 (": "Could not load events (",
+"자동": "Auto",
+"작성자": "Author",
+"작성자 목록": "Authors",
+"작성자 목록을 불러오지 못했습니다 (": "Could not load authors (",
+"작성자 선택": "Pick an author",
+"작성자도 기록하면서 새 종류를 추가할 수 있습니다. 이름 수정·순서·비활성화·삭제는 여기서만. 비활성화하면 새 기록에서는 선택할 수 없지만 지난 기록에는 그대로 남습니다.": "Authors can add a type while logging. Renaming, reordering, deactivating and deleting happen only here. A deactivated type cannot be picked for new entries but stays in past ones.",
+"작성자를 먼저 고르세요": "Pick an author first",
+"장미": "Rose",
+"장소, 준비물, 담당 등": "Place, what to bring, who's in charge…",
+"저녁": "Dusk",
+"저장": "Save",
+"저장 공간이 가득 찼습니다. 관리자에게 알려 주세요.": "Storage is full. Please tell the admin.",
+"저장 권한이 없습니다.": "No permission to save.",
+"저장 중…": "Saving…",
+"저장소(Supabase)에 연결되지 않았습니다 — 페이지를 새로고침해 주세요.": "Not connected to the database (Supabase) — please reload the page.",
+"저장소에 연결되지 않아 저장할 수 없습니다.": "Not connected to the database, cannot save.",
+"저장소에 연결되지 않았습니다.": "Not connected to the database.",
+"저장에 실패했습니다. 잠시 후 다시 시도해 주세요.": "Saving failed. Please try again shortly.",
+"저장하지 못했습니다.": "Could not save.",
+"저장하지 못했습니다. 다시 시도해 주세요.": "Could not save. Please try again.",
+"저장할 수 없습니다.": "Cannot save.",
+"점프": "Jump",
+"정말 삭제": "Really delete",
+"정말?": "Sure?",
+"제목": "Title",
+"종류": "Type",
+"종류 선택…": "Pick a type…",
+"종류를 선택해 주세요.": "Please pick a type.",
+"주별": "Weekly",
+"주사기": "Syringe",
+"주황": "Orange",
+"줄무늬": "Stripes",
+"지금 뭐 해요? (예: 동물실, 회의 중, 점심)": "What are you up to? (e.g. animal room, in a meeting, lunch)",
+"지난 7일 동안 기록이 없습니다.": "Nothing logged in the last 7 days.",
+"지우기": "Clear",
+"짧은": "Short",
+"청록": "Teal",
+"초록": "Green",
+"추가": "Add",
+"취소": "Cancel",
+"치마": "Skirt",
+"캘린더": "Calendar",
+"커피": "Coffee",
+"코랄": "Coral",
+"퀘스트": "Quests",
+"퀘스트 목록을 불러오지 못했습니다 (": "Could not load quests (",
+"퀘스트별": "By quest",
+"키보드 ←/→ 로 걷기, ↑ 점프, ↓ 앉기 · 아바타 클릭 = 상태 보기": "Keyboard ←/→ walk, ↑ jump, ↓ sit · click an avatar to see their status",
+"테마": "Theme",
+"토": "Sat",
+"토끼": "Rabbit",
+"튜브 랙": "Tube rack",
+"티셔츠": "T-shirt",
+"팀 전체 기록": "Team log",
+"파랑": "Blue",
+"페이지 오류: ": "Page error: ",
+"페트리 접시": "Petri dish",
+"펫": "Pet",
+"포니테일": "Ponytail",
+"플라스크": "Flask",
+"피부색": "Skin",
+"피펫": "Pipette",
+"하늘": "Sky",
+"하의": "Bottom",
+"하의 색": "Bottom colour",
+"한 일": "Work",
+"한 일 (특이사항 포함)": "What you did (incl. notes)",
+"한 일과 특이사항": "What you did, and any notes",
+"한 일을 적어 주세요.": "Please write what you did.",
+"합계": "Total",
+"헤드폰": "Headphones",
+"현미경": "Microscope",
+"화": "Tue",
+"활성화": "Activate",
+"회색": "Grey",
+"후드": "Hoodie",
+"휴대폰": "Phone",
+"💬 상태": "💬 Status",
+"📌 고정": "📌 Pinned",
+"📷 사진 추가": "📷 Add photos",
+"😊 반응": "😊 React"
+};
+</script>
+<script>
+  // ---- language: Korean by default, English on request (localStorage 'worklog.lang'); static markup is translated once at start-up, dynamic text goes through t()
+  const LANG = (() => { try { const v = localStorage.getItem('worklog.lang'); if (v === 'ko' || v === 'en') return v; } catch (e) {} return 'ko'; })();
+  const I18N = window.__I18N || {};
+  const tx = (s) => LANG === 'en' ? (Object.prototype.hasOwnProperty.call(I18N, s) ? I18N[s] : s) : s;
+  const fmtYM = (y, m) => LANG === 'en' ? new Date(y, m, 1).toLocaleString('en', { month: 'long', year: 'numeric' }) : y + '년 ' + (m + 1) + '월';
+  (function translateDom() {
+    document.documentElement.lang = LANG; if (LANG !== 'en') return;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.parentNode && /^(SCRIPT|STYLE)$/.test(n.parentNode.nodeName)) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+    const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n => { const raw = n.nodeValue, key = raw.trim(); if (key && Object.prototype.hasOwnProperty.call(I18N, key)) n.nodeValue = raw.replace(key, I18N[key]); });
+    document.querySelectorAll('[placeholder],[title],[aria-label],[alt]').forEach(el => ['placeholder', 'title', 'aria-label', 'alt'].forEach(a => { const v = el.getAttribute(a); if (v && Object.prototype.hasOwnProperty.call(I18N, v)) el.setAttribute(a, I18N[v]); }));
+    document.querySelectorAll('#langPick button').forEach(b => b.classList.toggle('on', b.dataset.lang === LANG));
+  })();
+  document.querySelectorAll('#langPick button').forEach(b => b.addEventListener('click', () => { try { localStorage.setItem('worklog.lang', b.dataset.lang); } catch (e) {} location.reload(); }));
+
 (function () {
   const $ = (id) => document.getElementById(id);
   const el = {
@@ -810,14 +1120,14 @@ window.makeSupabaseDb = function (url, anonKey) {
     upcoming: $('upcoming'), upcomingEmpty: $('upcomingEmpty'),
     sheetBg: $('sheetBg'), evForm: $('evForm'), evTitleH: $('evTitleH'), evTitle: $('evTitle'), evStart: $('evStart'), evEnd: $('evEnd'), evColors: $('evColors'), evWho: $('evWho'), evRepeat: $('evRepeat'), evUntil: $('evUntil'), evUntilWrap: $('evUntilWrap'), evDays: $('evDays'), evNote: $('evNote'), evDelete: $('evDelete'), evCancel: $('evCancel'), evSave: $('evSave'), evMsg: $('evMsg'),
   };
-  const WD = ['일', '월', '화', '수', '목', '금', '토'];
+  const WD = [tx('일'), tx('월'), tx('화'), tx('수'), tx('목'), tx('금'), tx('토')];
   const EV_COLORS = [
-    { key: 'blue', hex: '#2F6FB5', name: '파랑' }, { key: 'green', hex: '#2E8B62', name: '초록' }, { key: 'orange', hex: '#D9782B', name: '주황' },
-    { key: 'purple', hex: '#7A4FB8', name: '보라' }, { key: 'red', hex: '#C4403F', name: '빨강' }, { key: 'gray', hex: '#6B7683', name: '회색' },
-    { key: 'sky', hex: '#3AA0D8', name: '하늘' }, { key: 'teal', hex: '#1F9E9E', name: '청록' }, { key: 'lime', hex: '#7CB342', name: '연두' },
-    { key: 'yellow', hex: '#D4A017', name: '노랑' }, { key: 'coral', hex: '#E8674A', name: '코랄' }, { key: 'pink', hex: '#D9559A', name: '분홍' },
-    { key: 'rose', hex: '#E0708A', name: '장미' }, { key: 'indigo', hex: '#4C4FC7', name: '남보라' }, { key: 'navy', hex: '#2B3A67', name: '남색' },
-    { key: 'olive', hex: '#7A8A2E', name: '올리브' }, { key: 'brown', hex: '#8D5A3C', name: '갈색' }, { key: 'black', hex: '#2A2A2A', name: '검정' },
+    { key: 'blue', hex: '#2F6FB5', name: tx('파랑') }, { key: 'green', hex: '#2E8B62', name: tx('초록') }, { key: 'orange', hex: '#D9782B', name: tx('주황') },
+    { key: 'purple', hex: '#7A4FB8', name: tx('보라') }, { key: 'red', hex: '#C4403F', name: tx('빨강') }, { key: 'gray', hex: '#6B7683', name: tx('회색') },
+    { key: 'sky', hex: '#3AA0D8', name: tx('하늘') }, { key: 'teal', hex: '#1F9E9E', name: tx('청록') }, { key: 'lime', hex: '#7CB342', name: tx('연두') },
+    { key: 'yellow', hex: '#D4A017', name: tx('노랑') }, { key: 'coral', hex: '#E8674A', name: tx('코랄') }, { key: 'pink', hex: '#D9559A', name: tx('분홍') },
+    { key: 'rose', hex: '#E0708A', name: tx('장미') }, { key: 'indigo', hex: '#4C4FC7', name: tx('남보라') }, { key: 'navy', hex: '#2B3A67', name: tx('남색') },
+    { key: 'olive', hex: '#7A8A2E', name: tx('올리브') }, { key: 'brown', hex: '#8D5A3C', name: tx('갈색') }, { key: 'black', hex: '#2A2A2A', name: tx('검정') },
   ];
 
   // ---- state
@@ -863,7 +1173,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   el.lockBtn.addEventListener('click', () => { adminUnlocked = false; adminUnlockedFor = null; refreshAdminUI(); el.unlockPw.focus(); });
   el.pwForm.addEventListener('submit', onSetPassword);
   el.form.addEventListener('submit', onSubmit);
-  // anyone can grow the lists: "+ 새 종류" in the picker, and "목록에 추가" under a quest that is not listed yet
+  // anyone can grow the lists: tx("+ 새 종류") in the picker, and tx("목록에 추가") under a quest that is not listed yet
   el.type.addEventListener('change', () => { if (el.type.value === '__new__') { el.newTypeBox.hidden = false; el.newTypeName.value = ''; el.newTypeName.focus(); } });
   el.newTypeCancel.addEventListener('click', () => { el.newTypeBox.hidden = true; renderTypes(); });
   el.newTypeOk.addEventListener('click', addTypeInline);
@@ -887,7 +1197,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     document.querySelectorAll('[data-tab]').forEach(n => { if (n.tagName === 'BUTTON') n.classList.toggle('on', n.dataset.tab === t); else n.hidden = n.dataset.tab !== t; });
     if (t === 'cal') { ensureEventsSub(); renderCal(); }
     if (t === 'admin') { refreshAdminUI(); if (!isAdmin) el.unlockPw.focus(); }
-    if (t === 'stats') { el.myStatsWho.textContent = S.memberId ? memberName(S.memberId) : '작성자를 먼저 고르세요'; MY.load(); }
+    if (t === 'stats') { el.myStatsWho.textContent = S.memberId ? memberName(S.memberId) : tx('작성자를 먼저 고르세요'); MY.load(); }
     if (t === 'board') { ensurePostsSub(); renderBoardWho(); renderFeed(); }
   }
   document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
@@ -904,7 +1214,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   el.evDelete.addEventListener('click', deleteEvent);
   el.evStart.addEventListener('change', () => { if (el.evEnd.value < el.evStart.value) el.evEnd.value = el.evStart.value; });
   el.evRepeat.addEventListener('change', () => { el.evUntilWrap.hidden = el.evDays.hidden = !el.evRepeat.checked; if (el.evRepeat.checked && !el.evUntil.value) el.evUntil.value = addDays(el.evStart.value || todayStr(), 90); });
-  ['월', '화', '수', '목', '금', '토', '일'].forEach((l, i) => { const dow = (i + 1) % 7; const b = document.createElement('button'); b.type = 'button'; b.className = 'av-chip'; b.textContent = l; b.dataset.dow = String(dow); b.addEventListener('click', () => { b.classList.toggle('on'); b.setAttribute('aria-pressed', b.classList.contains('on')); }); el.evDays.append(b); });
+  [tx('월'), tx('화'), tx('수'), tx('목'), tx('금'), tx('토'), tx('일')].forEach((l, i) => { const dow = (i + 1) % 7; const b = document.createElement('button'); b.type = 'button'; b.className = 'av-chip'; b.textContent = l; b.dataset.dow = String(dow); b.addEventListener('click', () => { b.classList.toggle('on'); b.setAttribute('aria-pressed', b.classList.contains('on')); }); el.evDays.append(b); });
   EV_COLORS.forEach((c, i) => {
     const inp = document.createElement('input'); inp.type = 'radio'; inp.name = 'evColor'; inp.id = 'evc' + i; inp.value = c.key; if (i === 0) inp.checked = true;
     const lab = document.createElement('label'); lab.htmlFor = inp.id; lab.style.background = c.hex; lab.title = c.name;
@@ -917,7 +1227,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   async function boot() {
     try { db = window.makeSupabaseDb(SUPA.url, SUPA.anonKey); } catch (e) { db = null; }
     user = null; canEditArtifact = false;
-    if (!db) { showBanner('저장소(Supabase)에 연결되지 않았습니다 — 페이지를 새로고침해 주세요.'); setWritable(false); return; }
+    if (!db) { showBanner(tx('저장소(Supabase)에 연결되지 않았습니다 — 페이지를 새로고침해 주세요.')); setWritable(false); return; }
     refreshAdminUI();
     db.doc('settings/admin').onSnapshot(snap => { adminHash = snap.exists ? String((snap.data() || {}).hash || '') : ''; refreshAdminUI(); },
       () => { adminHash = ''; refreshAdminUI(); });
@@ -926,15 +1236,15 @@ window.makeSupabaseDb = function (url, anonKey) {
       S.members = snap.docs.map(x => ({ id: x.id, ...x.data() }));
       renderMembers(); renderAdminList('members', el.members, S.members); render();
       renderStatusBtn(); renderBoardWho(); renderPad(); if (tab === 'board') renderFeed(); if (window.__redrawScene) window.__redrawScene();
-    }, err => showBanner('작성자 목록을 불러오지 못했습니다 (' + err.code + ').'));
+    }, err => showBanner(tx('작성자 목록을 불러오지 못했습니다 (') + err.code + ').'));
     db.collection('taskTypes').orderBy('order').onSnapshot(snap => {
       S.types = snap.docs.map(x => ({ id: x.id, ...x.data() }));
       renderTypes(); renderAdminList('taskTypes', el.types, S.types); renderEntries();
-    }, err => showBanner('업무 종류를 불러오지 못했습니다 (' + err.code + ').'));
+    }, err => showBanner(tx('업무 종류를 불러오지 못했습니다 (') + err.code + ').'));
     db.collection('quests').orderBy('order').onSnapshot(snap => {
       S.quests = snap.docs.map(x => ({ id: x.id, ...x.data() }));
       renderQuestList(); renderAdminList('quests', el.quests, S.quests);
-    }, err => showBanner('퀘스트 목록을 불러오지 못했습니다 (' + err.code + ').'));
+    }, err => showBanner(tx('퀘스트 목록을 불러오지 못했습니다 (') + err.code + ').'));
     ensureWeekSub();
     if (tab === 'cal') ensureEventsSub();
     ensurePostsSub();
@@ -948,13 +1258,13 @@ window.makeSupabaseDb = function (url, anonKey) {
     subscribedKey = key;
     unsubWeek = db.collection('days').where('memberId', '==', S.memberId).where('date', '>=', ws).where('date', '<=', we)
       .onSnapshot(snap => { S.week = snap.docs.map(x => ({ id: x.id, ...x.data() })); render(); renderQuestList(); },
-        err => showBanner('기록을 불러오지 못했습니다 (' + err.code + ').'));
+        err => showBanner(tx('기록을 불러오지 못했습니다 (') + err.code + ').'));
   }
 
   function setWritable(v) { S.writable = v; el.submitBtn.disabled = !v; }
   function showBanner(t) {
     el.banner.hidden = false; el.banner.textContent = t;
-    if (!db) { const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost'; b.style.marginLeft = '8px'; b.textContent = '다시 연결'; b.addEventListener('click', () => location.reload()); el.banner.append(b); }
+    if (!db) { const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost'; b.style.marginLeft = '8px'; b.textContent = tx('다시 연결'); b.addEventListener('click', () => location.reload()); el.banner.append(b); }
   }
   function saveDraft() { if (S.editingId) return; try { localStorage.setItem('worklog.draft', JSON.stringify({ hours: el.hours.value, note: el.note.value, quest: el.quest.value })); } catch (e) {} }
   function clearDraft() { try { localStorage.removeItem('worklog.draft'); } catch (e) {} }
@@ -962,23 +1272,23 @@ window.makeSupabaseDb = function (url, anonKey) {
   // ---- render
   function paintDate() {
     const d = parse(S.date);
-    el.weekday.textContent = WD[d.getDay()] + '요일';
+    el.weekday.textContent = WD[d.getDay()] + tx('요일');
     const isToday = S.date === todayStr();
-    el.listTitle.textContent = isToday ? '오늘 한 일' : S.date.slice(5).replace('-', '/') + ' 한 일';
+    el.listTitle.textContent = isToday ? tx('오늘 한 일') : S.date.slice(5).replace('-', '/') + tx(' 한 일');
     el.todayBtn.hidden = isToday;
   }
-  function memberName(id) { const m = S.members.find(x => x.id === id); return m ? m.name : (S.members.length ? '(삭제된 작성자)' : '…'); }
-  function typeName(id) { const t = S.types.find(x => x.id === id); return t ? t.name : '(삭제된 종류)'; }
+  function memberName(id) { const m = S.members.find(x => x.id === id); return m ? m.name : (S.members.length ? tx('(삭제된 작성자)') : '…'); }
+  function typeName(id) { const t = S.types.find(x => x.id === id); return t ? t.name : tx('(삭제된 종류)'); }
   function typeInactive(id) { const t = S.types.find(x => x.id === id); return t ? t.active === false : false; }
 
   function renderMembers() {
     el.member.innerHTML = '';
     const active = S.members.filter(m => m.active !== false);
-    const ph = document.createElement('option'); ph.value = ''; ph.textContent = active.length ? '이름을 고르세요…' : '등록된 작성자 없음'; ph.disabled = active.length > 0; el.member.append(ph);
+    const ph = document.createElement('option'); ph.value = ''; ph.textContent = active.length ? tx('이름을 고르세요…') : tx('등록된 작성자 없음'); ph.disabled = active.length > 0; el.member.append(ph);
     active.forEach(m => { const o = document.createElement('option'); o.value = m.id; o.textContent = m.name; el.member.append(o); });
     // a remembered id that is no longer active still shows, so the person sees who they were
     if (S.memberId && !active.some(m => m.id === S.memberId) && S.members.some(m => m.id === S.memberId)) {
-      const o = document.createElement('option'); o.value = S.memberId; o.textContent = memberName(S.memberId) + ' (비활성)'; el.member.append(o);
+      const o = document.createElement('option'); o.value = S.memberId; o.textContent = memberName(S.memberId) + tx(' (비활성)'); el.member.append(o);
     }
     el.member.value = S.memberId || '';
     if (!el.member.value) ph.selected = true;
@@ -990,7 +1300,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     S.memberId = id; try { localStorage.setItem('worklog.member', S.memberId); } catch (e) {}
     posU = null; if (window.__sceneSelect) window.__sceneSelect(id); renderStatusBtn(); renderBoardWho(); renderPad(); if (tab === 'board') renderFeed();
     stopEditing(); S.week = []; subscribedKey = null; ensureWeekSub(); renderMembers(); render();
-    if (tab === 'stats') { el.myStatsWho.textContent = S.memberId ? memberName(S.memberId) : '작성자를 먼저 고르세요'; MY.load(); }
+    if (tab === 'stats') { el.myStatsWho.textContent = S.memberId ? memberName(S.memberId) : tx('작성자를 먼저 고르세요'); MY.load(); }
   }
   async function sha256(text) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
@@ -1000,9 +1310,9 @@ window.makeSupabaseDb = function (url, anonKey) {
   // The owner (edit permission) gets in without one only while no password exists yet, so it can be set.
   async function onUnlock(ev) {
     ev.preventDefault();
-    if (!adminHash) { el.unlockHint.textContent = '비밀번호가 아직 설정되지 않았습니다.'; return; }
+    if (!adminHash) { el.unlockHint.textContent = tx('비밀번호가 아직 설정되지 않았습니다.'); return; }
     if (await sha256(el.unlockPw.value) === adminHash) { el.unlockPw.value = ''; adminUnlockedFor = adminHash; unlockAdmin(); }
-    else { el.unlockHint.textContent = '비밀번호가 다릅니다.'; el.unlockPw.select(); }
+    else { el.unlockHint.textContent = tx('비밀번호가 다릅니다.'); el.unlockPw.select(); }
   }
   function unlockAdmin() {
     adminUnlocked = true;
@@ -1018,12 +1328,12 @@ window.makeSupabaseDb = function (url, anonKey) {
     el.unlockHint.textContent = '';
     if (isAdmin) { renderAdminList('members', el.members, S.members); renderAdminList('taskTypes', el.types, S.types); renderAdminList('quests', el.quests, S.quests); if (tab === 'admin') TEAM.load(); }
     el.pwForm.hidden = false;
-    el.pwHint.textContent = adminHash ? '관리자 탭을 열 때 이 비밀번호를 묻습니다. 바꾸려면 새 비밀번호를 저장하세요.' : '아직 비밀번호가 없습니다. 지금 설정하세요 — 설정 전까지는 누구나 이 탭을 열 수 있습니다.';
+    el.pwHint.textContent = adminHash ? tx('관리자 탭을 열 때 이 비밀번호를 묻습니다. 바꾸려면 새 비밀번호를 저장하세요.') : tx('아직 비밀번호가 없습니다. 지금 설정하세요 — 설정 전까지는 누구나 이 탭을 열 수 있습니다.');
   }
   async function onSetPassword(ev) {
     ev.preventDefault();
     const pw = el.pwNew.value; if (pw.length < 4) return;
-    await safe(async () => { const h = await sha256(pw); await db.doc('settings/admin').set({ hash: h, updatedAt: new Date().toISOString() }); adminUnlockedFor = h; adminUnlocked = true; el.pwNew.value = ''; setMsg('관리자 비밀번호를 저장했습니다.', 'ok'); });
+    await safe(async () => { const h = await sha256(pw); await db.doc('settings/admin').set({ hash: h, updatedAt: new Date().toISOString() }); adminUnlockedFor = h; adminUnlocked = true; el.pwNew.value = ''; setMsg(tx('관리자 비밀번호를 저장했습니다.'), 'ok'); });
   }
 
   function renderTypes() {
@@ -1035,14 +1345,14 @@ window.makeSupabaseDb = function (url, anonKey) {
       if (e && !active.some(t => t.id === e.typeId) && S.types.some(t => t.id === e.typeId)) active.push(S.types.find(t => t.id === e.typeId));
     }
     if (!active.length) {
-      const o = document.createElement('option'); o.value = ''; o.textContent = '등록된 종류 없음'; el.type.append(o);
-      const nw = document.createElement('option'); nw.value = '__new__'; nw.textContent = '+ 새 종류 추가…'; el.type.append(nw);
+      const o = document.createElement('option'); o.value = ''; o.textContent = tx('등록된 종류 없음'); el.type.append(o);
+      const nw = document.createElement('option'); nw.value = '__new__'; nw.textContent = tx('+ 새 종류 추가…'); el.type.append(nw);
       el.type.disabled = false; return;
     }
     el.type.disabled = false;
-    const ph = document.createElement('option'); ph.value = ''; ph.textContent = '종류 선택…'; ph.disabled = true; el.type.append(ph);
+    const ph = document.createElement('option'); ph.value = ''; ph.textContent = tx('종류 선택…'); ph.disabled = true; el.type.append(ph);
     active.forEach(t => { const o = document.createElement('option'); o.value = t.id; o.textContent = t.name; el.type.append(o); });
-    const nw = document.createElement('option'); nw.value = '__new__'; nw.textContent = '+ 새 종류 추가…'; el.type.append(nw);
+    const nw = document.createElement('option'); nw.value = '__new__'; nw.textContent = tx('+ 새 종류 추가…'); el.type.append(nw);
     if (pendingTypeId && active.some(t => t.id === pendingTypeId)) { el.type.value = pendingTypeId; pendingTypeId = null; return; }
     el.type.value = active.some(t => t.id === cur) ? cur : '';
     if (!el.type.value) ph.selected = true;
@@ -1050,7 +1360,7 @@ window.makeSupabaseDb = function (url, anonKey) {
 
   async function addQuestInline() {
     const name = el.newQuestName.value.trim(); if (!name) { el.newQuestName.focus(); return; }
-    if (!db) { showBanner('저장소에 연결되지 않아 저장할 수 없습니다.'); return; }
+    if (!db) { showBanner(tx('저장소에 연결되지 않아 저장할 수 없습니다.')); return; }
     if (!S.quests.some(q => q.name === name)) {
       const order = S.quests.reduce((m, t) => Math.max(m, Number(t.order) || 0), 0) + 1;
       await safe(() => db.collection('quests').add({ name, order, active: true, createdAt: new Date().toISOString(), createdBy: S.memberId || '' }));
@@ -1060,7 +1370,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   let pendingQuest = null;
   async function addTypeInline() {
     const name = el.newTypeName.value.trim(); if (!name) { el.newTypeName.focus(); return; }
-    if (!db) { showBanner('저장소에 연결되지 않아 저장할 수 없습니다.'); return; }
+    if (!db) { showBanner(tx('저장소에 연결되지 않아 저장할 수 없습니다.')); return; }
     const dup = S.types.find(t => t.name === name);
     if (dup) { el.newTypeBox.hidden = true; renderTypes(); el.type.value = dup.id; return; }
     const order = S.types.reduce((m, t) => Math.max(m, Number(t.order) || 0), 0) + 1;
@@ -1075,9 +1385,9 @@ window.makeSupabaseDb = function (url, anonKey) {
     S.quests.filter(q => q.active !== false).forEach(q => { if (!names.includes(q.name)) names.push(q.name); });
     if (cur && cur !== '__new__' && !names.includes(cur)) names.push(cur); // a name from an old row or one just typed
     el.quest.innerHTML = '';
-    const none = document.createElement('option'); none.value = ''; none.textContent = '없음'; el.quest.append(none);
+    const none = document.createElement('option'); none.value = ''; none.textContent = tx('없음'); el.quest.append(none);
     names.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; el.quest.append(o); });
-    const nw = document.createElement('option'); nw.value = '__new__'; nw.textContent = '+ 새 퀘스트 추가…'; el.quest.append(nw);
+    const nw = document.createElement('option'); nw.value = '__new__'; nw.textContent = tx('+ 새 퀘스트 추가…'); el.quest.append(nw);
     el.quest.value = names.includes(cur) ? cur : '';
   }
 
@@ -1090,7 +1400,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   function entryRow(e, withOps) {
     const li = document.createElement('div'); li.className = 'trow';
     const t = document.createElement('div'); t.className = 'c-type'; t.textContent = typeName(e.typeId);
-    if (typeInactive(e.typeId)) { const c = document.createElement('span'); c.className = 'chip'; c.textContent = '비활성'; t.append(c); }
+    if (typeInactive(e.typeId)) { const c = document.createElement('span'); c.className = 'chip'; c.textContent = tx('비활성'); t.append(c); }
     const n = document.createElement('div'); n.className = 'c-note'; n.textContent = e.note || '';
     const h = document.createElement('div'); h.className = 'c-hours'; h.textContent = fmtHours(Number(e.hours) || 0); const sm = document.createElement('small'); sm.textContent = 'h'; h.append(sm);
     const q = document.createElement('div'); q.className = 'c-quest';
@@ -1098,12 +1408,12 @@ window.makeSupabaseDb = function (url, anonKey) {
     li.append(t, q, h, n);
     if (withOps) {
       const ops = document.createElement('div'); ops.className = 'ops';
-      const ed = document.createElement('button'); ed.type = 'button'; ed.className = 'ghost'; ed.textContent = '수정'; ed.disabled = !S.writable; ed.addEventListener('click', () => startEditing(e));
-      const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = '삭제'; del.disabled = !S.writable;
+      const ed = document.createElement('button'); ed.type = 'button'; ed.className = 'ghost'; ed.textContent = tx('수정'); ed.disabled = !S.writable; ed.addEventListener('click', () => startEditing(e));
+      const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = tx('삭제'); del.disabled = !S.writable;
       del.addEventListener('click', () => {
         if (del.dataset.armed) { deleteEntry(e.id); return; }
-        del.dataset.armed = '1'; del.textContent = '정말?';
-        setTimeout(() => { delete del.dataset.armed; del.textContent = '삭제'; }, 3000);
+        del.dataset.armed = '1'; del.textContent = tx('정말?');
+        setTimeout(() => { delete del.dataset.armed; del.textContent = tx('삭제'); }, 3000);
       });
       ops.append(ed, del); li.append(ops);
     }
@@ -1114,13 +1424,13 @@ window.makeSupabaseDb = function (url, anonKey) {
     const list = currentRows().slice().sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
     el.rows.innerHTML = '';
     el.emptyList.hidden = list.length > 0 || !S.memberId;
-    if (!S.memberId) { el.emptyList.hidden = false; el.emptyList.textContent = '오른쪽 위에서 작성자(본인 이름)를 먼저 고르세요.'; }
-    else el.emptyList.textContent = '아직 기록이 없습니다. 아래 줄에서 첫 기록을 추가하세요.';
+    if (!S.memberId) { el.emptyList.hidden = false; el.emptyList.textContent = tx('오른쪽 위에서 작성자(본인 이름)를 먼저 고르세요.'); }
+    else el.emptyList.textContent = tx('아직 기록이 없습니다. 아래 줄에서 첫 기록을 추가하세요.');
     let total = 0;
     list.forEach(e => { total += Number(e.hours) || 0; el.rows.append(entryRow(e, true)); });
     el.dayTotal.textContent = fmtHours(total);
     el.dayTotal.classList.toggle('over', total > 12);
-    el.listSub.textContent = (S.memberId ? memberName(S.memberId) : '') + (list.length ? ' · ' + list.length + '건' : '');
+    el.listSub.textContent = (S.memberId ? memberName(S.memberId) : '') + (list.length ? ' · ' + list.length + tx('건') : '');
     document.getElementById('copyPrev').hidden = !(S.memberId && db);
   }
 
@@ -1137,7 +1447,7 @@ window.makeSupabaseDb = function (url, anonKey) {
       const dl = document.createElement('span'); dl.className = 'd'; dl.textContent = WD[(i + 1) % 7] + ' ' + parse(ds).getDate();
       const v = document.createElement('span'); v.className = 'v'; v.textContent = sum ? fmtHours(sum) : '–';
       b.append(dl, v);
-      b.setAttribute('aria-label', ds + ' ' + fmtHours(sum) + '시간');
+      b.setAttribute('aria-label', ds + ' ' + fmtHours(sum) + tx('시간'));
       b.addEventListener('click', () => { S.date = ds; el.date.value = ds; paintDate(); render(); });
       el.week.append(b);
     }
@@ -1147,7 +1457,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   // ---- entry CRUD (read-modify-write of the member's day document)
   function setMsg(t, kind) { el.formMsg.textContent = t; el.formMsg.className = 'msg ' + (kind || ''); if (t) setTimeout(() => { if (el.formMsg.textContent === t) el.formMsg.textContent = ''; }, 4000); }
 
-  // "어제 기록 복사": the most recent day with rows (within a week) is appended to the selected day
+  // tx("어제 기록 복사"): the most recent day with rows (within a week) is appended to the selected day
   document.getElementById('copyPrev').addEventListener('click', async () => {
     if (!db || !S.memberId) return;
     const btn = document.getElementById('copyPrev'); btn.disabled = true;
@@ -1157,14 +1467,14 @@ window.makeSupabaseDb = function (url, anonKey) {
         const d = addDays(S.date, -i); const snap = await db.doc('days/' + dayId(S.memberId, d)).get();
         if (snap.exists && Array.isArray(snap.data().rows) && snap.data().rows.length) { src = snap.data().rows; srcDate = d; }
       }
-      if (!src) { setMsg('지난 7일 동안 기록이 없습니다.', 'err'); return; }
+      if (!src) { setMsg(tx('지난 7일 동안 기록이 없습니다.'), 'err'); return; }
       const now = new Date().toISOString(), rows = currentRows().slice();
       const seen = new Set(rows.map(r => [r.typeId, r.quest || '', r.note || '', r.hours].join('\u0001')));
       const added = src.filter(r => !seen.has([r.typeId, r.quest || '', r.note || '', r.hours].join('\u0001')))
         .map(r => ({ id: newId('r'), typeId: r.typeId, hours: r.hours, note: r.note || '', quest: r.quest || '', createdAt: now, updatedAt: now }));
-      if (!added.length) { setMsg(srcDate.slice(5).replace('-', '/') + ' 기록은 이미 모두 들어 있습니다.', 'ok'); return; }
+      if (!added.length) { setMsg(srcDate.slice(5).replace('-', '/') + tx(' 기록은 이미 모두 들어 있습니다.'), 'ok'); return; }
       await writeDay(rows.concat(added));
-      setMsg(srcDate.slice(5).replace('-', '/') + ' 기록 ' + added.length + '건을 복사했습니다. 시간·내용을 오늘에 맞게 고쳐 주세요.', 'ok');
+      setMsg(srcDate.slice(5).replace('-', '/') + tx(' 기록 ') + added.length + tx('건을 복사했습니다. 시간·내용을 오늘에 맞게 고쳐 주세요.'), 'ok');
     } catch (e) { handleWriteError(e); }
     finally { btn.disabled = false; }
   });
@@ -1176,19 +1486,19 @@ window.makeSupabaseDb = function (url, anonKey) {
   }
   function handleWriteError(e) {
     const code = e && e.code;
-    if (code === 'invalid_argument') { setMsg('이 페이지에 기록할 권한이 없습니다.', 'err'); setWritable(false); }
-    else if (code === 'quota_exceeded') setMsg('저장 공간이 가득 찼습니다. 관리자에게 알려 주세요.', 'err');
-    else setMsg('저장에 실패했습니다. 잠시 후 다시 시도해 주세요.', 'err');
+    if (code === 'invalid_argument') { setMsg(tx('이 페이지에 기록할 권한이 없습니다.'), 'err'); setWritable(false); }
+    else if (code === 'quota_exceeded') setMsg(tx('저장 공간이 가득 찼습니다. 관리자에게 알려 주세요.'), 'err');
+    else setMsg(tx('저장에 실패했습니다. 잠시 후 다시 시도해 주세요.'), 'err');
   }
 
   async function onSubmit(ev) {
     ev.preventDefault();
-    if (!db) { setMsg('저장할 수 없습니다.', 'err'); return; }
-    if (!S.memberId) { setMsg('먼저 작성자(본인 이름)를 고르세요.', 'err'); el.member.focus(); return; }
+    if (!db) { setMsg(tx('저장할 수 없습니다.'), 'err'); return; }
+    if (!S.memberId) { setMsg(tx('먼저 작성자(본인 이름)를 고르세요.'), 'err'); el.member.focus(); return; }
     const typeId = el.type.value; const hours = Number(el.hours.value); const note = el.note.value.trim(); const quest = el.quest.value === '__new__' ? '' : el.quest.value.trim();
-    if (!typeId || typeId === '__new__') { setMsg('종류를 선택해 주세요.', 'err'); el.type.focus(); return; }
-    if (!note) { setMsg('한 일을 적어 주세요.', 'err'); el.note.focus(); return; }
-    if (!(hours > 0) || hours > 24) { setMsg('시간은 0.25–24 사이로 입력해 주세요.', 'err'); el.hours.focus(); return; }
+    if (!typeId || typeId === '__new__') { setMsg(tx('종류를 선택해 주세요.'), 'err'); el.type.focus(); return; }
+    if (!note) { setMsg(tx('한 일을 적어 주세요.'), 'err'); el.note.focus(); return; }
+    if (!(hours > 0) || hours > 24) { setMsg(tx('시간은 0.25–24 사이로 입력해 주세요.'), 'err'); el.hours.focus(); return; }
     el.submitBtn.disabled = true;
     const now = new Date().toISOString();
     try {
@@ -1197,11 +1507,11 @@ window.makeSupabaseDb = function (url, anonKey) {
         const i = rows.findIndex(r => r.id === S.editingId);
         if (i >= 0) rows[i] = { ...rows[i], typeId, hours, note, quest, updatedAt: now };
         await writeDay(rows);
-        setMsg('수정했습니다.', 'ok'); stopEditing();
+        setMsg(tx('수정했습니다.'), 'ok'); stopEditing();
       } else {
         rows.push({ id: newId('r'), typeId, hours, note, quest, createdAt: now, updatedAt: now });
         await writeDay(rows);
-        setMsg('기록했습니다.', 'ok');
+        setMsg(tx('기록했습니다.'), 'ok');
         el.hours.value = ''; el.note.value = ''; el.quest.value = ''; autoGrow(); clearDraft(); el.type.focus();
       }
     } catch (e) { handleWriteError(e); }
@@ -1212,12 +1522,12 @@ window.makeSupabaseDb = function (url, anonKey) {
     S.editingId = e.id;
     renderTypes();
     el.type.value = e.typeId; el.hours.value = e.hours; el.note.value = e.note || ''; pendingQuest = e.quest || ''; renderQuestList(); autoGrow();
-    el.cancelEdit.hidden = false; el.submitBtn.textContent = '저장';
+    el.cancelEdit.hidden = false; el.submitBtn.textContent = tx('저장');
     el.note.focus();
   }
   function stopEditing() {
     S.editingId = null;
-    el.cancelEdit.hidden = true; el.submitBtn.textContent = '기록';
+    el.cancelEdit.hidden = true; el.submitBtn.textContent = tx('기록');
     el.hours.value = ''; el.note.value = ''; el.quest.value = ''; autoGrow(); renderTypes();
   }
   async function deleteEntry(id) {
@@ -1231,7 +1541,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   function renderEvWho() {
     el.evWho.innerHTML = '';
     const ms = S.members.filter(m => m.active !== false || CAL.who.includes(m.id));
-    if (!ms.length) { const sp = document.createElement('span'); sp.className = 'hint'; sp.style.color = 'var(--muted)'; sp.textContent = '등록된 작성자가 없습니다.'; el.evWho.append(sp); return; }
+    if (!ms.length) { const sp = document.createElement('span'); sp.className = 'hint'; sp.style.color = 'var(--muted)'; sp.textContent = tx('등록된 작성자가 없습니다.'); el.evWho.append(sp); return; }
     ms.forEach(m => { const b = document.createElement('button'); b.type = 'button'; b.className = 'av-chip' + (CAL.who.includes(m.id) ? ' on' : ''); b.textContent = m.name; b.setAttribute('aria-pressed', CAL.who.includes(m.id));
       b.addEventListener('click', () => { CAL.who = CAL.who.includes(m.id) ? CAL.who.filter(x => x !== m.id) : [...CAL.who, m.id]; renderEvWho(); }); el.evWho.append(b); });
   }
@@ -1246,11 +1556,11 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (unsubEvents) unsubEvents(); eventsKey = key;
     unsubEvents = db.collection('events').where('start', '<=', to).where('end', '>=', from)
       .onSnapshot(snap => { CAL.events = snap.docs.map(x => ({ id: x.id, ...x.data() })); renderCal(); },
-        err => showBanner('일정을 불러오지 못했습니다 (' + err.code + ').'));
+        err => showBanner(tx('일정을 불러오지 못했습니다 (') + err.code + ').'));
   }
   function renderCal() {
     if (tab !== 'cal') return;
-    el.calMonth.textContent = CAL.y + '년 ' + (CAL.m + 1) + '월';
+    el.calMonth.textContent = fmtYM(CAL.y, CAL.m);
     const [gf, gt] = monthRange(); const today = todayStr();
     el.calGrid.innerHTML = '';
     const lim31 = addDays(today, 31); const evs = expandEvents(CAL.events, gf < today ? gf : today, gt > lim31 ? gt : lim31).sort((a, b) => a.start.localeCompare(b.start) || b.end.localeCompare(a.end) || a.title.localeCompare(b.title, 'ko'));
@@ -1317,7 +1627,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   function fmtShort(ds) { const d = parse(ds); return (d.getMonth() + 1) + '/' + d.getDate() + ' (' + WD[d.getDay()] + ')'; }
   function openEvent(e, ds) {
     CAL.editingId = e ? e.id : null;
-    el.evTitleH.textContent = e ? '일정 수정' : '일정 추가';
+    el.evTitleH.textContent = e ? tx('일정 수정') : tx('일정 추가');
     if (e && e.occurrence) e = CAL.events.find(x => x.id === e.id) || e;
     const rep = e && Array.isArray(e.repeatDays) && e.repeatDays.length;
     el.evTitle.value = e ? e.title : ''; el.evStart.value = e ? e.start : ds; el.evEnd.value = e ? (rep ? addDays(e.start, Number(e.span) || 0) : e.end) : ds; el.evNote.value = e ? (e.note || '') : '';
@@ -1325,21 +1635,21 @@ window.makeSupabaseDb = function (url, anonKey) {
     el.evDays.querySelectorAll('button').forEach(b => { const on = !!rep && e.repeatDays.includes(Number(b.dataset.dow)); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
     CAL.who = e ? (Array.isArray(e.assignees) ? e.assignees.slice() : []) : (S.memberId ? [S.memberId] : []); renderEvWho();
     const col = e ? (e.color || 'blue') : 'blue'; el.evColors.querySelectorAll('input').forEach(i => { i.checked = i.value === col; });
-    el.evDelete.hidden = !e; el.evDelete.textContent = '삭제'; delete el.evDelete.dataset.armed; el.evMsg.textContent = '';
+    el.evDelete.hidden = !e; el.evDelete.textContent = tx('삭제'); delete el.evDelete.dataset.armed; el.evMsg.textContent = '';
     el.sheetBg.hidden = false; el.evTitle.focus();
   }
   function closeEvent() { el.sheetBg.hidden = true; CAL.editingId = null; }
   async function saveEvent(ev) {
     ev.preventDefault();
-    if (!db) { el.evMsg.textContent = '저장소에 연결되지 않았습니다.'; return; }
+    if (!db) { el.evMsg.textContent = tx('저장소에 연결되지 않았습니다.'); return; }
     const title = el.evTitle.value.trim(), start = el.evStart.value, end = el.evEnd.value, note = el.evNote.value.trim();
     const color = (el.evColors.querySelector('input:checked') || {}).value || 'blue';
     if (!title || !start || !end) return;
-    if (end < start) { el.evMsg.textContent = '끝 날짜가 시작보다 빠릅니다.'; return; }
+    if (end < start) { el.evMsg.textContent = tx('끝 날짜가 시작보다 빠릅니다.'); return; }
     const repeatDays = el.evRepeat.checked ? [...el.evDays.querySelectorAll('button.on')].map(b => Number(b.dataset.dow)) : [];
-    if (el.evRepeat.checked && !repeatDays.length) { el.evMsg.textContent = '반복할 요일을 하나 이상 고르세요.'; return; }
+    if (el.evRepeat.checked && !repeatDays.length) { el.evMsg.textContent = tx('반복할 요일을 하나 이상 고르세요.'); return; }
     const until = el.evRepeat.checked ? (el.evUntil.value || addDays(start, 90)) : '';
-    if (until && until < start) { el.evMsg.textContent = '반복 종료일이 시작보다 빠릅니다.'; return; }
+    if (until && until < start) { el.evMsg.textContent = tx('반복 종료일이 시작보다 빠릅니다.'); return; }
     el.evSave.disabled = true;
     const now = new Date().toISOString();
     try {
@@ -1348,23 +1658,23 @@ window.makeSupabaseDb = function (url, anonKey) {
       if (CAL.editingId) await db.doc('events/' + CAL.editingId).update(body);
       else await db.collection('events').doc(newId('e')).set(Object.assign(body, { createdBy: S.memberId || '', createdAt: now }));
       closeEvent();
-    } catch (e) { el.evMsg.textContent = e && e.code === 'invalid_argument' ? '이 페이지에 일정을 쓸 권한이 없습니다.' : '저장하지 못했습니다. 다시 시도해 주세요.'; }
+    } catch (e) { el.evMsg.textContent = e && e.code === 'invalid_argument' ? tx('이 페이지에 일정을 쓸 권한이 없습니다.') : tx('저장하지 못했습니다. 다시 시도해 주세요.'); }
     finally { el.evSave.disabled = false; }
   }
   async function deleteEvent() {
     if (!CAL.editingId) return;
-    if (!el.evDelete.dataset.armed) { el.evDelete.dataset.armed = '1'; el.evDelete.textContent = '정말 삭제'; setTimeout(() => { delete el.evDelete.dataset.armed; el.evDelete.textContent = '삭제'; }, 3000); return; }
+    if (!el.evDelete.dataset.armed) { el.evDelete.dataset.armed = '1'; el.evDelete.textContent = tx('정말 삭제'); setTimeout(() => { delete el.evDelete.dataset.armed; el.evDelete.textContent = tx('삭제'); }, 3000); return; }
     try { await db.doc('events/' + CAL.editingId).delete(); closeEvent(); }
-    catch (e) { el.evMsg.textContent = '삭제하지 못했습니다.'; }
+    catch (e) { el.evMsg.textContent = tx('삭제하지 못했습니다.'); }
   }
 
   // ---- board: posts/<id> = {text, images:[url], author, pinned, createdAt}; photos go to Supabase Storage bucket "board"
   const BOARD = { posts: [], pending: [], unsub: null, editingId: null, keep: [] };
-  function renderBoardWho() { el.boardWho.textContent = S.memberId ? memberName(S.memberId) + ' 으로 게시' : '작성자를 먼저 고르세요'; }   // keep = existing image urls kept while editing
+  function renderBoardWho() { el.boardWho.textContent = S.memberId ? memberName(S.memberId) + tx(' 으로 게시') : tx('작성자를 먼저 고르세요'); }   // keep = existing image urls kept while editing
   el.postForm.addEventListener('submit', submitPost);
   el.postText.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); el.postForm.requestSubmit(); } });
   el.postFiles.addEventListener('change', async () => {
-    for (const f of el.postFiles.files) { try { BOARD.pending.push({ name: f.name, blob: await shrinkImage(f) }); } catch (e) { setPostMsg('이미지를 읽지 못했습니다: ' + f.name, 'err'); } }
+    for (const f of el.postFiles.files) { try { BOARD.pending.push({ name: f.name, blob: await shrinkImage(f) }); } catch (e) { setPostMsg(tx('이미지를 읽지 못했습니다: ') + f.name, 'err'); } }
     el.postFiles.value = ''; renderThumbs();
   });
   function setPostMsg(t, k) { el.postMsg.textContent = t; el.postMsg.className = 'msg ' + (k || ''); if (t && k) setTimeout(() => { if (el.postMsg.textContent === t) el.postMsg.textContent = ''; }, 4000); }
@@ -1373,8 +1683,8 @@ window.makeSupabaseDb = function (url, anonKey) {
     const thumb = (src, item, onRemove) => {
       const t = document.createElement('div'); t.className = 't';
       const img = document.createElement('img'); img.src = src; img.alt = '';
-      const x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.title = '빼기'; x.addEventListener('click', onRemove);
-      const cap = document.createElement('input'); cap.placeholder = '사진 설명'; cap.maxLength = 80; cap.value = item.cap || ''; cap.addEventListener('input', () => { item.cap = cap.value; });
+      const x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.title = tx('빼기'); x.addEventListener('click', onRemove);
+      const cap = document.createElement('input'); cap.placeholder = tx('사진 설명'); cap.maxLength = 80; cap.value = item.cap || ''; cap.addEventListener('input', () => { item.cap = cap.value; });
       t.append(img, x, cap); el.postThumbs.append(t);
     };
     BOARD.keep.forEach((k, i) => thumb(k.url, k, () => { BOARD.keep.splice(i, 1); renderThumbs(); }));
@@ -1395,61 +1705,61 @@ window.makeSupabaseDb = function (url, anonKey) {
   }
   async function submitPost(ev) {
     ev.preventDefault();
-    if (!db) { setPostMsg('저장소에 연결되지 않았습니다.', 'err'); return; }
-    if (!S.memberId) { setPostMsg('먼저 작성자(본인 이름)를 고르세요.', 'err'); el.member.focus(); return; }
+    if (!db) { setPostMsg(tx('저장소에 연결되지 않았습니다.'), 'err'); return; }
+    if (!S.memberId) { setPostMsg(tx('먼저 작성자(본인 이름)를 고르세요.'), 'err'); el.member.focus(); return; }
     const text = el.postText.value.trim();
-    if (!text && !BOARD.pending.length && !BOARD.keep.length) { setPostMsg('내용이나 사진을 넣어 주세요.', 'err'); return; }
-    el.postBtn.disabled = true; setPostMsg(BOARD.editingId ? '저장 중…' : '올리는 중…');
+    if (!text && !BOARD.pending.length && !BOARD.keep.length) { setPostMsg(tx('내용이나 사진을 넣어 주세요.'), 'err'); return; }
+    el.postBtn.disabled = true; setPostMsg(BOARD.editingId ? tx('저장 중…') : tx('올리는 중…'));
     try {
       const images = BOARD.keep.map(k => ({ url: k.url, cap: (k.cap || '').trim() }));
       for (const p of BOARD.pending) images.push({ url: await window.__uploadImage(p.blob), cap: (p.cap || '').trim() });
       const now = new Date().toISOString();
       if (BOARD.editingId) await db.doc('posts/' + BOARD.editingId).update({ text, images, pinned: el.postPin.checked, updatedAt: now, edited: true });
       else await db.collection('posts').doc(newId('p')).set({ text, images, author: S.memberId, pinned: el.postPin.checked, createdAt: now, updatedAt: now });
-      setPostMsg(BOARD.editingId ? '수정했습니다.' : '게시했습니다.', 'ok'); resetComposer();
-    } catch (e) { setPostMsg('올리지 못했습니다: ' + ((e && e.message) || (e && e.code) || ''), 'err'); }
+      setPostMsg(BOARD.editingId ? tx('수정했습니다.') : tx('게시했습니다.'), 'ok'); resetComposer();
+    } catch (e) { setPostMsg(tx('올리지 못했습니다: ') + ((e && e.message) || (e && e.code) || ''), 'err'); }
     finally { el.postBtn.disabled = false; }
   }
   function resetComposer() {
     BOARD.editingId = null; BOARD.keep = []; BOARD.pending = [];
     el.postText.value = ''; el.postPin.checked = false; renderThumbs();
-    el.postBtn.textContent = '게시'; el.postCancel.hidden = true; el.postFormTitle.textContent = '새 글';
+    el.postBtn.textContent = tx('게시'); el.postCancel.hidden = true; el.postFormTitle.textContent = tx('새 글');
   }
   function startEditPost(p) {
     BOARD.editingId = p.id; BOARD.keep = (Array.isArray(p.images) ? p.images : []).map(im => typeof im === 'string' ? { url: im, cap: '' } : { url: im.url, cap: im.cap || '' }); BOARD.pending = [];
     el.postText.value = p.text || ''; el.postPin.checked = !!p.pinned; renderThumbs();
-    el.postBtn.textContent = '수정 저장'; el.postCancel.hidden = false; el.postFormTitle.textContent = '글 수정';
+    el.postBtn.textContent = tx('수정 저장'); el.postCancel.hidden = false; el.postFormTitle.textContent = tx('글 수정');
     el.postForm.scrollIntoView({ behavior: 'smooth', block: 'start' }); el.postText.focus();
   }
   el.postCancel.addEventListener('click', resetComposer);
   function ensurePostsSub() {
     if (!db || BOARD.unsub) return;
     BOARD.unsub = db.collection('posts').orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => { BOARD.posts = snap.docs.map(x => ({ id: x.id, ...x.data() })); renderFeed(); },
-      err => showBanner('게시글을 불러오지 못했습니다 (' + err.code + ').'));
+      err => showBanner(tx('게시글을 불러오지 못했습니다 (') + err.code + ').'));
   }
   function linkify(text, node) {
     const re = /(https?:\/\/[^\s<]+)/g; let last = 0, m;
     while ((m = re.exec(text))) { node.append(text.slice(last, m.index)); const a = document.createElement('a'); a.href = m[1]; a.target = '_blank'; a.rel = 'noopener'; a.textContent = m[1]; node.append(a); last = m.index + m[1].length; }
     node.append(text.slice(last));
   }
-  function fmtWhen(iso) { const d = new Date(iso); if (isNaN(d)) return ''; const t = new Date(); const same = d.toDateString() === t.toDateString(); return (same ? '오늘 ' : (d.getMonth() + 1) + '/' + d.getDate() + ' ') + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+  function fmtWhen(iso) { const d = new Date(iso); if (isNaN(d)) return ''; const t = new Date(); const same = d.toDateString() === t.toDateString(); return (same ? tx('오늘 ') : (d.getMonth() + 1) + '/' + d.getDate() + ' ') + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
   function renderFeed() {
     const posts = BOARD.posts.slice().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || String(b.createdAt).localeCompare(String(a.createdAt)));
-    el.feed.innerHTML = ''; el.feedEmpty.hidden = posts.length > 0; el.boardSub.textContent = posts.length ? posts.length + '개' : '';
+    el.feed.innerHTML = ''; el.feedEmpty.hidden = posts.length > 0; el.boardSub.textContent = posts.length ? posts.length + tx('개') : '';
     posts.forEach(p => {
       const card = document.createElement('article'); card.className = 'post' + (p.pinned ? ' pinned' : '');
       const head = document.createElement('div'); head.className = 'head';
       const who = document.createElement('span'); who.className = 'who'; who.textContent = memberName(p.author);
-      const when = document.createElement('span'); when.textContent = fmtWhen(p.createdAt) + (p.edited ? ' · 수정됨' : '');
+      const when = document.createElement('span'); when.textContent = fmtWhen(p.createdAt) + (p.edited ? tx(' · 수정됨') : '');
       head.append(who, when);
-      if (p.pinned) { const pin = document.createElement('span'); pin.className = 'pin'; pin.textContent = '📌 고정'; head.append(pin); }
+      if (p.pinned) { const pin = document.createElement('span'); pin.className = 'pin'; pin.textContent = tx('📌 고정'); head.append(pin); }
       const sp = document.createElement('span'); sp.className = 'spacer'; head.append(sp);
       if (p.author === S.memberId || isAdmin) {
-        const ed = document.createElement('button'); ed.type = 'button'; ed.className = 'ghost'; ed.textContent = '수정'; ed.addEventListener('click', () => startEditPost(p)); head.append(ed);
-        const pinBtn = document.createElement('button'); pinBtn.type = 'button'; pinBtn.className = 'ghost'; pinBtn.textContent = p.pinned ? '고정 해제' : '고정';
+        const ed = document.createElement('button'); ed.type = 'button'; ed.className = 'ghost'; ed.textContent = tx('수정'); ed.addEventListener('click', () => startEditPost(p)); head.append(ed);
+        const pinBtn = document.createElement('button'); pinBtn.type = 'button'; pinBtn.className = 'ghost'; pinBtn.textContent = p.pinned ? tx('고정 해제') : tx('고정');
         pinBtn.addEventListener('click', () => safe(() => db.doc('posts/' + p.id).update({ pinned: !p.pinned })));
-        const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = '삭제';
-        del.addEventListener('click', () => { if (del.dataset.armed) { safe(() => db.doc('posts/' + p.id).delete()); return; } del.dataset.armed = '1'; del.textContent = '정말?'; setTimeout(() => { delete del.dataset.armed; del.textContent = '삭제'; }, 3000); });
+        const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = tx('삭제');
+        del.addEventListener('click', () => { if (del.dataset.armed) { safe(() => db.doc('posts/' + p.id).delete()); return; } del.dataset.armed = '1'; del.textContent = tx('정말?'); setTimeout(() => { delete del.dataset.armed; del.textContent = tx('삭제'); }, 3000); });
         head.append(pinBtn, del);
       }
       card.append(head);
@@ -1481,7 +1791,7 @@ window.makeSupabaseDb = function (url, anonKey) {
       if (ids.length) { const c = document.createElement('small'); c.textContent = ids.length; b.append(c); b.title = ids.map(memberName).join(', '); }
       if (S.memberId && ids.includes(S.memberId)) b.classList.add('on');
       b.addEventListener('click', () => {
-        if (!S.memberId) { showBanner('먼저 작성자(본인 이름)를 고르세요.'); return; }
+        if (!S.memberId) { showBanner(tx('먼저 작성자(본인 이름)를 고르세요.')); return; }
         const next = Object.assign({}, rx); const cur = (next[e] || []).slice();
         const i = cur.indexOf(S.memberId); if (i >= 0) cur.splice(i, 1); else cur.push(S.memberId);
         if (cur.length) next[e] = cur; else delete next[e];
@@ -1490,7 +1800,7 @@ window.makeSupabaseDb = function (url, anonKey) {
       return b;
     };
     used.forEach(e => bar.append(mk(e)));
-    const more = document.createElement('button'); more.type = 'button'; more.className = 'more'; more.textContent = used.length ? '+' : '😊 반응';
+    const more = document.createElement('button'); more.type = 'button'; more.className = 'more'; more.textContent = used.length ? '+' : tx('😊 반응');
     const tray = document.createElement('span'); tray.hidden = true; unused.forEach(e => tray.append(mk(e)));
     more.addEventListener('click', () => { tray.hidden = !tray.hidden; });
     if (unused.length) bar.append(more, tray);
@@ -1505,15 +1815,15 @@ window.makeSupabaseDb = function (url, anonKey) {
       const txt = document.createElement('span'); txt.className = 'txt'; linkify(String(c.text || ''), txt);
       const meta = document.createElement('span'); meta.className = 'meta'; meta.textContent = fmtWhen(c.createdAt);
       if (c.author === S.memberId || isAdmin) {
-        const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = '삭제';
+        const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = tx('삭제');
         del.addEventListener('click', () => safe(() => db.doc('posts/' + p.id).update({ comments: list.filter(x => x.id !== c.id) })));
         meta.append(' ', del);
       }
       row.append(who, txt, meta); box.append(row);
     });
     const form = document.createElement('form'); form.className = 'cform';
-    const inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = S.memberId ? '댓글 달기…' : '댓글을 달려면 작성자를 고르세요'; inp.maxLength = 500; inp.disabled = !S.memberId;
-    const btn = document.createElement('button'); btn.type = 'submit'; btn.textContent = '댓글'; btn.disabled = !S.memberId;
+    const inp = document.createElement('input'); inp.type = 'text'; inp.placeholder = S.memberId ? tx('댓글 달기…') : tx('댓글을 달려면 작성자를 고르세요'); inp.maxLength = 500; inp.disabled = !S.memberId;
+    const btn = document.createElement('button'); btn.type = 'submit'; btn.textContent = tx('댓글'); btn.disabled = !S.memberId;
     form.append(inp, btn);
     form.addEventListener('submit', (ev) => {
       ev.preventDefault(); const text = inp.value.trim(); if (!text || !S.memberId) return;
@@ -1574,13 +1884,13 @@ window.makeSupabaseDb = function (url, anonKey) {
   //   members/<id>.status = {text, at}
   window.__worklogStatusOf = (id) => { const m = S.members.find(x => x.id === id); return m && m.status && m.status.text ? String(m.status.text) : ''; };
   function myStatusText() { return window.__worklogStatusOf(S.memberId); }
-  function renderStatusBtn() { const t = myStatusText(); el.statusBtn.textContent = t ? '💬 ' + t : '💬 상태'; el.statusBtn.hidden = !S.memberId; }
-  el.statusBtn.addEventListener('click', () => { if (!S.memberId) { setMsg('먼저 작성자(본인 이름)를 고르세요.', 'err'); el.member.focus(); return; } openPop(S.memberId, null); });
+  function renderStatusBtn() { const t = myStatusText(); el.statusBtn.textContent = t ? '💬 ' + t : tx('💬 상태'); el.statusBtn.hidden = !S.memberId; }
+  el.statusBtn.addEventListener('click', () => { if (!S.memberId) { setMsg(tx('먼저 작성자(본인 이름)를 고르세요.'), 'err'); el.member.focus(); return; } openPop(S.memberId, null); });
   async function saveStatus(text) {
     if (!db || !S.memberId) return;
     const t = text.trim().slice(0, 60);
     try { await db.doc('members/' + S.memberId).update({ status: t ? { text: t, at: new Date().toISOString() } : { text: '', at: new Date().toISOString() } }); }
-    catch (e) { showBanner('상태를 저장하지 못했습니다.'); }
+    catch (e) { showBanner(tx('상태를 저장하지 못했습니다.')); }
   }
   let toastTimer = null;
   function toast(t) {
@@ -1592,20 +1902,20 @@ window.makeSupabaseDb = function (url, anonKey) {
     const m = S.members.find(x => x.id === id); if (!m) return;
     const isMe = id === S.memberId;
     el.pop.innerHTML = '';
-    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = m.name + (isMe ? ' (나)' : '');
-    const st = document.createElement('div'); st.className = 'st'; st.textContent = window.__worklogStatusOf(id) || '(상태 메시지 없음)';
+    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = m.name + (isMe ? tx(' (나)') : '');
+    const st = document.createElement('div'); st.className = 'st'; st.textContent = window.__worklogStatusOf(id) || tx('(상태 메시지 없음)');
     el.pop.append(nm, st);
     const row = document.createElement('div'); row.className = 'row';
     if (isMe) {
-      const inp = document.createElement('input'); inp.value = window.__worklogStatusOf(id); inp.maxLength = 60; inp.placeholder = '지금 뭐 해요? (예: 동물실, 회의 중, 점심)'; inp.style.width = '100%';
-      const ok = document.createElement('button'); ok.type = 'button'; ok.className = 'primary'; ok.textContent = '저장';
-      const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'ghost'; clr.textContent = '지우기';
+      const inp = document.createElement('input'); inp.value = window.__worklogStatusOf(id); inp.maxLength = 60; inp.placeholder = tx('지금 뭐 해요? (예: 동물실, 회의 중, 점심)'); inp.style.width = '100%';
+      const ok = document.createElement('button'); ok.type = 'button'; ok.className = 'primary'; ok.textContent = tx('저장');
+      const clr = document.createElement('button'); clr.type = 'button'; clr.className = 'ghost'; clr.textContent = tx('지우기');
       ok.addEventListener('click', async () => { await saveStatus(inp.value); closePop(); });
       clr.addEventListener('click', async () => { await saveStatus(''); closePop(); });
       inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); ok.click(); } if (e.key === 'Escape') closePop(); });
       el.pop.append(inp); row.append(ok, clr); el.pop.append(row); el.pop.hidden = false; positionPop(x); inp.focus(); return;
     }
-    const cl = document.createElement('button'); cl.type = 'button'; cl.className = 'ghost'; cl.textContent = '닫기'; cl.addEventListener('click', closePop);
+    const cl = document.createElement('button'); cl.type = 'button'; cl.className = 'ghost'; cl.textContent = tx('닫기'); cl.addEventListener('click', closePop);
     row.append(cl); el.pop.append(row); el.pop.hidden = false; positionPop(x);
   }
   function positionPop(x) {
@@ -1625,17 +1935,17 @@ window.makeSupabaseDb = function (url, anonKey) {
 
   // ---- avatar editor (per author; stored as members/<id>.avatar and drawn on the field above)
   const AV_OPTS = {
-    skin:        { label: '피부색', colors: { s1: '#F6D7C3', s2: '#EBBB9C', s3: '#C68B65', s4: '#8D5A3C', s5: '#5C3A26' } },
-    hair:        { label: '머리 스타일', items: { short: '짧은', bob: '단발', long: '긴 머리', ponytail: '포니테일', bun: '올림머리', curly: '곱슬', spiky: '뾰족', mohawk: '모히칸', bald: '민머리' } },
-    hairColor:   { label: '머리색', colors: { black: '#1E1B1B', brown: '#5A3A22', blond: '#E4C36A', red: '#B5432E', gray: '#A8A8A8', blue: '#3E63C9', pink: '#E68AB8', green: '#3D9B5C' } },
-    eyes:        { label: '눈동자색', colors: { brown: '#4A2E1E', black: '#111111', blue: '#2F6FD6', green: '#2E8B57', gray: '#6E7B8B', purple: '#7A4FB8', red: '#C4403F' } },
-    top:         { label: '상의', items: { tee: '티셔츠', shirt: '셔츠', hoodie: '후드', stripe: '줄무늬', labcoat: '실험복' } },
-    topColor:    { label: '상의 색', colors: { red: '#C4403F', blue: '#2F6FB5', green: '#2E8B62', yellow: '#E3B23C', purple: '#7A4FB8', black: '#2A2A2A', white: '#F2F2F2', orange: '#D9782B', pink: '#E68AB8', teal: '#2A9D9F' } },
-    bottom:      { label: '하의', items: { pants: '긴바지', shorts: '반바지', skirt: '치마' } },
-    bottomColor: { label: '하의 색', colors: { jeans: '#3B5B99', black: '#2A2A2A', khaki: '#B49B6A', gray: '#7C8288', white: '#EDEDED', red: '#A63A3A', green: '#3F6B3A' } },
-    item:        { label: '들고 있는 것', items: { none: '없음', pipette: '피펫', flask: '플라스크', tubes: '튜브 랙', petri: '페트리 접시', syringe: '주사기', mouse: '마우스', microscope: '현미경', laptop: '노트북', notebook: '실험노트', coffee: '커피', phone: '휴대폰' } },
-    pet:         { label: '펫', items: { none: '없음', cat: '고양이', dog: '강아지', mouse: '생쥐', rabbit: '토끼', bird: '새 (어깨)', fish: '어항', turtle: '거북' } },
-    acc:         { label: '악세사리', items: { none: '없음', glasses: '안경', goggles: '고글', mask: '마스크', headphones: '헤드폰', cap: '모자', beanie: '비니', badge: '명찰', flower: '꽃', crown: '왕관' } },
+    skin:        { label: tx('피부색'), colors: { s1: '#F6D7C3', s2: '#EBBB9C', s3: '#C68B65', s4: '#8D5A3C', s5: '#5C3A26' } },
+    hair:        { label: tx('머리 스타일'), items: { short: tx('짧은'), bob: tx('단발'), long: tx('긴 머리'), ponytail: tx('포니테일'), bun: tx('올림머리'), curly: tx('곱슬'), spiky: tx('뾰족'), mohawk: tx('모히칸'), bald: tx('민머리') } },
+    hairColor:   { label: tx('머리색'), colors: { black: '#1E1B1B', brown: '#5A3A22', blond: '#E4C36A', red: '#B5432E', gray: '#A8A8A8', blue: '#3E63C9', pink: '#E68AB8', green: '#3D9B5C' } },
+    eyes:        { label: tx('눈동자색'), colors: { brown: '#4A2E1E', black: '#111111', blue: '#2F6FD6', green: '#2E8B57', gray: '#6E7B8B', purple: '#7A4FB8', red: '#C4403F' } },
+    top:         { label: tx('상의'), items: { tee: tx('티셔츠'), shirt: tx('셔츠'), hoodie: tx('후드'), stripe: tx('줄무늬'), labcoat: tx('실험복') } },
+    topColor:    { label: tx('상의 색'), colors: { red: '#C4403F', blue: '#2F6FB5', green: '#2E8B62', yellow: '#E3B23C', purple: '#7A4FB8', black: '#2A2A2A', white: '#F2F2F2', orange: '#D9782B', pink: '#E68AB8', teal: '#2A9D9F' } },
+    bottom:      { label: tx('하의'), items: { pants: tx('긴바지'), shorts: tx('반바지'), skirt: tx('치마') } },
+    bottomColor: { label: tx('하의 색'), colors: { jeans: '#3B5B99', black: '#2A2A2A', khaki: '#B49B6A', gray: '#7C8288', white: '#EDEDED', red: '#A63A3A', green: '#3F6B3A' } },
+    item:        { label: tx('들고 있는 것'), items: { none: tx('없음'), pipette: tx('피펫'), flask: tx('플라스크'), tubes: tx('튜브 랙'), petri: tx('페트리 접시'), syringe: tx('주사기'), mouse: tx('마우스'), microscope: tx('현미경'), laptop: tx('노트북'), notebook: tx('실험노트'), coffee: tx('커피'), phone: tx('휴대폰') } },
+    pet:         { label: tx('펫'), items: { none: tx('없음'), cat: tx('고양이'), dog: tx('강아지'), mouse: tx('생쥐'), rabbit: tx('토끼'), bird: tx('새 (어깨)'), fish: tx('어항'), turtle: tx('거북') } },
+    acc:         { label: tx('악세사리'), items: { none: tx('없음'), glasses: tx('안경'), goggles: tx('고글'), mask: tx('마스크'), headphones: tx('헤드폰'), cap: tx('모자'), beanie: tx('비니'), badge: tx('명찰'), flower: tx('꽃'), crown: tx('왕관') } },
   };
   const AV_DEFAULT_APP = { skin: 's2', hair: 'short', hairColor: 'black', eyes: 'brown', top: 'tee', topColor: 'blue', bottom: 'pants', bottomColor: 'jeans', item: 'none', pet: 'none', acc: 'none' };
   const AVE = { draft: null, memberId: null };
@@ -1648,10 +1958,10 @@ window.makeSupabaseDb = function (url, anonKey) {
   el.avRandom.addEventListener('click', () => { const d = {}; Object.entries(AV_OPTS).forEach(([k, o]) => { const keys = Object.keys(o.colors || o.items); d[k] = keys[Math.floor(Math.random() * keys.length)]; }); AVE.draft = d; renderAvatarEditor(); });
 
   function openAvatar(memberId) {
-    if (!memberId) { setMsg('먼저 작성자(본인 이름)를 고르세요.', 'err'); el.member.focus(); return; }
+    if (!memberId) { setMsg(tx('먼저 작성자(본인 이름)를 고르세요.'), 'err'); el.member.focus(); return; }
     const m = S.members.find(x => x.id === memberId); if (!m) return;
     AVE.memberId = memberId; AVE.draft = Object.assign({}, AV_DEFAULT_APP, m.avatar || {});
-    el.avTitle.textContent = m.name + ' 아바타';
+    el.avTitle.textContent = m.name + tx(' 아바타');
     renderAvatarEditor(); el.avBg.hidden = false;
   }
   function closeAvatar() { el.avBg.hidden = true; AVE.memberId = null; }
@@ -1685,8 +1995,8 @@ window.makeSupabaseDb = function (url, anonKey) {
     ev.preventDefault();
     if (!db || !AVE.memberId) return;
     el.avSave.disabled = true;
-    try { await db.doc('members/' + AVE.memberId).update({ avatar: AVE.draft }); closeAvatar(); setMsg('아바타를 저장했습니다.', 'ok'); }
-    catch (e) { el.avMsg.textContent = e && e.code === 'invalid_argument' ? '저장 권한이 없습니다.' : '저장하지 못했습니다.'; }
+    try { await db.doc('members/' + AVE.memberId).update({ avatar: AVE.draft }); closeAvatar(); setMsg(tx('아바타를 저장했습니다.'), 'ok'); }
+    catch (e) { el.avMsg.textContent = e && e.code === 'invalid_argument' ? tx('저장 권한이 없습니다.') : tx('저장하지 못했습니다.'); }
     finally { el.avSave.disabled = false; }
   }
 
@@ -1694,18 +2004,18 @@ window.makeSupabaseDb = function (url, anonKey) {
   function renderAdminList(col, ul, items) {
     if (!isAdmin) return;
     ul.innerHTML = '';
-    if (!items.length) { const li = document.createElement('li'); li.className = 'empty'; li.style.borderTop = '0'; li.textContent = '아직 없습니다. 아래에서 추가하세요.'; ul.append(li); return; }
+    if (!items.length) { const li = document.createElement('li'); li.className = 'empty'; li.style.borderTop = '0'; li.textContent = tx('아직 없습니다. 아래에서 추가하세요.'); ul.append(li); return; }
     items.forEach((t, i) => {
       const li = document.createElement('li'); li.className = 'item-row' + (t.active === false ? ' off' : '');
-      const inp = document.createElement('input'); inp.value = t.name; inp.maxLength = 60; inp.setAttribute('aria-label', '이름');
+      const inp = document.createElement('input'); inp.value = t.name; inp.maxLength = 60; inp.setAttribute('aria-label', tx('이름'));
       inp.addEventListener('change', async () => { const name = inp.value.trim(); if (!name || name === t.name) { inp.value = t.name; return; } await safe(() => db.doc(col + '/' + t.id).update({ name })); });
       const ops = document.createElement('div'); ops.className = 'ops';
       const up = btn('↑', () => move(col, items, i, -1)); up.disabled = i === 0;
       const dn = btn('↓', () => move(col, items, i, 1)); dn.disabled = i === items.length - 1;
-      const tg = btn(t.active === false ? '활성화' : '비활성화', () => safe(() => db.doc(col + '/' + t.id).update({ active: t.active === false })));
-      const del = btn('삭제', () => {
+      const tg = btn(t.active === false ? tx('활성화') : tx('비활성화'), () => safe(() => db.doc(col + '/' + t.id).update({ active: t.active === false })));
+      const del = btn(tx('삭제'), () => {
         if (del.dataset.armed) { safe(() => db.doc(col + '/' + t.id).delete()); return; }
-        del.dataset.armed = '1'; del.textContent = '정말?'; setTimeout(() => { delete del.dataset.armed; del.textContent = '삭제'; }, 3000);
+        del.dataset.armed = '1'; del.textContent = tx('정말?'); setTimeout(() => { delete del.dataset.armed; del.textContent = tx('삭제'); }, 3000);
       }); del.classList.add('danger');
       ops.append(up, dn, tg, del);
       li.append(inp, ops); ul.append(li);
@@ -1720,14 +2030,14 @@ window.makeSupabaseDb = function (url, anonKey) {
   async function onAddItem(ev, col, input, items) {
     ev.preventDefault();
     const name = input.value.trim(); if (!name) return;
-    if (!db) { showBanner('저장소에 연결되지 않아 저장할 수 없습니다.'); return; }
+    if (!db) { showBanner(tx('저장소에 연결되지 않아 저장할 수 없습니다.')); return; }
     const order = items.reduce((m, t) => Math.max(m, Number(t.order) || 0), 0) + 1;
     // members get a short generated id: it becomes part of every day-document id
     const ref = col === 'members' ? db.collection(col).doc(newId('m')) : db.collection(col).doc();
     await safe(() => ref.set({ name, order, active: true, createdAt: new Date().toISOString() }));
     input.value = '';
   }
-  async function safe(fn) { if (!db) { showBanner('저장소에 연결되지 않아 저장할 수 없습니다.'); return; } try { await fn(); } catch (e) { showBanner('변경을 저장하지 못했습니다 (' + ((e && e.code) || 'error') + ').'); } }
+  async function safe(fn) { if (!db) { showBanner(tx('저장소에 연결되지 않아 저장할 수 없습니다.')); return; } try { await fn(); } catch (e) { showBanner(tx('변경을 저장하지 못했습니다 (') + ((e && e.code) || 'error') + ').'); } }
 
   // ---- stats view: one period (day / week / month), sums by person / type / quest / date, sortable flat table.
   //      Two instances: the whole team (admin tab) and the selected author alone (내 통계 tab).
@@ -1736,24 +2046,24 @@ window.makeSupabaseDb = function (url, anonKey) {
     root.innerHTML = '';
     const ctl = document.createElement('div'); ctl.className = 'team-ctl';
     const seg = document.createElement('div'); seg.className = 'seg'; seg.setAttribute('role', 'group');
-    [['day', '일별'], ['week', '주별'], ['month', '월별']].forEach(([u, l]) => {
+    [['day', tx('일별')], ['week', tx('주별')], ['month', tx('월별')]].forEach(([u, l]) => {
       const b = document.createElement('button'); b.type = 'button'; b.dataset.unit = u; b.textContent = l; b.classList.toggle('on', u === V.unit);
       b.addEventListener('click', () => { V.unit = u; seg.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); load(); });
       seg.append(b);
     });
     const nav = document.createElement('div'); nav.className = 'nav';
-    const prev = document.createElement('button'); prev.type = 'button'; prev.className = 'ghost'; prev.textContent = '‹'; prev.setAttribute('aria-label', '이전 기간');
+    const prev = document.createElement('button'); prev.type = 'button'; prev.className = 'ghost'; prev.textContent = '‹'; prev.setAttribute('aria-label', tx('이전 기간'));
     const per = document.createElement('span'); per.className = 'period';
-    const next = document.createElement('button'); next.type = 'button'; next.className = 'ghost'; next.textContent = '›'; next.setAttribute('aria-label', '다음 기간');
+    const next = document.createElement('button'); next.type = 'button'; next.className = 'ghost'; next.textContent = '›'; next.setAttribute('aria-label', tx('다음 기간'));
     nav.append(prev, per, next);
-    const date = document.createElement('input'); date.type = 'date'; date.value = V.anchor; date.setAttribute('aria-label', '기준 날짜');
+    const date = document.createElement('input'); date.type = 'date'; date.value = V.anchor; date.setAttribute('aria-label', tx('기준 날짜'));
     const msg = document.createElement('span'); msg.className = 'msg';
-    const rf = document.createElement('button'); rf.type = 'button'; rf.className = 'ghost'; rf.textContent = '↻ 새로고침'; rf.title = '다른 사람이 방금 쓴 기록까지 다시 불러오기'; rf.addEventListener('click', load);
+    const rf = document.createElement('button'); rf.type = 'button'; rf.className = 'ghost'; rf.textContent = tx('↻ 새로고침'); rf.title = tx('다른 사람이 방금 쓴 기록까지 다시 불러오기'); rf.addEventListener('click', load);
     ctl.append(seg, nav, date, rf, msg);
     const sums = document.createElement('div'); sums.className = 'sums'; sums.hidden = true;
     const wrap = document.createElement('div'); wrap.className = 'team-tbl-wrap'; wrap.hidden = true;
     const tbl = document.createElement('table'); tbl.className = 'team-tbl';
-    const cols = [['date', '날짜'], ['member', '사람'], ['type', '실험 종류'], ['quest', '관련 퀘스트'], ['hours', '시간'], ['note', '한 일']].filter(c => !(opts.mine && c[0] === 'member'));
+    const cols = [['date', tx('날짜')], ['member', tx('사람')], ['type', tx('실험 종류')], ['quest', tx('관련 퀘스트')], ['hours', tx('시간')], ['note', tx('한 일')]].filter(c => !(opts.mine && c[0] === 'member'));
     const thead = document.createElement('thead'); const htr = document.createElement('tr');
     cols.forEach(([k, l]) => {
       const th = document.createElement('th'); th.dataset.key = k; th.textContent = l; if (k === 'hours') th.className = 'num';
@@ -1763,7 +2073,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     });
     thead.append(htr); const tbody = document.createElement('tbody');
     const tfoot = document.createElement('tfoot'); const ftr = document.createElement('tr');
-    const f1 = document.createElement('td'); f1.colSpan = cols.length - 2; f1.textContent = '합계';
+    const f1 = document.createElement('td'); f1.colSpan = cols.length - 2; f1.textContent = tx('합계');
     const fg = document.createElement('td'); fg.className = 'num'; const f3 = document.createElement('td');
     ftr.append(f1, fg, f3); tfoot.append(ftr);
     tbl.append(thead, tbody, tfoot); wrap.append(tbl);
@@ -1781,7 +2091,7 @@ window.makeSupabaseDb = function (url, anonKey) {
       const [f, t] = range(); const d = parse(f);
       if (V.unit === 'day') return f + ' (' + WD[d.getDay()] + ')';
       if (V.unit === 'week') return f.slice(5).replace('-', '/') + ' – ' + t.slice(5).replace('-', '/');
-      return d.getFullYear() + '년 ' + (d.getMonth() + 1) + '월';
+      return fmtYM(d.getFullYear(), d.getMonth());
     }
     function shift(n) {
       if (V.unit === 'day') V.anchor = addDays(V.anchor, n);
@@ -1791,11 +2101,11 @@ window.makeSupabaseDb = function (url, anonKey) {
     }
     async function load() {
       per.textContent = label();
-      if (!db) { msg.textContent = '저장소에 연결되지 않았습니다.'; msg.className = 'msg err'; return; }
+      if (!db) { msg.textContent = tx('저장소에 연결되지 않았습니다.'); msg.className = 'msg err'; return; }
       const memberId = opts.mine ? S.memberId : null;
-      if (opts.mine && !memberId) { V.rows = []; render(); msg.textContent = '오른쪽 위에서 작성자를 고르면 통계가 보입니다.'; msg.className = 'msg'; return; }
+      if (opts.mine && !memberId) { V.rows = []; render(); msg.textContent = tx('오른쪽 위에서 작성자를 고르면 통계가 보입니다.'); msg.className = 'msg'; return; }
       V.loaded = true;
-      msg.textContent = '불러오는 중…'; msg.className = 'msg';
+      msg.textContent = tx('불러오는 중…'); msg.className = 'msg';
       try {
         const [from, to] = range();
         let q = db.collection('days').where('date', '>=', from).where('date', '<=', to);
@@ -1806,8 +2116,8 @@ window.makeSupabaseDb = function (url, anonKey) {
           date: d.date, memberId: d.memberId, member: memberName(d.memberId), type: typeName(r.typeId),
           quest: r.quest || '', hours: Number(r.hours) || 0, note: r.note || '', createdAt: r.createdAt || '' })); });
         render();
-        msg.textContent = V.rows.length ? V.rows.length + '건' : '이 기간에는 기록이 없습니다.';
-      } catch (e) { msg.textContent = '불러오지 못했습니다 (' + ((e && e.code) || 'error') + ').'; msg.className = 'msg err'; }
+        msg.textContent = V.rows.length ? V.rows.length + tx('건') : tx('이 기간에는 기록이 없습니다.');
+      } catch (e) { msg.textContent = tx('불러오지 못했습니다 (') + ((e && e.code) || 'error') + ').'; msg.className = 'msg err'; }
     }
     function render() {
       const rows = V.rows;
@@ -1815,13 +2125,13 @@ window.makeSupabaseDb = function (url, anonKey) {
       if (!rows.length) return;
       const grand = rows.reduce((a, r) => a + r.hours, 0);
       sums.innerHTML = '';
-      const groups = [['실험 종류별', r => r.type], ['퀘스트별', r => r.quest || '(퀘스트 없음)']];
-      if (!opts.mine) groups.unshift(['사람별', r => r.member]);
-      if (V.unit !== 'day') groups.push(['날짜별', r => r.date.slice(5).replace('-', '/') + ' (' + WD[parse(r.date).getDay()] + ')']);
+      const groups = [[tx('실험 종류별'), r => r.type], [tx('퀘스트별'), r => r.quest || tx('(퀘스트 없음)')]];
+      if (!opts.mine) groups.unshift([tx('사람별'), r => r.member]);
+      if (V.unit !== 'day') groups.push([tx('날짜별'), r => r.date.slice(5).replace('-', '/') + ' (' + WD[parse(r.date).getDay()] + ')']);
       sums.style.gridTemplateColumns = 'repeat(' + Math.min(3, groups.length) + ', 1fr)';
       groups.forEach(([title, keyOf]) => {
         const m = new Map(); rows.forEach(r => { const k = keyOf(r); m.set(k, (m.get(k) || 0) + r.hours); });
-        const list = [...m.entries()].sort((a, b) => title === '날짜별' ? a[0].localeCompare(b[0]) : b[1] - a[1]);
+        const list = [...m.entries()].sort((a, b) => title === tx('날짜별') ? a[0].localeCompare(b[0]) : b[1] - a[1]);
         const box = document.createElement('div'); box.className = 'sum';
         const h = document.createElement('h4'); h.textContent = title; const tot = document.createElement('span'); tot.className = 'num'; tot.textContent = fmtHours(grand) + ' h'; h.append(tot); box.append(h);
         const max = Math.max(...list.map(x => x[1]), 0.01);
@@ -1831,7 +2141,7 @@ window.makeSupabaseDb = function (url, anonKey) {
           const n = document.createElement('div'); n.className = 'num'; n.textContent = fmtHours(v) + ' h';
           row.append(lab, n); box.append(row);
         });
-        if (list.length > 10) { const more = document.createElement('div'); more.className = 'more'; more.textContent = '외 ' + (list.length - 10) + '개'; box.append(more); }
+        if (list.length > 10) { const more = document.createElement('div'); more.className = 'more'; more.textContent = LANG === 'en' ? '+' + (list.length - 10) + ' more' : tx('외 ') + (list.length - 10) + tx('개'); box.append(more); }
         sums.append(box);
       });
       const k = V.sortKey, dir = V.sortDir;
@@ -1864,7 +2174,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   renderMembers(); render(); showTab(tab);
   boot();
   // surface any later uncaught error instead of failing silently
-  window.addEventListener('error', (e) => { try { showBanner('페이지 오류: ' + (e.message || e.error)); } catch (_) {} });
+  window.addEventListener('error', (e) => { try { showBanner(tx('페이지 오류: ') + (e.message || e.error)); } catch (_) {} });
 })();
 </script>
 
