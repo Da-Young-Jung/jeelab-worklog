@@ -1940,7 +1940,7 @@ window.__I18N = {
     bottom:      { label: tx('하의'), items: { pants: tx('긴바지'), shorts: tx('반바지'), skirt: tx('치마') } },
     bottomColor: { label: tx('하의 색'), colors: { jeans: '#3B5B99', black: '#2A2A2A', khaki: '#B49B6A', gray: '#7C8288', white: '#EDEDED', red: '#A63A3A', green: '#3F6B3A' } },
     item:        { label: tx('들고 있는 것'), items: { none: tx('없음'), pipette: tx('피펫'), flask: tx('플라스크'), tubes: tx('튜브 랙'), petri: tx('페트리 접시'), syringe: tx('주사기'), mouse: tx('마우스'), microscope: tx('현미경'), laptop: tx('노트북'), notebook: tx('실험노트'), coffee: tx('커피'), phone: tx('휴대폰') } },
-    pet:         { label: tx('펫'), items: { none: tx('없음'), cat: tx('고양이'), dog: tx('강아지'), mouse: tx('생쥐'), rabbit: tx('토끼'), bird: tx('새 (어깨)'), fish: tx('어항'), turtle: tx('거북') } },
+    pet:         { label: tx('펫'), items: { none: tx('없음'), cat: tx('고양이'), dog: tx('강아지'), mouse: 'ICR', b6: 'B6', rat: 'Rat', guinea: tx('기니피그'), rabbit: tx('토끼'), bird: tx('새 (어깨)'), fish: tx('어항'), turtle: tx('거북') } },
     acc:         { label: tx('악세사리'), items: { none: tx('없음'), glasses: tx('안경'), goggles: tx('고글'), mask: tx('마스크'), headphones: tx('헤드폰'), cap: tx('모자'), beanie: tx('비니'), badge: tx('명찰'), flower: tx('꽃'), crown: tx('왕관') } },
   };
   const AV_DEFAULT_APP = { skin: 's2', hair: 'short', hairColor: 'black', eyes: 'brown', top: 'tee', topColor: 'blue', bottom: 'pants', bottomColor: 'jeans', item: 'none', pet: 'none', acc: 'none' };
@@ -2511,6 +2511,9 @@ window.__I18N = {
     if (P === 'cat') { rect(p0, fy - 2, 4, 2, '#D9782B'); rect(p0 + 3, fy - 3, 2, 1, '#D9782B'); px(p0 + 3, fy - 4, '#D9782B'); px(p0 + 4, fy - 4, '#D9782B'); px(p0 - 1, fy - 3, '#D9782B'); px(p0 + 4, fy - 3, '#2E8B57'); }
     if (P === 'dog') { rect(p0, fy - 2, 4, 2, '#8D5A3C'); rect(p0 + 3, fy - 3, 2, 1, '#8D5A3C'); px(p0 + 5, fy - 3, '#5C3A26'); px(p0 - 1, fy - 3, '#8D5A3C'); px(p0 + 4, fy - 3, '#111111'); }
     if (P === 'mouse') { rect(p0, fy - 1, 2, 1, '#F2F2F2'); px(p0 + 1, fy - 2, '#F2B8C6'); px(p0 - 1, fy - 1, '#C9C9C9'); }
+    if (P === 'b6') { rect(p0, fy - 1, 2, 1, '#2A2A2A'); px(p0 + 1, fy - 2, '#5A3E48'); px(p0 - 1, fy - 1, '#6E6E6E'); px(p0 + 1, fy - 1, '#111111'); }
+    if (P === 'rat') { rect(p0, fy - 2, 4, 2, '#8C7B70'); px(p0 + 4, fy - 2, '#8C7B70'); px(p0 + 4, fy - 1, '#8C7B70'); px(p0 + 3, fy - 3, '#F2B8C6'); px(p0 + 4, fy - 2, '#111111'); px(p0 + 5, fy - 1, '#C9A0A0'); px(p0 - 1, fy - 1, '#C9A0A0'); px(p0 - 2, fy - 2, '#C9A0A0'); px(p0 - 3, fy - 2, '#C9A0A0'); }
+    if (P === 'guinea') { rect(p0, fy - 3, 4, 3, '#C98A4B'); rect(p0 + 2, fy - 3, 2, 2, '#F2F2F2'); px(p0 + 4, fy - 2, '#C98A4B'); px(p0 + 4, fy - 1, '#C98A4B'); px(p0 + 3, fy - 4, '#C98A4B'); px(p0 + 4, fy - 3, '#111111'); px(p0 - 1, fy - 2, '#F2F2F2'); }
     if (P === 'rabbit') { rect(p0, fy - 2, 3, 2, '#F2F2F2'); rect(p0 + 2, fy - 4, 1, 2, '#F2F2F2'); px(p0 + 1, fy - 4, '#F2F2F2'); px(p0 + 2, fy - 3, '#F2B8C6'); }
     if (P === 'bird') { rect(c0 + 5, fy - 12, 2, 2, '#E3B23C'); px(c0 + 7, fy - 12, '#D9782B'); px(c0 + 6, fy - 12, '#111111'); }
     if (P === 'fish') { rect(p0, fy - 3, 3, 3, '#BFE3EA'); px(p0 + 1, fy - 2, '#D9782B'); rect(p0, fy - 4, 3, 1, '#7FB0E0'); }
