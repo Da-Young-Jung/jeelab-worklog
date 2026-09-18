@@ -133,6 +133,13 @@ window.makeSupabaseDb = function (url, anonKey) {
     };
     return self;
   }
+  // photos for the board: public bucket "board" (see schema.sql for the bucket + policies)
+  window.__uploadImage = async (blob) => {
+    const name = new Date().toISOString().slice(0, 10) + '/' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8) + '.jpg';
+    const { error } = await sb.storage.from('board').upload(name, blob, { contentType: 'image/jpeg', upsert: false });
+    if (error) throw new Error(error.message);
+    return sb.storage.from('board').getPublicUrl(name).data.publicUrl;
+  };
   return {
     doc(path) { const i = path.lastIndexOf('/'); return docRef(path.slice(0, i), path.slice(i + 1)); },
     collection(path) { return colRef(path); },
@@ -481,6 +488,32 @@ window.makeSupabaseDb = function (url, anonKey) {
     .av-opts-wrap { max-height: 40vh; }
   }
 
+  /* board: notes, photos, news */
+  .composer { display: grid; gap: 8px; }
+  .composer textarea { min-height: 72px; }
+  .composer .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .composer .bar .spacer { flex: 1; }
+  .composer .thumbs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .composer .thumbs img { width: 72px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); }
+  .composer .thumbs .t { position: relative; }
+  .composer .thumbs .t button { position: absolute; top: -6px; right: -6px; width: 20px; height: 20px; padding: 0; border-radius: 50%; font-size: 12px; line-height: 18px; background: var(--surface); }
+  .composer .filebtn { cursor: pointer; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; font-size: 13px; background: var(--surface); }
+  .feed { display: grid; gap: 12px; }
+  .post { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 8px; background: var(--surface); }
+  .post .head { display: flex; align-items: baseline; gap: 8px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+  .post .head .who { font-weight: 700; color: var(--text); font-size: 14px; }
+  .post .head .spacer { flex: 1; }
+  .post .head button { font-size: 12px; padding: 2px 6px; }
+  .post .body { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.55; }
+  .post .body a { color: var(--accent); }
+  .post .pics { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px; }
+  .post .pics img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); cursor: zoom-in; }
+  .post .pics.one { grid-template-columns: 1fr; } .post .pics.one img { aspect-ratio: auto; max-height: 480px; object-fit: contain; background: var(--surface-2); }
+  .post.pinned { border-color: var(--accent); }
+  .post .pin { font-size: 11px; color: var(--accent); font-weight: 700; }
+  .lightbox { position: fixed; inset: 0; background: rgba(0, 0, 0, .85); z-index: 40; display: flex; align-items: center; justify-content: center; padding: 16px; cursor: zoom-out; }
+  .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
   .banner { background: var(--surface-2); border: 1px solid var(--line); color: var(--muted); padding: 10px 14px; border-radius: 8px; font-size: 13.5px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -518,6 +551,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   <nav class="tabs" role="tablist">
     <button type="button" role="tab" data-tab="log" class="on" id="tabLog">업무일지</button>
     <button type="button" role="tab" data-tab="cal" id="tabCal">캘린더</button>
+    <button type="button" role="tab" data-tab="board" id="tabBoard">게시판</button>
     <button type="button" role="tab" data-tab="stats" id="tabStats">내 통계</button>
     <button type="button" role="tab" data-tab="admin" id="tabAdmin">관리자</button>
   </nav>
@@ -547,6 +581,27 @@ window.makeSupabaseDb = function (url, anonKey) {
     <h2><span>다가오는 일정</span><span class="sub">오늘부터 30일</span></h2>
     <ul class="upcoming" id="upcoming"></ul>
     <div class="empty" id="upcomingEmpty" hidden style="border-top:0">예정된 일정이 없습니다.</div>
+  </section>
+
+  <section class="card lift" data-tab="board" hidden>
+    <h2><span>새 글</span><span class="sub" id="boardWho"></span></h2>
+    <form class="composer" id="postForm">
+      <textarea id="postText" placeholder="노트, 소식, 공지, 사진 설명… (Ctrl/⌘+Enter 게시)" aria-label="글 내용"></textarea>
+      <div class="thumbs" id="postThumbs"></div>
+      <div class="bar">
+        <label class="filebtn">📷 사진 추가<input type="file" id="postFiles" accept="image/*" multiple hidden></label>
+        <label style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted)"><input type="checkbox" id="postPin" style="width:auto"> 상단 고정</label>
+        <span class="spacer"></span>
+        <span class="msg" id="postMsg"></span>
+        <button type="submit" class="primary" id="postBtn">게시</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="card" data-tab="board" hidden>
+    <h2><span>게시판</span><span class="sub" id="boardSub"></span></h2>
+    <div class="feed" id="feed"></div>
+    <div class="empty" id="feedEmpty" hidden style="border-top:0">아직 글이 없습니다. 첫 소식을 올려 보세요.</div>
   </section>
 
   <section class="card" data-tab="stats" hidden>
@@ -716,6 +771,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     admin: $('admin'), members: $('members'), addMember: $('addMember'), newMember: $('newMember'),
     types: $('types'), addType: $('addType'), newType: $('newType'),
     quests: $('quests'), addQuest: $('addQuest'), newQuest: $('newQuest'),
+    postForm: $('postForm'), postText: $('postText'), postThumbs: $('postThumbs'), postFiles: $('postFiles'), postPin: $('postPin'), postMsg: $('postMsg'), postBtn: $('postBtn'), boardWho: $('boardWho'), boardSub: $('boardSub'), feed: $('feed'), feedEmpty: $('feedEmpty'),
     teamStats: $('teamStats'), myStats: $('myStats'), myStatsWho: $('myStatsWho'),
     hero: $('hero'), avatarBtn: $('avatarBtn'), statusBtn: $('statusBtn'), pop: $('pop'), avBg: $('avBg'), avForm: $('avForm'), avTitle: $('avTitle'), avPreview: $('avPreview'), avRandom: $('avRandom'), avOpts: $('avOpts'), avMsg: $('avMsg'), avCancel: $('avCancel'), avSave: $('avSave'),
     unlockForm: $('unlockForm'), unlockPw: $('unlockPw'), unlockHint: $('unlockHint'), adminLock: $('adminLock'),
@@ -798,6 +854,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (t === 'cal') { ensureEventsSub(); renderCal(); }
     if (t === 'admin') { refreshAdminUI(); if (!isAdmin) el.unlockPw.focus(); }
     if (t === 'stats') { el.myStatsWho.textContent = S.memberId ? memberName(S.memberId) : '작성자를 먼저 고르세요'; MY.load(); }
+    if (t === 'board') { ensurePostsSub(); el.boardWho.textContent = S.memberId ? memberName(S.memberId) + ' 으로 게시' : '작성자를 먼저 고르세요'; }
   }
   document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
 
@@ -834,7 +891,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     db.collection('members').orderBy('order').onSnapshot(snap => {
       S.members = snap.docs.map(x => ({ id: x.id, ...x.data() }));
       renderMembers(); renderAdminList('members', el.members, S.members); render();
-      renderStatusBtn(); if (window.__redrawScene) window.__redrawScene();
+      renderStatusBtn(); if (tab === 'board') renderFeed(); if (window.__redrawScene) window.__redrawScene();
     }, err => showBanner('작성자 목록을 불러오지 못했습니다 (' + err.code + ').'));
     db.collection('taskTypes').orderBy('order').onSnapshot(snap => {
       S.types = snap.docs.map(x => ({ id: x.id, ...x.data() }));
@@ -846,6 +903,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     }, err => showBanner('퀘스트 목록을 불러오지 못했습니다 (' + err.code + ').'));
     ensureWeekSub();
     if (tab === 'cal') ensureEventsSub();
+    if (tab === 'board') ensurePostsSub();
   }
 
   function ensureWeekSub() {
@@ -1244,6 +1302,95 @@ window.makeSupabaseDb = function (url, anonKey) {
     try { await db.doc('events/' + CAL.editingId).delete(); closeEvent(); }
     catch (e) { el.evMsg.textContent = '삭제하지 못했습니다.'; }
   }
+
+  // ---- board: posts/<id> = {text, images:[url], author, pinned, createdAt}; photos go to Supabase Storage bucket "board"
+  const BOARD = { posts: [], pending: [], unsub: null };
+  el.postForm.addEventListener('submit', submitPost);
+  el.postText.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); el.postForm.requestSubmit(); } });
+  el.postFiles.addEventListener('change', async () => {
+    for (const f of el.postFiles.files) { try { BOARD.pending.push({ name: f.name, blob: await shrinkImage(f) }); } catch (e) { setPostMsg('이미지를 읽지 못했습니다: ' + f.name, 'err'); } }
+    el.postFiles.value = ''; renderThumbs();
+  });
+  function setPostMsg(t, k) { el.postMsg.textContent = t; el.postMsg.className = 'msg ' + (k || ''); if (t && k) setTimeout(() => { if (el.postMsg.textContent === t) el.postMsg.textContent = ''; }, 4000); }
+  function renderThumbs() {
+    el.postThumbs.innerHTML = '';
+    BOARD.pending.forEach((p, i) => {
+      const t = document.createElement('div'); t.className = 't';
+      const img = document.createElement('img'); img.src = URL.createObjectURL(p.blob); img.alt = p.name;
+      const x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.title = '빼기'; x.addEventListener('click', () => { BOARD.pending.splice(i, 1); renderThumbs(); });
+      t.append(img, x); el.postThumbs.append(t);
+    });
+  }
+  // downscale to 1600px JPEG so uploads stay small
+  function shrinkImage(file) {
+    return new Promise((res, rej) => {
+      const img = new Image(); const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const max = 1600, k = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        c.toBlob(b => b ? res(b) : rej(new Error('encode')), 'image/jpeg', 0.85);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('decode')); }; img.src = url;
+    });
+  }
+  async function submitPost(ev) {
+    ev.preventDefault();
+    if (!db) { setPostMsg('저장소에 연결되지 않았습니다.', 'err'); return; }
+    if (!S.memberId) { setPostMsg('먼저 작성자(본인 이름)를 고르세요.', 'err'); el.member.focus(); return; }
+    const text = el.postText.value.trim();
+    if (!text && !BOARD.pending.length) { setPostMsg('내용이나 사진을 넣어 주세요.', 'err'); return; }
+    el.postBtn.disabled = true; setPostMsg('올리는 중…');
+    try {
+      const images = [];
+      for (const p of BOARD.pending) images.push(await window.__uploadImage(p.blob));
+      const now = new Date().toISOString();
+      await db.collection('posts').doc(newId('p')).set({ text, images, author: S.memberId, pinned: el.postPin.checked, createdAt: now, updatedAt: now });
+      el.postText.value = ''; el.postPin.checked = false; BOARD.pending = []; renderThumbs(); setPostMsg('게시했습니다.', 'ok');
+    } catch (e) { setPostMsg('올리지 못했습니다: ' + ((e && e.message) || (e && e.code) || ''), 'err'); }
+    finally { el.postBtn.disabled = false; }
+  }
+  function ensurePostsSub() {
+    if (!db || BOARD.unsub) return;
+    BOARD.unsub = db.collection('posts').orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => { BOARD.posts = snap.docs.map(x => ({ id: x.id, ...x.data() })); renderFeed(); },
+      err => showBanner('게시글을 불러오지 못했습니다 (' + err.code + ').'));
+  }
+  function linkify(text, node) {
+    const re = /(https?:\/\/[^\s<]+)/g; let last = 0, m;
+    while ((m = re.exec(text))) { node.append(text.slice(last, m.index)); const a = document.createElement('a'); a.href = m[1]; a.target = '_blank'; a.rel = 'noopener'; a.textContent = m[1]; node.append(a); last = m.index + m[1].length; }
+    node.append(text.slice(last));
+  }
+  function fmtWhen(iso) { const d = new Date(iso); if (isNaN(d)) return ''; const t = new Date(); const same = d.toDateString() === t.toDateString(); return (same ? '오늘 ' : (d.getMonth() + 1) + '/' + d.getDate() + ' ') + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+  function renderFeed() {
+    const posts = BOARD.posts.slice().sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || String(b.createdAt).localeCompare(String(a.createdAt)));
+    el.feed.innerHTML = ''; el.feedEmpty.hidden = posts.length > 0; el.boardSub.textContent = posts.length ? posts.length + '개' : '';
+    posts.forEach(p => {
+      const card = document.createElement('article'); card.className = 'post' + (p.pinned ? ' pinned' : '');
+      const head = document.createElement('div'); head.className = 'head';
+      const who = document.createElement('span'); who.className = 'who'; who.textContent = memberName(p.author);
+      const when = document.createElement('span'); when.textContent = fmtWhen(p.createdAt);
+      head.append(who, when);
+      if (p.pinned) { const pin = document.createElement('span'); pin.className = 'pin'; pin.textContent = '📌 고정'; head.append(pin); }
+      const sp = document.createElement('span'); sp.className = 'spacer'; head.append(sp);
+      if (p.author === S.memberId || isAdmin) {
+        const pinBtn = document.createElement('button'); pinBtn.type = 'button'; pinBtn.className = 'ghost'; pinBtn.textContent = p.pinned ? '고정 해제' : '고정';
+        pinBtn.addEventListener('click', () => safe(() => db.doc('posts/' + p.id).update({ pinned: !p.pinned })));
+        const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = '삭제';
+        del.addEventListener('click', () => { if (del.dataset.armed) { safe(() => db.doc('posts/' + p.id).delete()); return; } del.dataset.armed = '1'; del.textContent = '정말?'; setTimeout(() => { delete del.dataset.armed; del.textContent = '삭제'; }, 3000); });
+        head.append(pinBtn, del);
+      }
+      card.append(head);
+      if (p.text) { const body = document.createElement('div'); body.className = 'body'; linkify(String(p.text), body); card.append(body); }
+      const imgs = Array.isArray(p.images) ? p.images : [];
+      if (imgs.length) {
+        const pics = document.createElement('div'); pics.className = 'pics' + (imgs.length === 1 ? ' one' : '');
+        imgs.forEach(u => { const im = document.createElement('img'); im.src = u; im.loading = 'lazy'; im.alt = ''; im.addEventListener('click', () => openLightbox(u)); pics.append(im); });
+        card.append(pics);
+      }
+      el.feed.append(card);
+    });
+  }
+  function openLightbox(u) { const lb = document.createElement('div'); lb.className = 'lightbox'; const im = document.createElement('img'); im.src = u; lb.append(im); lb.addEventListener('click', () => lb.remove()); document.body.append(lb); }
 
   // ---- arrow keys walk the selected author's avatar across the field (←/→ walk, ↑ or space jump); position syncs
   let posTimer = null, posU = null;
