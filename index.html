@@ -210,7 +210,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     -webkit-font-smoothing: antialiased;
   }
   .wrap { max-width: 860px; margin: 0 auto; display: grid; gap: 20px; padding-top: 16px; min-width: 0; }
-  .wrap > *, .card, .sum, .sums { min-width: 0; }   /* grid children must not inherit the wide table's min-content width */
+  .wrap > *, .card, .sum, .sums, .admin-body > *, .admin-grid > *, #teamStats, #myStats, .team-tbl-wrap { min-width: 0; max-width: 100%; }   /* grid children must not inherit the wide table's min-content width */
   body { overflow-x: hidden; }
 
   /* hero: procedural voxel landscape; the page theme and the scene both follow the viewer's clock (day / dusk / night) */
