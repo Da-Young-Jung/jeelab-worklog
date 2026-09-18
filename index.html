@@ -224,8 +224,12 @@ window.makeSupabaseDb = function (url, anonKey) {
   .hero { position: relative; margin-inline: -16px; height: 400px; overflow: hidden; background: var(--bg); }
   /* a little plane tows the notice (pinned board posts) across the sky */
   .hero .flyer { position: absolute; top: 46px; left: 0; z-index: 5; display: flex; align-items: center; pointer-events: none; will-change: transform; }
-  .hero .flyer .banner { white-space: nowrap; font-size: 13.5px; font-weight: 700; color: #1E2A33; background: #fff; padding: 6px 12px; margin-inline: 3px; border-radius: 0;
-    box-shadow: 3px 0 0 0 #2A2A2A, -3px 0 0 0 #2A2A2A, 0 3px 0 0 #2A2A2A, 0 -3px 0 0 #2A2A2A, 0 0 0 3px #fff inset; image-rendering: pixelated; }
+  /* the towed flag: white cloth with a black pixel edge and a swallow-tail, flapping from its rope end */
+  .hero .flyer .banner { display: block; white-space: nowrap; font-size: 13.5px; font-weight: 700; color: #1E2A33; background: #2A2A2A; padding: 3px;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 50%, 100% 100%, 0 100%); transform-origin: 0 50%; animation: flap .6s ease-in-out infinite; }
+  .hero .flyer .banner span { display: block; background: #fff; padding: 5px 24px 5px 11px; clip-path: polygon(0 0, 100% 0, calc(100% - 13px) 50%, 100% 100%, 0 100%); }
+  @keyframes flap { 0%, 100% { transform: skewY(2.2deg) translateY(-1px); } 50% { transform: skewY(-2.2deg) translateY(1px); } }
+  @media (prefers-reduced-motion: reduce) { .hero .flyer .banner { animation: none; } }
   .hero .flyer .rope { width: 22px; height: 3px; background: #2A2A2A; }
   .hero .flyer canvas { width: 60px; height: 32px; image-rendering: pixelated; image-rendering: crisp-edges; margin-bottom: 10px; }
   .hero .wx { position: absolute; top: 10px; left: 12px; z-index: 6; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .9); background: rgba(10, 18, 28, .45); padding: 4px 9px; border-radius: 999px; backdrop-filter: blur(2px); }
@@ -556,7 +560,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   <canvas id="sky" aria-hidden="true"></canvas>
   <div class="tags" id="tags" aria-hidden="true"></div>
   <div class="pop" id="pop" hidden></div>
-  <div class="flyer" id="flyer" hidden aria-live="polite"><canvas id="plane" width="15" height="8" aria-hidden="true"></canvas><span class="rope"></span><span class="banner" id="bannerText"></span></div>
+  <div class="flyer" id="flyer" hidden aria-live="polite"><canvas id="plane" width="15" height="8" aria-hidden="true"></canvas><span class="rope"></span><span class="banner"><span id="bannerText"></span></span></div>
   <div class="wx" id="wx" hidden title="서울 현재 날씨 (Open-Meteo)"></div>
   <div class="pad" id="pad" hidden aria-label="아바타 이동"><button type="button" data-k="ArrowLeft" aria-label="왼쪽">◀</button><button type="button" data-k="ArrowUp" aria-label="점프">▲</button><button type="button" data-k="ArrowRight" aria-label="오른쪽">▶</button></div>
   <div class="theme-pick" id="themePick" role="group" aria-label="테마">
@@ -734,6 +738,15 @@ window.makeSupabaseDb = function (url, anonKey) {
           </form>
           <p class="hint">기록할 때 목록에서 고릅니다. 작성자도 기록하면서 "+ 새 퀘스트 추가…"로 여기에 올릴 수 있습니다.</p>
         </div>
+      </div>
+      <div>
+        <h3>✈️ 공지 (하늘 비행기 배너)</h3>
+        <ul class="items" id="notices"></ul>
+        <form class="add-item" id="addNotice">
+          <input id="newNotice" placeholder="새 공지 (한 줄)" maxlength="120" required>
+          <button type="submit">추가</button>
+        </form>
+        <p class="hint">여기 등록한 공지가 들판 위 비행기 배너로 날아갑니다. 여러 개면 ✦ 로 이어서 보여 주고, 없으면 비행기도 뜨지 않습니다.</p>
       </div>
       <div>
         <h3>관리자 비밀번호</h3>
@@ -945,8 +958,29 @@ window.makeSupabaseDb = function (url, anonKey) {
     }, err => showBanner('퀘스트 목록을 불러오지 못했습니다 (' + err.code + ').'));
     ensureWeekSub();
     if (tab === 'cal') ensureEventsSub();
-    ensurePostsSub();   // always: pinned posts feed the billboard above
+    ensurePostsSub();
+    db.collection('notices').onSnapshot(snap => { S.notices = snap.docs.map(x => ({ id: x.id, ...x.data() })).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))); renderNotices(); renderBanner(); },
+      err => showBanner('공지를 불러오지 못했습니다 (' + err.code + ').'));
   }
+  // ---- admin notices → the banner plane
+  S.notices = [];
+  function renderNotices() {
+    const ul = document.getElementById('notices'); if (!ul) return; ul.innerHTML = '';
+    if (!S.notices.length) { const li = document.createElement('li'); li.className = 'hint'; li.textContent = '등록된 공지가 없습니다.'; ul.append(li); return; }
+    S.notices.forEach(n => {
+      const li = document.createElement('li'); li.className = 'item-row';
+      const inp = document.createElement('input'); inp.value = n.text || ''; inp.maxLength = 120;
+      inp.addEventListener('change', () => { const text = inp.value.trim(); if (!text) { inp.value = n.text || ''; return; } safe(() => db.doc('notices/' + n.id).update({ text, updatedAt: new Date().toISOString() })); });
+      const ops = document.createElement('div'); ops.className = 'ops';
+      const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = '삭제';
+      del.addEventListener('click', () => { if (del.dataset.armed) { safe(() => db.doc('notices/' + n.id).delete()); return; } del.dataset.armed = '1'; del.textContent = '정말?'; setTimeout(() => { delete del.dataset.armed; del.textContent = '삭제'; }, 3000); });
+      ops.append(del); li.append(inp, ops); ul.append(li);
+    });
+  }
+  document.getElementById('addNotice').addEventListener('submit', (ev) => {
+    ev.preventDefault(); const inp = document.getElementById('newNotice'); const text = inp.value.trim(); if (!text) return;
+    safe(() => db.collection('notices').doc(newId('n')).set({ text, createdAt: new Date().toISOString(), createdBy: S.memberId || '' })); inp.value = '';
+  });
 
   function ensureWeekSub() {
     if (!db || !S.memberId) return;
@@ -1433,7 +1467,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   el.postCancel.addEventListener('click', resetComposer);
   function ensurePostsSub() {
     if (!db || BOARD.unsub) return;
-    BOARD.unsub = db.collection('posts').orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => { BOARD.posts = snap.docs.map(x => ({ id: x.id, ...x.data() })); renderSign(); if (tab === 'board') renderFeed(); },
+    BOARD.unsub = db.collection('posts').orderBy('createdAt', 'desc').limit(200).onSnapshot(snap => { BOARD.posts = snap.docs.map(x => ({ id: x.id, ...x.data() })); if (tab === 'board') renderFeed(); },
       err => showBanner('게시글을 불러오지 못했습니다 (' + err.code + ').'));
   }
   function linkify(text, node) {
@@ -1479,7 +1513,7 @@ window.makeSupabaseDb = function (url, anonKey) {
       el.feed.append(card);
     });
   }
-  // ---- notice plane: pinned posts' first lines on a towed banner, flying right → left every so often
+  // ---- notice plane: the admin notices on a towed banner, flying right → left every so often
   const FLY = { anim: null, text: '' };
   (function drawPlane() {
     const cv = document.getElementById('plane'); if (!cv) return; const c = cv.getContext('2d');
@@ -1489,8 +1523,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   })();
   function renderBanner() {
     const fl = document.getElementById('flyer'), txt = document.getElementById('bannerText'), hero = document.getElementById('hero'); if (!fl || !txt) return;
-    const pinned = BOARD.posts.filter(p => p.pinned && p.text).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
-    const parts = pinned.map(p => String(p.text).split('\n').map(x => x.trim()).filter(Boolean)[0]).filter(Boolean).map(x => x.length > 70 ? x.slice(0, 69) + '…' : x);
+    const parts = (S.notices || []).map(n => String(n.text || '').trim()).filter(Boolean);
     const text = parts.join('   ✦   ');
     if (!text) { fl.hidden = true; if (FLY.anim) { FLY.anim.cancel(); FLY.anim = null; } FLY.text = ''; return; }
     if (text === FLY.text && FLY.anim && !fl.hidden) return;
@@ -1503,7 +1536,6 @@ window.makeSupabaseDb = function (url, anonKey) {
       { transform: 'translateX(' + (-w) + 'px)', offset: 1 },
     ], { duration: flight + pause, iterations: Infinity });
   }
-  function renderSign() { renderBanner(); }
   addEventListener('resize', () => { FLY.text = ''; renderBanner(); });
 
   // ---- reactions + comments live inside the post document (small arrays; read-modify-write)
