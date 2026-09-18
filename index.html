@@ -2215,14 +2215,17 @@ window.__I18N = {
   }
   function drawSeason(P, season) {
     if (reduce || (season !== 'spring' && season !== 'autumn')) return;
-    const T = terrain, J = T.jitter, n = Math.round(W * H / (season === 'spring' ? 110 : 140));
+    // petals / leaves let go from the tree tops and drift slowly left → right, sinking a little as they go
+    const T = terrain, J = T.jitter, trees = T.trees.filter(tr => Math.round(T.near[tr.x]) <= T.water); if (!trees.length) return;
     const cols = season === 'spring' ? ['rgba(255,190,215,.95)', 'rgba(255,215,230,.9)', 'rgba(240,150,190,.9)'] : ['rgba(230,130,40,.95)', 'rgba(200,60,40,.9)', 'rgba(235,195,60,.9)', 'rgba(150,90,40,.9)'];
+    const n = Math.round(trees.length * 1.5), life = 140;
     for (let i = 0; i < n; i++) {
-      const j = J[(i * 7919) % J.length], j2 = J[(i * 104729 + 13) % J.length];
-      const y = ((j2 * H * 4 + t * 0.55 + i) % (H + 4)) - 2;
-      const x = ((j * W + Math.sin((t + i * 3) / 7) * 3 - t * 0.25) % W + W) % W | 0;
-      if (y < 0 || y >= Math.round(T.near[x])) continue;
-      ctx.fillStyle = cols[i % cols.length]; ctx.fillRect(x, y | 0, 1, 1);
+      const tr = trees[i % trees.length], j = J[(i * 7919) % J.length], j2 = J[(i * 104729 + 13) % J.length];
+      const ph = (t * 0.8 + j * life) % life;                       // where this one is in its fall
+      const gy = Math.round(T.near[tr.x]), x0 = tr.x + Math.round((j2 - 0.5) * 2 * tr.w), y0 = gy - tr.h - tr.w / 2;
+      const x = x0 + ph * 0.32 + Math.sin(ph / 6 + i) * 1.2, y = y0 + ph * 0.09 + Math.sin(ph / 9 + i * 2) * 0.8;
+      if (x < 0 || x >= W || y >= Math.round(T.near[Math.min(W - 1, Math.max(0, x | 0))])) continue;
+      ctx.fillStyle = cols[i % cols.length]; ctx.fillRect(x | 0, y | 0, 1, 1);
     }
   }
   function phaseNow() { return (window.__worklogPhase && window.__worklogPhase()) || document.documentElement.getAttribute('data-phase') || 'day'; }
