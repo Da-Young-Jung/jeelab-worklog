@@ -570,7 +570,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     <select id="member" aria-label="작성자 선택"></select>
     <button type="button" class="av-btn" id="avatarBtn">내 아바타</button>
     <button type="button" class="av-btn status-btn" id="statusBtn" title="내 상태 메시지">💬 상태</button>
-    <span class="keys" title="키보드 ←/→ 로 걷기, ↑ 점프, ↓ 앉기 · 아바타 클릭 = 상태 보기">← → 걷기 · ↑ 점프 · ↓ 앉기 · 클릭 = 상태</span>
+    <span class="keys" title="키보드 ←/→ 로 걷기, ↑ 점프, ↓ 앉기 (그네·자전거 앞에서는 타기/내리기, 자전거에서 ↑ = 자동 주행) · 아바타 클릭 = 상태 보기">← → 걷기 · ↑ 점프 · ↓ 앉기/타기 · 클릭 = 상태</span>
   </div>
 </header>
 
@@ -1225,6 +1225,8 @@ window.__I18N = {
     user = null; canEditArtifact = false;
     if (!db) { showBanner(tx('저장소(Supabase)에 연결되지 않았습니다 — 페이지를 새로고침해 주세요.')); setWritable(false); return; }
     refreshAdminUI();
+    // the shared bicycle: settings/bike = { u, riderId, dir }
+    db.doc('settings/bike').onSnapshot(snap => { if (window.__sceneBike) window.__sceneBike(snap.exists ? (snap.data() || {}) : {}); }, () => {});
     db.doc('settings/admin').onSnapshot(snap => { adminHash = snap.exists ? String((snap.data() || {}).hash || '') : ''; refreshAdminUI(); },
       () => { adminHash = ''; refreshAdminUI(); });
 
@@ -1842,31 +1844,45 @@ window.__I18N = {
       posU = u; clearTimeout(posTimer); posTimer = setTimeout(savePos, 600); return true;
     }
     if (key === 'ArrowDown') {
+      stopCruise();
+      const bike = window.__sceneBikeState ? window.__sceneBikeState(S.memberId) : null;   // 'riding' | 'near' | null
+      if (bike === 'riding') { const u = posU != null ? posU : window.__scenePosOf(S.memberId); bikeWrite({ riderId: null, u: Math.round(u * 1000) / 1000, dir: window.__sceneDir ? window.__sceneDir() : 1 }); return true; }
+      if (bike === 'near') { bikeWrite({ riderId: S.memberId, dir: window.__sceneDir ? window.__sceneDir() : 1 }); return true; }
       const on = window.__sceneSit ? window.__sceneSit(S.memberId) : null; if (on == null) return false;
       if (db) db.doc('members/' + S.memberId).update({ sit: on }).catch(() => {}); return true;
     }
+    if (window.__sceneBikeState && window.__sceneBikeState(S.memberId) === 'riding') { toggleCruise(); return true; }   // ↑ on the bike = cruise on/off
     if (window.__sceneJump) window.__sceneJump(S.memberId); return true;
+  }
+  function bikeWrite(patch) { if (!db) return; const ref = db.doc('settings/bike'); ref.update(patch).catch(() => ref.set(Object.assign({ u: 0.15, riderId: null, dir: 1 }, patch)).catch(() => {})); }
+  // cruise: keep pedalling in the facing direction until the edge / the shore / any key
+  let cruiseTimer = null;
+  function stopCruise() { clearInterval(cruiseTimer); cruiseTimer = null; }
+  function toggleCruise() {
+    if (cruiseTimer) { stopCruise(); return; }
+    const dir = window.__sceneDir ? window.__sceneDir() : 1;
+    cruiseTimer = setInterval(() => { if (!steer(dir > 0 ? 'ArrowRight' : 'ArrowLeft')) stopCruise(); }, 140);
   }
   function stopWalk() { clearInterval(walkTimer); walkTimer = null; }
   // walk to a fraction of the field width, one step per tick (tap / click on the ground)
   function walkTo(u) {
-    stopWalk(); if (!S.memberId || !window.__scenePosOf) return;
+    stopWalk(); stopCruise(); if (!S.memberId || !window.__scenePosOf) return;
     walkTimer = setInterval(() => {
       const cur = posU != null ? posU : window.__scenePosOf(S.memberId);
-      if (cur == null || Math.abs(cur - u) * (window.__sceneW || 200) < 1 || !steer(u > cur ? 'ArrowRight' : 'ArrowLeft')) stopWalk();
+      if (cur == null || Math.abs(cur - u) * (window.__sceneW || 200) < 3 || !steer(u > cur ? 'ArrowRight' : 'ArrowLeft')) stopWalk();
     }, 70);
   }
   document.addEventListener('keydown', (e) => {
     const tag = (e.target && e.target.tagName) || '';
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable) return;
     if (!el.sheetBg.hidden || !el.avBg.hidden || !S.memberId) return;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); stopWalk(); steer(e.key === ' ' ? 'ArrowUp' : e.key); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); stopWalk(); if (e.key !== 'ArrowUp' && e.key !== ' ') stopCruise(); steer(e.key === ' ' ? 'ArrowUp' : e.key); }
   });
   // touch pad: press = one step, hold = keep walking
   document.querySelectorAll('#pad button').forEach(b => {
     let rep = null; const k = b.dataset.k;
     const stop = () => { clearInterval(rep); rep = null; };
-    b.addEventListener('pointerdown', (e) => { e.preventDefault(); stopWalk(); steer(k); stop(); if (k === 'ArrowLeft' || k === 'ArrowRight') rep = setInterval(() => steer(k), 90); });
+    b.addEventListener('pointerdown', (e) => { e.preventDefault(); stopWalk(); if (k !== 'ArrowUp') stopCruise(); steer(k); stop(); if (k === 'ArrowLeft' || k === 'ArrowRight') rep = setInterval(() => steer(k), 90); });
     ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, stop));
     b.addEventListener('contextmenu', (e) => e.preventDefault());
   });
@@ -2565,6 +2581,28 @@ window.__I18N = {
   const tagsEl = document.getElementById('tags'); let tagSig = '';
   // live state for the author being steered with the arrow keys (position is also saved to the member doc)
   const MOVE = { id: null, u: null, lastMove: 0, jumpAt: 0, pumpAt: 0, dir: 1, sit: null };
+  // the shared bicycle (settings/bike): parked at u, or carried along by its rider; whoever rides moves three columns per step
+  const BIKE = { u: 0.15, riderId: null, dir: 1 };
+  window.__sceneBike = (d) => { BIKE.u = typeof d.u === 'number' ? d.u : BIKE.u; BIKE.riderId = d.riderId || null; BIKE.dir = d.dir < 0 ? -1 : 1; if (terrain) draw(); };
+  window.__sceneDir = () => MOVE.dir;
+  function bikeParkX() { return nearestLand(Math.min(W - 10, Math.max(3, Math.round(BIKE.u * W)))); }
+  window.__sceneBikeState = (id) => {
+    if (!terrain) return null; if (BIKE.riderId === id) return 'riding'; if (BIKE.riderId) return null;
+    const sl = memberSlots().find(s => s.m.id === id); return sl && !sl.swim && Math.abs(sl.x - bikeParkX()) <= 3 ? 'near' : null;
+  };
+  function drawBike(P, x, fy, dir, spin) {
+    const L = P.light, px = (dx, y, c) => { ctx.fillStyle = css([c[0] * L, c[1] * L, c[2] * L]); ctx.fillRect(x + dir * dx, y, 1, 1); };
+    const frame = [60, 120, 190], tyre = [40, 40, 40], rim = [170, 175, 180];
+    [-4, 4].forEach(cx => {                                                    // wheels: ring of 8 + a turning spoke
+      [[-2, 0], [2, 0], [0, -2], [0, 2], [-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([a, b]) => px(cx + a, fy - 3 + b, tyre));
+      const sp = [[1, 0], [0, -1], [-1, 0], [0, 1]][spin ? (t % 4) : 0]; px(cx + sp[0], fy - 3 + sp[1], rim); px(cx, fy - 3, rim);
+    });
+    px(-2, fy - 4, frame); px(-1, fy - 5, frame); px(0, fy - 6, frame); px(1, fy - 5, frame); px(2, fy - 4, frame);   // frame triangle
+    px(0, fy - 4, frame); px(0, fy - 5, frame); px(3, fy - 5, frame); px(4, fy - 6, frame);
+    px(-1, fy - 7, [40, 40, 40]); px(0, fy - 7, [40, 40, 40]);                                         // saddle
+    px(4, fy - 7, [170, 175, 180]); px(5, fy - 7, [170, 175, 180]);                                     // handlebar
+    px(0, fy - 3, [90, 90, 90]);                                                                        // pedal crank
+  }
   function groundAt(x) { return Math.round(terrain.near[Math.min(W - 1, Math.max(0, x))]); }
   // dry columns of the near ground (the lake and any other dip below the waterline are excluded)
   function landColumns() {
@@ -2585,12 +2623,13 @@ window.__I18N = {
       else if (typeof m.pos === 'number' && m.pos >= 0 && m.pos <= 1) x = Math.min(W - 10, Math.max(3, Math.round(m.pos * W)));
       else x = land.length ? land[Math.min(land.length - 1, Math.floor((i + 0.5) / ms.length * land.length))] : Math.round(W * 0.2);
       const fy = groundAt(x), wy = terrain.water | 0, swim = fy > terrain.water;
-      const sit = !swim && (MOVE.id === m.id && MOVE.sit != null ? MOVE.sit : !!m.sit);
+      const riding = !swim && BIKE.riderId === m.id;
+      const sit = !swim && !riding && (MOVE.id === m.id && MOVE.sit != null ? MOVE.sit : !!m.sit);
       // swimmers float on the surface row; `top` is where the name tag hangs
-      return { m, x, fy: swim ? wy + 2 : fy, swim, sit, top: swim ? wy - 6 : fy - (sit ? 14 : 18) };
+      return { m, x, fy: swim ? wy + 2 : fy, swim, sit, riding, top: swim ? wy - 6 : fy - (riding ? 21 : sit ? 14 : 18) };
     }).map(sl => {
       // sitting down (↓) at a free swing seat = riding it; the seat takes over from the plain sitting pose
-      if (!sl.swim && sl.sit) { const g = swingGeom(); SWING.seats.forEach((d, k) => { if (sl.seat == null && !taken.has(k) && Math.abs(sl.x - (g.xs + d)) <= 1) { taken.add(k); sl.seat = k; sl.sit = false; sl.top = sl.fy - 22; } }); }
+      if (!sl.swim && sl.sit && !sl.riding) { const g = swingGeom(); SWING.seats.forEach((d, k) => { if (sl.seat == null && !taken.has(k) && Math.abs(sl.x - (g.xs + d)) <= 1) { taken.add(k); sl.seat = k; sl.sit = false; sl.top = sl.fy - 22; } }); }
       return sl;
     });
   }
@@ -2605,6 +2644,7 @@ window.__I18N = {
       return amp * Math.sin((me ? now / 380 : t / 2.7) + k * 1.3);
     };
     const seatAt = {}; SWING.seats.forEach((d, k) => { const rider = slots.find(sl => sl.seat === k); seatAt[k] = drawSeat(P, k, angle(k, rider && MOVE.id === rider.m.id)); });
+    if (!slots.some(sl => sl.riding)) { const bx = bikeParkX(); drawBike(P, bx, groundAt(bx), BIKE.dir, false); }   // parked bike
     slots.forEach((sl, i) => {
       const warm = P.warm * Math.max(0, 1 - Math.abs(sl.x - Math.round(W * P.sunX)) / (W * 0.5));
       if (sl.seat != null) {                // sitting on the swing: torso on the seat, legs dangling
@@ -2627,6 +2667,12 @@ window.__I18N = {
       if (MOVE.id === sl.m.id) {
         if (now - MOVE.lastMove < 350) bob = (Math.floor(now / 120) % 2);          // walking: quick step bob
         const j = (now - MOVE.jumpAt) / 520; if (j >= 0 && j < 1) bob += Math.round(16 * j * (1 - j)); // jump arc, 4 units high
+      }
+      if (sl.riding) {                     // on the bike: seated pose over the saddle, wheels spin while moving
+        const me = MOVE.id === sl.m.id, dir = me ? MOVE.dir : BIKE.dir, moving = me ? now - MOVE.lastMove < 350 : ((t % 2) === 0);
+        drawBike(P, sl.x, sl.fy, dir, moving);
+        drawAvatar(ctx, sl.x - 2 - (dir > 0 ? 1 : -1), sl.fy - 5, sl.m.avatar, P.light, warm, 0, { sit: true, noPet: true, noItem: true });
+        return;
       }
       drawAvatar(ctx, sl.x - 2, sl.fy, sl.m.avatar, P.light, warm, sl.sit ? 0 : bob, { sit: sl.sit });
       if (sl.sit) drawFishing(sl, i, P);
@@ -2660,8 +2706,11 @@ window.__I18N = {
   window.__sceneMove = (id, u, dir) => {
     if (!terrain) return null;
     MOVE.id = id; const cur = u == null ? (memberSlots().find(s => s.m.id === id) || { x: Math.round(W * 0.2) }).x : Math.round(u * W);
-    const nx = cur + dir;
-    if (nx < 3 || nx > W - 10) return null;
+    let nx = cur + dir;
+    if (BIKE.riderId === id) {   // bike: three columns, stopping at the shore or the edge
+      nx = cur; for (let k = 0; k < 3; k++) { const c = nx + dir; if (c < 3 || c > W - 10 || groundAt(c) > terrain.water) break; nx = c; }
+      if (nx === cur) return null;
+    } else if (nx < 3 || nx > W - 10) return null;
     MOVE.u = nx / W; MOVE.dir = dir; MOVE.sit = false; MOVE.lastMove = Date.now(); draw(); return MOVE.u;
   };
   window.__sceneJump = (id) => {
