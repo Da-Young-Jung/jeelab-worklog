@@ -1889,10 +1889,25 @@ window.makeSupabaseDb = function (url, anonKey) {
     const lines = [], stars = new Map(); const sx = 2.2, sy = 2, gap = 9.5, x0 = 6, y0 = 14;
     [...'JEELAB'].forEach((ch, i) => L[ch].forEach(pl => {
       const pts = pl.map(([x, y]) => [x0 + i * gap + x * sx, y0 + y * sy]);
-      pts.forEach(pt => stars.set(pt.join(','), pt)); for (let k = 1; k < pts.length; k++) lines.push([pts[k - 1], pts[k]]);
+      // a star at every vertex plus one every ~2 units along each stroke, so the letters read as dotted lines
+      pts.forEach(pt => stars.set(Math.round(pt[0]) + ',' + Math.round(pt[1]), pt));
+      for (let k = 1; k < pts.length; k++) { const [p, q] = [pts[k - 1], pts[k]], n = Math.max(1, Math.round(Math.hypot(q[0] - p[0], q[1] - p[1]) / 2)); for (let j = 1; j < n; j++) { const pt = [p[0] + (q[0] - p[0]) * j / n, p[1] + (q[1] - p[1]) * j / n]; stars.set(Math.round(pt[0]) + ',' + Math.round(pt[1]), pt); } lines.push([p, q]); }
     }));
     return { lines, stars: [...stars.values()] };
   })();
+  // shooting stars at night: one at a time, a few seconds apart, streaking down-left across the upper sky
+  const METEOR = { on: false, x: 0, y: 0, vx: -3, vy: 1.4, age: 0, next: 30 };
+  function drawMeteor() {
+    if (!METEOR.on) { if (t >= METEOR.next) { METEOR.on = true; METEOR.age = 0; METEOR.x = W * (0.3 + 0.7 * Math.random()); METEOR.y = 2 + Math.random() * H * 0.2; METEOR.vx = -(2.5 + Math.random() * 2); METEOR.vy = 0.8 + Math.random() * 1.2; } else return; }
+    const horizon = terrain.far[Math.max(0, Math.min(W - 1, Math.round(METEOR.x)))];
+    for (let k = 0; k < 7; k++) {   // head + fading tail
+      const x = Math.round(METEOR.x - METEOR.vx * k * 0.6), y = Math.round(METEOR.y - METEOR.vy * k * 0.6);
+      if (x < 0 || x >= W || y < 0) continue;
+      ctx.fillStyle = 'rgba(255,255,255,' + (k === 0 ? 1 : (0.7 * (1 - k / 7))).toFixed(2) + ')'; ctx.fillRect(x, y, 1, 1);
+    }
+    METEOR.x += METEOR.vx; METEOR.y += METEOR.vy; METEOR.age++;
+    if (METEOR.age > 12 || METEOR.x < 0 || METEOR.y > horizon - 4) { METEOR.on = false; METEOR.next = t + 40 + Math.floor(Math.random() * 120); }  // next one in 6–22 s
+  }
   function drawConstellation(a) {
     if (WX.kind === 'fog' || WX.kind === 'storm') a *= 0.5;
     CONST.stars.forEach((p, i) => {
@@ -1994,6 +2009,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (P.stars) T.stars.forEach(s => { if (s.y < T.far[Math.floor(s.x)] - 2 && s.b < 0.4 + 0.6 * P.stars) { const tw = night && ((s.x + s.y + t) | 0) % 23 === 0 ? 0.3 : 1; ctx.fillStyle = 'rgba(255,255,255,' + ((0.35 + 0.6 * s.b) * P.stars * tw).toFixed(2) + ')'; ctx.fillRect(s.x | 0, s.y | 0, 1, 1); } });
     // "JEELAB" constellation in the top-left sky: stars at the letter vertices (bright at night, faint by day)
     drawConstellation(P.stars ? 0.7 + 0.3 * P.stars : 0.5);
+    if (night && !reduce) drawMeteor();
     // sun block (hidden in rain / snow / fog)
     if (!{ rain: 1, storm: 1, snow: 1, fog: 1 }[WX.kind]) ctx.fillStyle = css(P.sun), ctx.fillRect(sunX - 2, sunY - 2, 5, 5);
     if ({ rain: 1, storm: 1, snow: 1, fog: 1 }[WX.kind]) {} else if (night) { ctx.fillStyle = css(P.skyTop); ctx.fillRect(sunX + 1, sunY - 2, 2, 3); ctx.fillRect(sunX, sunY - 2, 1, 1); } // crescent bite
