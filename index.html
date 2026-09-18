@@ -1886,12 +1886,12 @@ window.makeSupabaseDb = function (url, anonKey) {
       A: [[[0, 5], [1.5, 0], [3, 5]], [[0.75, 2.5], [2.25, 2.5]]],
       B: [[[0, 0], [0, 5], [2, 5], [3, 4], [2, 2.5], [0, 2.5]], [[0, 0], [2, 0], [3, 1], [2, 2.5]]],
     };
-    const lines = [], stars = new Map(); const sx = 2.2, sy = 2, gap = 9.5, x0 = 6, y0 = 14;
+    const lines = [], stars = new Map(); const sx = 1.6, sy = 1.4, gap = 7, x0 = 6, y0 = 14;
     [...'JEELAB'].forEach((ch, i) => L[ch].forEach(pl => {
       const pts = pl.map(([x, y]) => [x0 + i * gap + x * sx, y0 + y * sy]);
       // a star at every vertex plus one every ~2 units along each stroke, so the letters read as dotted lines
       pts.forEach(pt => stars.set(Math.round(pt[0]) + ',' + Math.round(pt[1]), pt));
-      for (let k = 1; k < pts.length; k++) { const [p, q] = [pts[k - 1], pts[k]], n = Math.max(1, Math.round(Math.hypot(q[0] - p[0], q[1] - p[1]) / 2)); for (let j = 1; j < n; j++) { const pt = [p[0] + (q[0] - p[0]) * j / n, p[1] + (q[1] - p[1]) * j / n]; stars.set(Math.round(pt[0]) + ',' + Math.round(pt[1]), pt); } lines.push([p, q]); }
+      for (let k = 1; k < pts.length; k++) { const [p, q] = [pts[k - 1], pts[k]], n = Math.max(1, Math.round(Math.hypot(q[0] - p[0], q[1] - p[1]) / 1.5)); for (let j = 1; j < n; j++) { const pt = [p[0] + (q[0] - p[0]) * j / n, p[1] + (q[1] - p[1]) * j / n]; stars.set(Math.round(pt[0]) + ',' + Math.round(pt[1]), pt); } lines.push([p, q]); }
     }));
     return { lines, stars: [...stars.values()] };
   })();
