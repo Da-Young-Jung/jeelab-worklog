@@ -1886,7 +1886,7 @@ window.makeSupabaseDb = function (url, anonKey) {
       A: [[[0, 5], [1.5, 0], [3, 5]], [[0.75, 2.5], [2.25, 2.5]]],
       B: [[[0, 0], [0, 5], [2, 5], [3, 4], [2, 2.5], [0, 2.5]], [[0, 0], [2, 0], [3, 1], [2, 2.5]]],
     };
-    const lines = [], stars = new Map(); const sx = 2.2, sy = 2, gap = 9.5, x0 = 6, y0 = 9;
+    const lines = [], stars = new Map(); const sx = 2.2, sy = 2, gap = 9.5, x0 = 6, y0 = 14;
     [...'JEELAB'].forEach((ch, i) => L[ch].forEach(pl => {
       const pts = pl.map(([x, y]) => [x0 + i * gap + x * sx, y0 + y * sy]);
       pts.forEach(pt => stars.set(pt.join(','), pt)); for (let k = 1; k < pts.length; k++) lines.push([pts[k - 1], pts[k]]);
@@ -1895,8 +1895,6 @@ window.makeSupabaseDb = function (url, anonKey) {
   })();
   function drawConstellation(a) {
     if (WX.kind === 'fog' || WX.kind === 'storm') a *= 0.5;
-    ctx.save(); ctx.strokeStyle = 'rgba(255,255,255,' + (0.35 * a).toFixed(2) + ')'; ctx.lineWidth = 0.5; ctx.beginPath();
-    CONST.lines.forEach(([p, q]) => { ctx.moveTo(p[0] + 0.5, p[1] + 0.5); ctx.lineTo(q[0] + 0.5, q[1] + 0.5); }); ctx.stroke(); ctx.restore();
     CONST.stars.forEach((p, i) => {
       const tw = reduce ? 1 : 0.75 + 0.25 * Math.sin(t / 3 + i * 1.7);
       const x = Math.round(p[0]), y = Math.round(p[1]);
@@ -1994,7 +1992,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     }
     // stars (dark only)
     if (P.stars) T.stars.forEach(s => { if (s.y < T.far[Math.floor(s.x)] - 2 && s.b < 0.4 + 0.6 * P.stars) { const tw = night && ((s.x + s.y + t) | 0) % 23 === 0 ? 0.3 : 1; ctx.fillStyle = 'rgba(255,255,255,' + ((0.35 + 0.6 * s.b) * P.stars * tw).toFixed(2) + ')'; ctx.fillRect(s.x | 0, s.y | 0, 1, 1); } });
-    // "JEELAB" constellation in the top-left sky: stars at the letter vertices, faint lines between (bright at night, faint by day)
+    // "JEELAB" constellation in the top-left sky: stars at the letter vertices (bright at night, faint by day)
     drawConstellation(P.stars ? 0.7 + 0.3 * P.stars : 0.5);
     // sun block (hidden in rain / snow / fog)
     if (!{ rain: 1, storm: 1, snow: 1, fog: 1 }[WX.kind]) ctx.fillStyle = css(P.sun), ctx.fillRect(sunX - 2, sunY - 2, 5, 5);
