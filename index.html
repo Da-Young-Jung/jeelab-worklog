@@ -236,6 +236,11 @@ window.makeSupabaseDb = function (url, anonKey) {
   .hero .bubble::after { content: ""; position: absolute; left: 50%; bottom: -9px; width: 12px; height: 6px; margin-left: -6px; background: #fff; box-shadow: 3px 0 0 0 #2A2A2A, -3px 0 0 0 #2A2A2A; }
   .hero .bubble::before { content: ""; position: absolute; left: 50%; bottom: -15px; width: 6px; height: 6px; margin-left: -3px; background: #fff; box-shadow: 3px 0 0 0 #2A2A2A, -3px 0 0 0 #2A2A2A, 0 3px 0 0 #2A2A2A; }
   .hero canvas { cursor: pointer; }
+  /* on-screen ◀ ▲ ▶ for touch devices (keyboard arrows do the same on desktop) */
+  .hero .pad { position: absolute; left: 10px; bottom: 10px; z-index: 6; display: none; gap: 6px; }
+  .hero .pad button { width: 42px; height: 42px; border: 0; border-radius: 10px; background: rgba(10, 18, 28, .5); color: #fff; font-size: 16px; touch-action: manipulation; user-select: none; -webkit-user-select: none; backdrop-filter: blur(2px); }
+  .hero .pad button:active { background: rgba(255, 255, 255, .9); color: #1E2A33; }
+  @media (hover: none), (pointer: coarse) { .hero .pad:not([hidden]) { display: flex; } }
   .pop { position: absolute; z-index: 5; transform: translateX(-50%); background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 10px 12px; min-width: 170px; max-width: 240px; display: grid; gap: 6px; font-size: 13px; }
   .pop .nm { font-weight: 700; font-size: 14px; }
   .pop .st { color: var(--muted); font-size: 12.5px; white-space: pre-wrap; overflow-wrap: anywhere; }
@@ -528,6 +533,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   <canvas id="sky" aria-hidden="true"></canvas>
   <div class="tags" id="tags" aria-hidden="true"></div>
   <div class="pop" id="pop" hidden></div>
+  <div class="pad" id="pad" hidden aria-label="아바타 이동"><button type="button" data-k="ArrowLeft" aria-label="왼쪽">◀</button><button type="button" data-k="ArrowUp" aria-label="점프">▲</button><button type="button" data-k="ArrowRight" aria-label="오른쪽">▶</button></div>
   <div class="theme-pick" id="themePick" role="group" aria-label="테마">
     <button type="button" data-mode="auto">자동</button><button type="button" data-mode="day">낮</button><button type="button" data-mode="dusk">저녁</button><button type="button" data-mode="night">밤</button>
   </div>
@@ -898,7 +904,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     db.collection('members').orderBy('order').onSnapshot(snap => {
       S.members = snap.docs.map(x => ({ id: x.id, ...x.data() }));
       renderMembers(); renderAdminList('members', el.members, S.members); render();
-      renderStatusBtn(); renderBoardWho(); if (tab === 'board') renderFeed(); if (window.__redrawScene) window.__redrawScene();
+      renderStatusBtn(); renderBoardWho(); renderPad(); if (tab === 'board') renderFeed(); if (window.__redrawScene) window.__redrawScene();
     }, err => showBanner('작성자 목록을 불러오지 못했습니다 (' + err.code + ').'));
     db.collection('taskTypes').orderBy('order').onSnapshot(snap => {
       S.types = snap.docs.map(x => ({ id: x.id, ...x.data() }));
@@ -962,7 +968,7 @@ window.makeSupabaseDb = function (url, anonKey) {
 
   function selectMember(id) {
     S.memberId = id; try { localStorage.setItem('worklog.member', S.memberId); } catch (e) {}
-    posU = null; if (window.__sceneSelect) window.__sceneSelect(id); renderStatusBtn(); renderBoardWho(); if (tab === 'board') renderFeed();
+    posU = null; if (window.__sceneSelect) window.__sceneSelect(id); renderStatusBtn(); renderBoardWho(); renderPad(); if (tab === 'board') renderFeed();
     stopEditing(); S.week = []; subscribedKey = null; ensureWeekSub(); renderMembers(); render();
     if (tab === 'stats') { el.myStatsWho.textContent = S.memberId ? memberName(S.memberId) : '작성자를 먼저 고르세요'; MY.load(); }
   }
@@ -1424,19 +1430,41 @@ window.makeSupabaseDb = function (url, anonKey) {
   function openLightbox(u) { const lb = document.createElement('div'); lb.className = 'lightbox'; const im = document.createElement('img'); im.src = u; lb.append(im); lb.addEventListener('click', () => lb.remove()); document.body.append(lb); }
 
   // ---- arrow keys walk the selected author's avatar across the field (←/→ walk, ↑ or space jump); position syncs
-  let posTimer = null, posU = null;
+  let posTimer = null, posU = null, walkTimer = null;
+  // one step (or jump) for the selected author; shared by keyboard, the touch pad and tap-to-walk
+  function steer(key) {
+    if (!S.memberId) return false;
+    if (key === 'ArrowLeft' || key === 'ArrowRight') {
+      const u = window.__sceneMove ? window.__sceneMove(S.memberId, posU, key === 'ArrowLeft' ? -1 : 1) : null;
+      if (u == null) return false;
+      posU = u; clearTimeout(posTimer); posTimer = setTimeout(savePos, 600); return true;
+    }
+    if (window.__sceneJump) window.__sceneJump(S.memberId); return true;
+  }
+  function stopWalk() { clearInterval(walkTimer); walkTimer = null; }
+  // walk to a fraction of the field width, one step per tick (tap / click on the ground)
+  function walkTo(u) {
+    stopWalk(); if (!S.memberId || !window.__scenePosOf) return;
+    walkTimer = setInterval(() => {
+      const cur = posU != null ? posU : window.__scenePosOf(S.memberId);
+      if (cur == null || Math.abs(cur - u) * (window.__sceneW || 200) < 1 || !steer(u > cur ? 'ArrowRight' : 'ArrowLeft')) stopWalk();
+    }, 70);
+  }
   document.addEventListener('keydown', (e) => {
     const tag = (e.target && e.target.tagName) || '';
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable) return;
     if (!el.sheetBg.hidden || !el.avBg.hidden || !S.memberId) return;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-      e.preventDefault();
-      const u = window.__sceneMove ? window.__sceneMove(S.memberId, posU, e.key === 'ArrowLeft' ? -1 : 1) : null;
-      if (u != null) { posU = u; clearTimeout(posTimer); posTimer = setTimeout(savePos, 600); }
-    } else if (e.key === 'ArrowUp' || e.key === ' ') {
-      e.preventDefault(); if (window.__sceneJump) window.__sceneJump(S.memberId);
-    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === ' ') { e.preventDefault(); stopWalk(); steer(e.key === ' ' ? 'ArrowUp' : e.key); }
   });
+  // touch pad: press = one step, hold = keep walking
+  document.querySelectorAll('#pad button').forEach(b => {
+    let rep = null; const k = b.dataset.k;
+    const stop = () => { clearInterval(rep); rep = null; };
+    b.addEventListener('pointerdown', (e) => { e.preventDefault(); stopWalk(); steer(k); stop(); if (k !== 'ArrowUp') rep = setInterval(() => steer(k), 90); });
+    ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => b.addEventListener(ev, stop));
+    b.addEventListener('contextmenu', (e) => e.preventDefault());
+  });
+  function renderPad() { const pad = document.getElementById('pad'); if (pad) pad.hidden = !S.memberId; }
   async function savePos() {
     if (!db || !S.memberId || posU == null) return;
     const u = posU; try { await db.doc('members/' + S.memberId).update({ pos: Math.round(u * 1000) / 1000 }); } catch (e) {}
@@ -1491,7 +1519,8 @@ window.makeSupabaseDb = function (url, anonKey) {
   document.getElementById('sky').addEventListener('click', (e) => {
     const r = e.currentTarget.getBoundingClientRect();
     const hit = window.__sceneHit ? window.__sceneHit(e.clientX - r.left, e.clientY - r.top) : null;
-    if (hit) { e.stopPropagation(); openPop(hit, e.clientX - r.left); } else closePop();
+    if (hit) { e.stopPropagation(); openPop(hit, e.clientX - r.left); }
+    else { closePop(); if (S.memberId) walkTo((e.clientX - r.left) / r.width); }
   });
 
   // ---- avatar editor (per author; stored as members/<id>.avatar and drawn on the field above)
@@ -1866,8 +1895,40 @@ window.makeSupabaseDb = function (url, anonKey) {
         ctx.fillStyle = css([side[0] * k, side[1] * k, side[2] * k]); ctx.fillRect(x, y, 1, 1);
       }
     });
+    drawSwingFrame(P);
     drawMembers(P);
   }
+
+  // ---- the swing: an A-frame with two seats; an author standing at a seat sits down and swings (max two riders)
+  const SWING = { u: 0.54, ropeL: 12, seats: [-4, 4] };
+  function swingGeom() {
+    if (!terrain.swing) { const xs = nearestLand(Math.round(SWING.u * W)); const gy = groundAt(xs); terrain.swing = { xs, gy, top: gy - 18 }; }
+    return terrain.swing;
+  }
+  function line(x0, y0, x1, y1, fill) {
+    let dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1, dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1, err = dx + dy;
+    for (let n = 0; n < 200; n++) { fill(x0, y0); if (x0 === x1 && y0 === y1) break; const e2 = 2 * err; if (e2 >= dy) { err += dy; x0 += sx; } if (e2 <= dx) { err += dx; y0 += sy; } }
+  }
+  function drawSwingFrame(P) {
+    const g = swingGeom(), wood = P.trunk, hi = mix(P.trunk, [255, 230, 190], 0.25);
+    const fill = (c) => (x, y) => { ctx.fillStyle = css([c[0] * P.light, c[1] * P.light, c[2] * P.light]); ctx.fillRect(x, y, 1, 1); };
+    [-1, 1].forEach(sg => { const px = g.xs + sg * 8; line(px, g.top + 1, px + sg * 3, groundAt(px + sg * 3) - 1, fill(wood)); line(px + sg, g.top + 1, px + sg * 4, groundAt(px + sg * 4) - 1, fill(wood)); });
+    ctx.fillStyle = css([hi[0] * P.light, hi[1] * P.light, hi[2] * P.light]); ctx.fillRect(g.xs - 10, g.top, 21, 1);
+    ctx.fillStyle = css([wood[0] * P.light, wood[1] * P.light, wood[2] * P.light]); ctx.fillRect(g.xs - 10, g.top + 1, 21, 1);
+  }
+  // seat k at its current swing angle: rest column, and the seat's drawn position
+  function seatPos(k, th) {
+    const g = swingGeom(), rx = g.xs + SWING.seats[k];
+    return { rx, sx: rx + Math.round(SWING.ropeL * Math.sin(th)), sy: g.top + 2 + Math.round(SWING.ropeL * Math.cos(th)) };
+  }
+  function drawSeat(P, k, th) {
+    const g = swingGeom(), sp = seatPos(k, th), rope = mix(P.trunk, [255, 255, 255], 0.55);
+    const fill = (x, y) => { ctx.fillStyle = css([rope[0] * P.light, rope[1] * P.light, rope[2] * P.light]); ctx.fillRect(x, y, 1, 1); };
+    line(sp.rx - 4, g.top + 2, sp.sx - 4, sp.sy - 1, fill); line(sp.rx + 3, g.top + 2, sp.sx + 3, sp.sy - 1, fill);
+    drawPlank(P, sp); return sp;
+  }
+  function drawPlank(P, sp) { ctx.fillStyle = css([P.trunk[0] * P.light * 0.8, P.trunk[1] * P.light * 0.8, P.trunk[2] * P.light * 0.8]); ctx.fillRect(sp.sx - 4, sp.sy, 8, 1); }
+  const RIDERS = new Map();   // memberId -> seat index, refreshed every frame
 
   // ---- avatars: front-facing voxel people, 6 wide x 15 tall units, feet on the grass row `fy`
   const AV = {
@@ -1878,8 +1939,8 @@ window.makeSupabaseDb = function (url, anonKey) {
     botC:  { jeans: '#3B5B99', black: '#2A2A2A', khaki: '#B49B6A', gray: '#7C8288', white: '#EDEDED', red: '#A63A3A', green: '#3F6B3A' },
   };
   const AV_DEFAULT = { skin: 's2', hair: 'short', hairColor: 'black', eyes: 'brown', top: 'tee', topColor: 'blue', bottom: 'pants', bottomColor: 'jeans', item: 'none', pet: 'none', acc: 'none' };
-  function drawAvatar(ctx, c0, fy, av, light, warm, bob) {
-    av = Object.assign({}, AV_DEFAULT, av || {}); fy -= (bob || 0);
+  function drawAvatar(ctx, c0, fy, av, light, warm, bob, opts) {
+    av = Object.assign({}, AV_DEFAULT, av || {}); fy -= (bob || 0); opts = opts || {};
     const L = light == null ? 1 : light, Wm = warm || 0;
     const px = (x, y, hexc) => { const c = hex(hexc); ctx.fillStyle = css([c[0] * L + 40 * Wm, c[1] * L + 10 * Wm, c[2] * L]); ctx.fillRect(x, y, 1, 1); };
     const rect = (x, y, w, h, hexc) => { for (let i = 0; i < w; i++) for (let j = 0; j < h; j++) px(x + i, y + j, hexc); };
@@ -1926,7 +1987,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (A === 'cap') { rect(c0 - 1, fy - 15, 6, 1, topC); rect(c0 - 1, fy - 16, 6, 1, topC); rect(c0 + 5, fy - 15, 2, 1, dark(topC, .8)); }
     if (A === 'beanie') { rect(c0 - 1, fy - 16, 6, 2, topC); rect(c0 - 1, fy - 14, 6, 1, dark(topC, .8)); }
     // item in the right hand (x0 = just right of the hand)
-    const x0 = c0 + 5, I = av.item;
+    const x0 = c0 + 5, I = opts.noItem ? '' : av.item;
     if (I === 'pipette') { rect(x0, fy - 10, 1, 4, '#2F6FB5'); px(x0, fy - 6, '#F2F2F2'); px(x0, fy - 11, '#8FB4E8'); }
     if (I === 'flask') { px(x0 + 1, fy - 9, '#DDEEFF'); rect(x0, fy - 8, 3, 1, '#DDEEFF'); rect(x0, fy - 7, 3, 2, '#5CC26A'); }
     if (I === 'mouse') { rect(x0, fy - 7, 3, 2, '#F2F2F2'); px(x0 + 2, fy - 8, '#F2B8C6'); px(x0 + 3, fy - 6, '#C9C9C9'); px(x0 + 2, fy - 7, '#333333'); }
@@ -1939,7 +2000,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (I === 'phone') { rect(x0, fy - 9, 2, 3, '#2A2A2A'); px(x0, fy - 8, '#8FB4E8'); px(x0 + 1, fy - 8, '#8FB4E8'); }
     if (I === 'microscope') { rect(x0 + 1, fy - 10, 1, 3, '#3A3F47'); px(x0 + 2, fy - 10, '#3A3F47'); px(x0, fy - 8, '#3A3F47'); rect(x0, fy - 7, 3, 1, '#9AA0A8'); }
     // pet, on the ground to the right (or a bird on the shoulder)
-    const p0 = c0 + 8, P = av.pet;
+    const p0 = c0 + 8, P = opts.noPet ? '' : av.pet;
     if (P === 'cat') { rect(p0, fy - 2, 4, 2, '#D9782B'); rect(p0 + 3, fy - 3, 2, 1, '#D9782B'); px(p0 + 3, fy - 4, '#D9782B'); px(p0 + 4, fy - 4, '#D9782B'); px(p0 - 1, fy - 3, '#D9782B'); px(p0 + 4, fy - 3, '#2E8B57'); }
     if (P === 'dog') { rect(p0, fy - 2, 4, 2, '#8D5A3C'); rect(p0 + 3, fy - 3, 2, 1, '#8D5A3C'); px(p0 + 5, fy - 3, '#5C3A26'); px(p0 - 1, fy - 3, '#8D5A3C'); px(p0 + 4, fy - 3, '#111111'); }
     if (P === 'mouse') { rect(p0, fy - 1, 2, 1, '#F2F2F2'); px(p0 + 1, fy - 2, '#F2B8C6'); px(p0 - 1, fy - 1, '#C9C9C9'); }
@@ -1951,10 +2012,49 @@ window.makeSupabaseDb = function (url, anonKey) {
   window.__drawAvatar = drawAvatar;
   window.__AV = AV;
 
+  // freestyle swimmer: body lies on the water surface row wy, head to the front (dir +1 = facing right), frame 0..3 is the stroke cycle
+  function drawSwimmer(ctx, c0, wy, av, light, warm, frame, dir) {
+    av = Object.assign({}, AV_DEFAULT, av || {});
+    const L = light == null ? 1 : light, Wm = warm || 0, f = ((frame % 4) + 4) % 4, d = dir < 0 ? -1 : 1;
+    const X = (dx) => d > 0 ? c0 + dx : c0 + 9 - dx;
+    const px = (dx, y, hexc) => { const c = hex(hexc); ctx.fillStyle = css([c[0] * L + 40 * Wm, c[1] * L + 10 * Wm, c[2] * L]); ctx.fillRect(X(dx), y, 1, 1); };
+    const rect = (dx, y, w, h, hexc) => { for (let i = 0; i < w; i++) for (let j = 0; j < h; j++) px(dx + i, y + j, hexc); };
+    const dark = (h, k) => { const c = hex(h); return '#' + c.map(v => Math.max(0, Math.round(v * k)).toString(16).padStart(2, '0')).join(''); };
+    const skin = AV.skin[av.skin] || AV.skin.s2, hairC = AV.hairC[av.hairColor] || AV.hairC.black, eye = AV.eyes[av.eyes] || AV.eyes.brown;
+    const topC = av.top === 'labcoat' ? '#F2F2F2' : (AV.topC[av.topColor] || AV.topC.blue), botC = AV.botC[av.bottomColor] || AV.botC.jeans;
+    const hi = '#CFEAFF';
+    // legs (flutter kick) + body
+    rect(-3, wy + 1, 3, 1, botC); px(-4, wy + 1, '#2A2A2A');
+    if (f % 2 === 0) { px(-3, wy, botC); px(-4, wy, '#2A2A2A'); px(-5, wy - 1, hi); } else { px(-2, wy + 2, botC); px(-5, wy, hi); }
+    rect(0, wy, 5, 2, topC);
+    if (av.top === 'stripe') { px(1, wy, '#F2F2F2'); px(3, wy, '#F2F2F2'); }
+    // head (side view) + hair + eye
+    rect(5, wy - 2, 4, 3, skin);
+    px(8, wy - 1, eye); px(8, wy, dark(skin, .8));
+    const H = av.hair;
+    if (H !== 'bald') { rect(5, wy - 3, 4, 1, hairC); px(5, wy - 2, hairC); }
+    if (H === 'long' || H === 'ponytail') rect(3, wy - 2, 2, 1, hairC);
+    if (H === 'bob') px(5, wy - 1, hairC);
+    if (H === 'bun') px(5, wy - 4, hairC);
+    if (H === 'curly') { rect(4, wy - 4, 6, 1, hairC); px(4, wy - 3, hairC); px(9, wy - 3, hairC); }
+    if (H === 'mohawk' || H === 'spiky') { px(6, wy - 4, hairC); px(8, wy - 4, hairC); }
+    const A = av.acc;
+    if (A === 'glasses' || A === 'goggles') { px(8, wy - 1, A === 'goggles' ? '#D6F5F5' : '#9CC8F0'); px(7, wy - 1, A === 'goggles' ? '#2A9D9F' : '#333333'); }
+    if (A === 'cap' || A === 'beanie') { rect(5, wy - 3, 4, 1, topC); if (A === 'cap') px(9, wy - 3, dark(topC, .8)); }
+    // arms: A reaching forward, C pulling under water, D leaving the water, B recovering high over the back
+    const arm = (st) => {
+      if (st === 0) { px(9, wy - 1, topC); rect(10, wy - 1, 2, 1, skin); px(12, wy - 1, hi); px(13, wy, hi); }
+      else if (st === 1) { rect(1, wy + 1, 2, 1, topC); px(3, wy + 1, skin); }
+      else if (st === 2) { px(1, wy - 1, topC); px(2, wy - 2, skin); px(0, wy - 1, hi); }
+      else { px(2, wy - 3, topC); rect(3, wy - 4, 2, 1, skin); px(5, wy - 4, skin); }
+    };
+    arm(f); arm((f + 2) % 4);
+  }
+
   // members standing on the near ground, spread over the two land stretches either side of the lake
   const tagsEl = document.getElementById('tags'); let tagSig = '';
   // live state for the author being steered with the arrow keys (position is also saved to the member doc)
-  const MOVE = { id: null, u: null, lastMove: 0, jumpAt: 0 };
+  const MOVE = { id: null, u: null, lastMove: 0, jumpAt: 0, pumpAt: 0, dir: 1 };
   function groundAt(x) { return Math.round(terrain.near[Math.min(W - 1, Math.max(0, x))]); }
   // dry columns of the near ground (the lake and any other dip below the waterline are excluded)
   function landColumns() {
@@ -1968,33 +2068,63 @@ window.makeSupabaseDb = function (url, anonKey) {
   }
   function memberSlots() {
     const ms = (window.__worklogMembers ? window.__worklogMembers() : []) || [];
-    const land = landColumns();
+    const land = landColumns(), taken = new Set();
     return ms.map((m, i) => {
       let x;
       if (MOVE.id === m.id && MOVE.u != null) x = Math.round(MOVE.u * W);
-      else if (typeof m.pos === 'number' && m.pos >= 0 && m.pos <= 1) x = nearestLand(Math.round(m.pos * W));
+      else if (typeof m.pos === 'number' && m.pos >= 0 && m.pos <= 1) x = Math.min(W - 10, Math.max(3, Math.round(m.pos * W)));
       else x = land.length ? land[Math.min(land.length - 1, Math.floor((i + 0.5) / ms.length * land.length))] : Math.round(W * 0.2);
-      return { m, x, fy: groundAt(x) };
+      const fy = groundAt(x), wy = terrain.water | 0, swim = fy > terrain.water;
+      // swimmers float on the surface row; `top` is where the name tag hangs
+      return { m, x, fy: swim ? wy + 2 : fy, swim, top: swim ? wy - 6 : fy - 18 };
+    }).map(sl => {
+      // standing at a swing seat (and it is free) = riding it
+      if (!sl.swim) { const g = swingGeom(); SWING.seats.forEach((d, k) => { if (sl.seat == null && !taken.has(k) && Math.abs(sl.x - (g.xs + d)) <= 1) { taken.add(k); sl.seat = k; sl.top = sl.fy - 22; } }); }
+      return sl;
     });
   }
   function drawMembers(P) {
     const slots = memberSlots(); const now = Date.now();
+    // swing seats: empty ones sway a little; a rider's angle follows the shared pendulum (pumped by ↑/space)
+    RIDERS.clear(); slots.forEach(sl => { if (sl.seat != null) RIDERS.set(sl.m.id, sl.seat); });
+    const angle = (k, me) => {
+      if (reduce) return 0;
+      const boost = me ? Math.max(0, 1 - (now - MOVE.pumpAt) / 5000) : 0;
+      const amp = RIDERS.size && [...RIDERS.values()].includes(k) ? 0.28 + 0.4 * boost : 0.06;
+      return amp * Math.sin((me ? now / 380 : t / 2.7) + k * 1.3);
+    };
+    const seatAt = {}; SWING.seats.forEach((d, k) => { const rider = slots.find(sl => sl.seat === k); seatAt[k] = drawSeat(P, k, angle(k, rider && MOVE.id === rider.m.id)); });
     slots.forEach((sl, i) => {
-      if (sl.fy > terrain.water) return; // never in the lake
+      const warm = P.warm * Math.max(0, 1 - Math.abs(sl.x - Math.round(W * P.sunX)) / (W * 0.5));
+      if (sl.seat != null) {                // sitting on the swing: torso on the seat, legs dangling
+        const sp = seatAt[sl.seat];
+        drawAvatar(ctx, sp.sx - 2, sp.sy + 5, sl.m.avatar, P.light, warm, 0, { noPet: true, noItem: true });
+        drawPlank(P, sp); return;
+      }
+      if (sl.swim) {                       // in the lake: freestyle (slow strokes while idle, fast while steered)
+        const wy = terrain.water | 0, me = MOVE.id === sl.m.id;
+        let f = reduce ? 0 : (((t / 3) | 0) + i) % 4, dip = 0;
+        if (me && now - MOVE.lastMove < 350) f = Math.floor(now / 110) % 4;
+        if (me) { const j = (now - MOVE.jumpAt) / 520; if (j >= 0 && j < 1) dip = Math.round(6 * j * (1 - j)); } // ↑/space = a little hop out of the water
+        drawSwimmer(ctx, sl.x - 2, wy - dip, sl.m.avatar, P.light, warm, f, me ? MOVE.dir : (sl.dir || 1));
+        // the part below the surface shows through the water
+        ctx.fillStyle = 'rgba(' + P.water.map(Math.round).join(',') + ',0.55)';
+        for (let x = sl.x - 8; x <= sl.x + 12; x++) { const g = groundAt(x); if (g > wy + 1) ctx.fillRect(x, wy + 1, 1, Math.min(g, wy + 3) - (wy + 1)); }
+        return;
+      }
       let bob = reduce ? 0 : ((((t / 5) | 0) + i) % 6 === 0 ? 1 : 0);
       if (MOVE.id === sl.m.id) {
         if (now - MOVE.lastMove < 350) bob = (Math.floor(now / 120) % 2);          // walking: quick step bob
         const j = (now - MOVE.jumpAt) / 520; if (j >= 0 && j < 1) bob += Math.round(16 * j * (1 - j)); // jump arc, 4 units high
       }
-      drawAvatar(ctx, sl.x - 2, sl.fy, sl.m.avatar, P.light, P.warm * Math.max(0, 1 - Math.abs(sl.x - Math.round(W * P.sunX)) / (W * 0.5)), bob);
+      drawAvatar(ctx, sl.x - 2, sl.fy, sl.m.avatar, P.light, warm, bob);
     });
     const statusOf = window.__worklogStatusOf || (() => '');
     const sig = W + '|' + slots.map(s => s.m.id + ':' + s.m.name + ':' + s.x + ':' + s.fy + ':' + statusOf(s.m.id)).join(',');
     if (sig !== tagSig && tagsEl) {
       tagSig = sig; tagsEl.innerHTML = '';
       slots.forEach(sl => {
-        if (sl.fy > terrain.water) return;
-        const cx = (sl.x + 0.5) * B, topY = (sl.fy - 18) * B - 14;
+        const cx = (sl.x + 0.5) * B, topY = sl.top * B - 14;
         const d = document.createElement('div'); d.className = 'tag'; d.textContent = sl.m.name; d.style.left = cx + 'px'; d.style.top = topY + 'px'; tagsEl.append(d);
         const st = statusOf(sl.m.id);
         if (st) {
@@ -2010,19 +2140,24 @@ window.makeSupabaseDb = function (url, anonKey) {
   // hit test in css px: which member's body (6 wide x 15 tall units, plus a little slack) is under the point?
   window.__sceneHit = (px, py) => {
     const ux = px / B, uy = py / B;
-    for (const sl of LAST_SLOTS) { if (sl.fy > terrain.water) continue; if (ux >= sl.x - 4 && ux <= sl.x + 4 && uy >= sl.fy - 19 && uy <= sl.fy + 1) return sl.m.id; }
+    for (const sl of LAST_SLOTS) { if (ux >= sl.x - 4 && ux <= sl.x + 4 && uy >= sl.top - 1 && uy <= sl.fy + 1) return sl.m.id; }
     return null;
   };
   window.__redrawScene = () => { if (terrain) draw(); };
-  // the app steers one member: returns the new fraction, or null when the step is blocked (lake / edge)
+  // the app steers one member: returns the new fraction, or null when the step is blocked (edge); the lake is swimmable
   window.__sceneMove = (id, u, dir) => {
     if (!terrain) return null;
     MOVE.id = id; const cur = u == null ? (memberSlots().find(s => s.m.id === id) || { x: Math.round(W * 0.2) }).x : Math.round(u * W);
     const nx = cur + dir;
-    if (nx < 3 || nx > W - 10 || groundAt(nx) > terrain.water) return null;
-    MOVE.u = nx / W; MOVE.lastMove = Date.now(); draw(); return MOVE.u;
+    if (nx < 3 || nx > W - 10) return null;
+    MOVE.u = nx / W; MOVE.dir = dir; MOVE.lastMove = Date.now(); draw(); return MOVE.u;
   };
-  window.__sceneJump = (id) => { MOVE.id = id; MOVE.jumpAt = Date.now(); if (reduce) return; let n = 0; const tick = () => { draw(); if (++n < 10) setTimeout(tick, 55); }; tick(); };
+  window.__sceneJump = (id) => {
+    MOVE.id = id; if (RIDERS.has(id)) { MOVE.pumpAt = Date.now(); return; }
+    MOVE.jumpAt = Date.now(); if (reduce) return; let n = 0; const tick = () => { draw(); if (++n < 10) setTimeout(tick, 55); }; tick();
+  };
+  window.__scenePosOf = (id) => { if (!terrain) return null; const sl = memberSlots().find(s => s.m.id === id); return sl ? sl.x / W : null; };
+  Object.defineProperty(window, '__sceneW', { get: () => W });
   window.__sceneSelect = (id) => { if (MOVE.id !== id) { MOVE.id = id; MOVE.u = null; } };
 
   function resize() {
