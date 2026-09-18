@@ -224,7 +224,8 @@ window.makeSupabaseDb = function (url, anonKey) {
   .hero { position: relative; margin-inline: -16px; height: 400px; overflow: hidden; background: var(--bg); }
   /* a little plane tows the notice (pinned board posts) across the sky */
   .hero .flyer { position: absolute; top: 46px; left: 0; z-index: 5; display: flex; align-items: center; pointer-events: none; will-change: transform; }
-  .hero .flyer .banner { white-space: nowrap; font-size: 13.5px; font-weight: 700; color: #1E2A33; background: #FFF8E1; border: 3px solid #2A2A2A; box-shadow: inset 0 0 0 2px #FFD35C; padding: 5px 12px; }
+  .hero .flyer .banner { white-space: nowrap; font-size: 13.5px; font-weight: 700; color: #1E2A33; background: #fff; padding: 6px 12px; margin-inline: 3px; border-radius: 0;
+    box-shadow: 3px 0 0 0 #2A2A2A, -3px 0 0 0 #2A2A2A, 0 3px 0 0 #2A2A2A, 0 -3px 0 0 #2A2A2A, 0 0 0 3px #fff inset; image-rendering: pixelated; }
   .hero .flyer .rope { width: 22px; height: 3px; background: #2A2A2A; }
   .hero .flyer canvas { width: 60px; height: 32px; image-rendering: pixelated; image-rendering: crisp-edges; margin-bottom: 10px; }
   .hero .wx { position: absolute; top: 10px; left: 12px; z-index: 6; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .9); background: rgba(10, 18, 28, .45); padding: 4px 9px; border-radius: 999px; backdrop-filter: blur(2px); }
@@ -555,7 +556,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   <canvas id="sky" aria-hidden="true"></canvas>
   <div class="tags" id="tags" aria-hidden="true"></div>
   <div class="pop" id="pop" hidden></div>
-  <div class="flyer" id="flyer" hidden aria-live="polite"><span class="banner" id="bannerText"></span><span class="rope"></span><canvas id="plane" width="15" height="8" aria-hidden="true"></canvas></div>
+  <div class="flyer" id="flyer" hidden aria-live="polite"><canvas id="plane" width="15" height="8" aria-hidden="true"></canvas><span class="rope"></span><span class="banner" id="bannerText"></span></div>
   <div class="wx" id="wx" hidden title="서울 현재 날씨 (Open-Meteo)"></div>
   <div class="pad" id="pad" hidden aria-label="아바타 이동"><button type="button" data-k="ArrowLeft" aria-label="왼쪽">◀</button><button type="button" data-k="ArrowUp" aria-label="점프">▲</button><button type="button" data-k="ArrowRight" aria-label="오른쪽">▶</button></div>
   <div class="theme-pick" id="themePick" role="group" aria-label="테마">
@@ -1478,12 +1479,12 @@ window.makeSupabaseDb = function (url, anonKey) {
       el.feed.append(card);
     });
   }
-  // ---- notice plane: pinned posts' first lines on a towed banner, flying left → right every so often
+  // ---- notice plane: pinned posts' first lines on a towed banner, flying right → left every so often
   const FLY = { anim: null, text: '' };
   (function drawPlane() {
     const cv = document.getElementById('plane'); if (!cv) return; const c = cv.getContext('2d');
-    const rows = ['...........##..', '...........#k..', '..###########..', '.#wwww#######p.', '.############p.', '..#########....', '....####.......', '.......##......'];
-    const col = { '#': '#E0503F', k: '#A83A2C', w: '#BFE3FF', p: '#444444' };
+    const rows = ['..##...........', '..k#...........', '..###########..', '.p#######wwww#.', '.p############.', '....#########..', '.......####....', '......##.......'];
+    const col = { '#': '#F4F4F4', k: '#B8BEC6', w: '#7FB0E0', p: '#444444' };
     rows.forEach((r, y) => [...r].forEach((ch, x) => { if (col[ch]) { c.fillStyle = col[ch]; c.fillRect(x, y, 1, 1); } }));
   })();
   function renderBanner() {
@@ -1497,9 +1498,9 @@ window.makeSupabaseDb = function (url, anonKey) {
     if (FLY.anim) FLY.anim.cancel();
     const w = fl.offsetWidth, hw = hero.clientWidth, flight = (w + hw) / 42 * 1000, pause = 9000;
     FLY.anim = fl.animate([
-      { transform: 'translateX(' + (-w) + 'px)', offset: 0 },
-      { transform: 'translateX(' + hw + 'px)', offset: flight / (flight + pause) },
-      { transform: 'translateX(' + hw + 'px)', offset: 1 },
+      { transform: 'translateX(' + hw + 'px)', offset: 0 },
+      { transform: 'translateX(' + (-w) + 'px)', offset: flight / (flight + pause) },
+      { transform: 'translateX(' + (-w) + 'px)', offset: 1 },
     ], { duration: flight + pause, iterations: Infinity });
   }
   function renderSign() { renderBanner(); }
