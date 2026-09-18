@@ -222,17 +222,6 @@ window.makeSupabaseDb = function (url, anonKey) {
 
   /* hero: procedural voxel landscape; the page theme and the scene both follow the viewer's clock (day / dusk / night) */
   .hero { position: relative; margin-inline: -16px; height: 400px; overflow: hidden; background: var(--bg); }
-  /* notice board hanging in the sky: pale yellow, Minecraft pixel frame; long text scrolls */
-  .hero .sign { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: min(64%, 640px); z-index: 5; pointer-events: none; }
-  .hero .sign .chain { display: flex; justify-content: space-between; padding: 0 36px; height: 16px; }
-  .hero .sign .chain i { display: block; width: 4px; height: 16px; background: repeating-linear-gradient(#2A2A2A 0 4px, #5A5F66 4px 8px); }
-  .hero .sign .panel { background: rgba(255, 251, 224, .93); padding: 8px 14px; overflow: hidden; border-radius: 0;
-    box-shadow: 3px 0 0 0 #2A2A2A, -3px 0 0 0 #2A2A2A, 0 3px 0 0 #2A2A2A, 0 -3px 0 0 #2A2A2A, 0 0 0 3px #FFF3B0 inset; image-rendering: pixelated; }
-  .hero .sign .txt { display: block; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; font-weight: 700; color: #1E2A33; }
-  .hero .sign .txt.scroll { display: inline-block; text-overflow: clip; overflow: visible; padding-left: 100%; animation: marquee var(--dur, 20s) linear infinite; }
-  .hero .sign .panel:has(.scroll) { text-align: left; }
-  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-100%); } }
-  @media (prefers-reduced-motion: reduce) { .hero .sign .txt.scroll { animation: none; padding-left: 0; display: block; text-overflow: ellipsis; overflow: hidden; } }
   .hero .wx { position: absolute; top: 10px; left: 12px; z-index: 6; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .9); background: rgba(10, 18, 28, .45); padding: 4px 9px; border-radius: 999px; backdrop-filter: blur(2px); }
   .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
   .hero .tags { position: absolute; inset: 0; pointer-events: none; }
@@ -361,7 +350,6 @@ window.makeSupabaseDb = function (url, anonKey) {
     .top .who .status-btn { grid-column: 2 / -1; max-width: none; text-align: left; }
     .mlabel { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
     .hero { height: 300px; }
-    .hero .sign { width: 80%; top: 46px; } .hero .sign .txt { font-size: 12.5px; } .hero .sign .panel { padding: 6px 9px; } .hero .sign .chain { padding: 0 24px; height: 12px; } .hero .sign .chain i { height: 12px; }
     .hero .wx { top: 46px; }
     .top h1 { font-size: 21px; }
     .tabs { gap: 0; }
@@ -561,7 +549,6 @@ window.makeSupabaseDb = function (url, anonKey) {
   <canvas id="sky" aria-hidden="true"></canvas>
   <div class="tags" id="tags" aria-hidden="true"></div>
   <div class="pop" id="pop" hidden></div>
-  <div class="sign" id="sign" hidden aria-live="polite"><div class="chain"><i></i><i></i></div><div class="panel"><span class="txt" id="signText"></span></div></div>
   <div class="wx" id="wx" hidden title="서울 현재 날씨 (Open-Meteo)"></div>
   <div class="pad" id="pad" hidden aria-label="아바타 이동"><button type="button" data-k="ArrowLeft" aria-label="왼쪽">◀</button><button type="button" data-k="ArrowUp" aria-label="점프">▲</button><button type="button" data-k="ArrowRight" aria-label="오른쪽">▶</button></div>
   <div class="theme-pick" id="themePick" role="group" aria-label="테마">
@@ -739,15 +726,6 @@ window.makeSupabaseDb = function (url, anonKey) {
           </form>
           <p class="hint">기록할 때 목록에서 고릅니다. 작성자도 기록하면서 "+ 새 퀘스트 추가…"로 여기에 올릴 수 있습니다.</p>
         </div>
-      </div>
-      <div>
-        <h3>✈️ 공지 (하늘 비행기 배너)</h3>
-        <ul class="items" id="notices"></ul>
-        <form class="add-item" id="addNotice">
-          <input id="newNotice" placeholder="새 공지 (한 줄)" maxlength="120" required>
-          <button type="submit">추가</button>
-        </form>
-        <p class="hint">여기 등록한 공지가 들판 위 비행기 배너로 날아갑니다. 여러 개면 ✦ 로 이어서 보여 주고, 없으면 비행기도 뜨지 않습니다.</p>
       </div>
       <div>
         <h3>관리자 비밀번호</h3>
@@ -960,29 +938,7 @@ window.makeSupabaseDb = function (url, anonKey) {
     ensureWeekSub();
     if (tab === 'cal') ensureEventsSub();
     ensurePostsSub();
-    db.collection('notices').onSnapshot(snap => { S.notices = snap.docs.map(x => ({ id: x.id, ...x.data() })).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))); renderNotices(); renderBanner(); },
-      err => showBanner('공지를 불러오지 못했습니다 (' + err.code + ').'));
   }
-  // ---- admin notices → the banner plane
-  S.notices = [];
-  function renderNotices() {
-    const ul = document.getElementById('notices'); if (!ul) return; ul.innerHTML = '';
-    if (!S.notices.length) { const li = document.createElement('li'); li.className = 'hint'; li.textContent = '등록된 공지가 없습니다.'; ul.append(li); return; }
-    S.notices.forEach(n => {
-      const li = document.createElement('li'); li.className = 'item-row';
-      const inp = document.createElement('input'); inp.value = n.text || ''; inp.maxLength = 120;
-      inp.addEventListener('change', () => { const text = inp.value.trim(); if (!text) { inp.value = n.text || ''; return; } safe(() => db.doc('notices/' + n.id).update({ text, updatedAt: new Date().toISOString() })); });
-      const ops = document.createElement('div'); ops.className = 'ops';
-      const del = document.createElement('button'); del.type = 'button'; del.className = 'ghost danger'; del.textContent = '삭제';
-      del.addEventListener('click', () => { if (del.dataset.armed) { safe(() => db.doc('notices/' + n.id).delete()); return; } del.dataset.armed = '1'; del.textContent = '정말?'; setTimeout(() => { delete del.dataset.armed; del.textContent = '삭제'; }, 3000); });
-      ops.append(del); li.append(inp, ops); ul.append(li);
-    });
-  }
-  document.getElementById('addNotice').addEventListener('submit', (ev) => {
-    ev.preventDefault(); const inp = document.getElementById('newNotice'); const text = inp.value.trim(); if (!text) return;
-    safe(() => db.collection('notices').doc(newId('n')).set({ text, createdAt: new Date().toISOString(), createdBy: S.memberId || '' })); inp.value = '';
-  });
-
   function ensureWeekSub() {
     if (!db || !S.memberId) return;
     const ws = weekStart(S.date), we = addDays(ws, 6);
@@ -1514,22 +1470,6 @@ window.makeSupabaseDb = function (url, anonKey) {
       el.feed.append(card);
     });
   }
-  // ---- notice board in the sky: the admin notices, scrolling when they do not fit
-  const SIGN = { text: '' };
-  function renderBanner() {
-    const sign = document.getElementById('sign'), txt = document.getElementById('signText'); if (!sign || !txt) return;
-    const parts = (S.notices || []).map(n => String(n.text || '').trim()).filter(Boolean);
-    const text = parts.map(x => '📢 ' + x).join('      ✦      ');
-    sign.hidden = !text; if (!text) { SIGN.text = ''; return; }
-    if (text === SIGN.text) return;
-    SIGN.text = text; txt.textContent = text; txt.className = 'txt';
-    requestAnimationFrame(() => {
-      const box = txt.parentElement.clientWidth;
-      if (txt.scrollWidth > box) { txt.style.setProperty('--dur', Math.max(12, Math.round((txt.scrollWidth + box) / 45)) + 's'); txt.classList.add('scroll'); }
-    });
-  }
-  addEventListener('resize', () => { SIGN.text = ''; renderBanner(); });
-
   // ---- reactions + comments live inside the post document (small arrays; read-modify-write)
   const REACTS = ['👍', '❤️', '🎉', '😂', '😮', '🙏'];
   function renderReactions(p, card) {
