@@ -321,15 +321,18 @@ window.makeSupabaseDb = function (url, anonKey) {
     .trow.input .f-hours { grid-area: 2 / 1; } .trow.input .go { grid-area: 2 / 2; align-self: end; grid-template-columns: 1fr; }
     .trow.input .f-note { grid-area: 3 / 1 / 4 / 3; }
     .trow.input .newbox { grid-template-columns: 1fr; }
-    /* header rows line up as label | control | extra */
+    /* header rows share one label column so every control starts on the same line: 라벨 | 입력 | 보조 */
     .top { display: grid; gap: 10px; padding-top: 14px; }
-    .top h1 { margin: 0; }
-    .top .datebar { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; }
-    .top .datebar input[type="date"] { width: 100%; min-width: 0; }
-    .top .datebar .today-btn { grid-column: 3; }
-    .top .who { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px; }
-    .top .who select { width: 100%; min-width: 0; }
-    .top .who .status-btn { grid-column: 1 / -1; max-width: none; text-align: left; }
+    .top h1 { margin: 0 0 2px; }
+    .top .datebar, .top .who { display: grid; grid-template-columns: 52px 1fr auto; align-items: center; gap: 8px; }
+    .top .datebar .label, .top .who .lbl { white-space: nowrap; }
+    .top .datebar input[type="date"] { -webkit-appearance: none; appearance: none; display: block; width: 100%; min-width: 0; min-height: 42px; padding: 8px 10px; text-align: left; font-size: 16px; }
+    .top .datebar input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+    .top .datebar .weekday { grid-column: 3; }
+    .top .datebar .today-btn { grid-column: 1 / -1; justify-self: end; }
+    .top .who select { width: 100%; min-width: 0; min-height: 42px; }
+    .top .who .av-btn { min-height: 42px; }
+    .top .who .status-btn { grid-column: 2 / -1; max-width: none; text-align: left; }
     .mlabel { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
     .hero { height: 240px; }
     .top h1 { font-size: 21px; }
