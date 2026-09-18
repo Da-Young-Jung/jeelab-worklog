@@ -2228,8 +2228,8 @@ window.makeSupabaseDb = function (url, anonKey) {
       // swimmers float on the surface row; `top` is where the name tag hangs
       return { m, x, fy: swim ? wy + 2 : fy, swim, sit, top: swim ? wy - 6 : fy - (sit ? 14 : 18) };
     }).map(sl => {
-      // standing at a swing seat (and it is free) = riding it
-      if (!sl.swim) { const g = swingGeom(); SWING.seats.forEach((d, k) => { if (sl.seat == null && !taken.has(k) && Math.abs(sl.x - (g.xs + d)) <= 1) { taken.add(k); sl.seat = k; sl.top = sl.fy - 22; } }); }
+      // sitting down (↓) at a free swing seat = riding it; the seat takes over from the plain sitting pose
+      if (!sl.swim && sl.sit) { const g = swingGeom(); SWING.seats.forEach((d, k) => { if (sl.seat == null && !taken.has(k) && Math.abs(sl.x - (g.xs + d)) <= 1) { taken.add(k); sl.seat = k; sl.sit = false; sl.top = sl.fy - 22; } }); }
       return sl;
     });
   }
@@ -2309,11 +2309,11 @@ window.makeSupabaseDb = function (url, anonKey) {
   window.__scenePosOf = (id) => { if (!terrain) return null; const sl = memberSlots().find(s => s.m.id === id); return sl ? sl.x / W : null; };
   Object.defineProperty(window, '__sceneW', { get: () => W });
   window.__sceneSelect = (id) => { if (MOVE.id !== id) { MOVE.id = id; MOVE.u = null; MOVE.sit = null; } };
-  // ↓ sits down (again = stand up); returns the new state, or null when it does not apply (swimming / on the swing)
+  // ↓ sits down (again = stand up; at a swing seat this is how you get on and off); null when swimming
   window.__sceneSit = (id) => {
     if (!terrain) return null; MOVE.id = id; const sl = memberSlots().find(s => s.m.id === id);
-    if (!sl || sl.swim || sl.seat != null) return null;
-    MOVE.sit = !sl.sit; draw(); return MOVE.sit;
+    if (!sl || sl.swim) return null;
+    MOVE.sit = !(sl.sit || sl.seat != null); draw(); return MOVE.sit;
   };
 
   function resize() {
