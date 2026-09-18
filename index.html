@@ -29,7 +29,17 @@ window.makeSupabaseDb = function (url, anonKey) {
   const snap = (row) => ({ id: row.id, exists: true, data: () => row.data, metadata: { fromCache: false, hasPendingWrites: false } });
   const missing = (id) => ({ id, exists: false, data: () => undefined, metadata: { fromCache: false, hasPendingWrites: false } });
   const deepMerge = (a, b) => { const o = Object.assign({}, a); for (const k of Object.keys(b)) { const v = b[k]; o[k] = (v && typeof v === 'object' && !Array.isArray(v) && a && a[k] && typeof a[k] === 'object' && !Array.isArray(a[k])) ? deepMerge(a[k], v) : v; } return o; };
-  const wrap = async (p) => { const { data, error } = await p; if (error) throw err(error.code === '42501' ? 'invalid_argument' : 'unavailable', error.message); return data; };
+  const wrap = async (build) => {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const { data, error } = await (typeof build === 'function' ? build() : build);
+        if (!error) return data;
+        if (error.code === '42501') throw err('invalid_argument', error.message);
+        if (attempt === 2) throw err('unavailable', error.message);
+      } catch (e) { if (e.code === 'invalid_argument' || attempt === 2) throw e; }
+      await new Promise(r => setTimeout(r, 700 * (attempt + 1)));
+    }
+  };
 
   // ---- realtime: one channel per collection, listeners re-run their query
   const listeners = new Map(); // collection -> Set<fn>
@@ -45,22 +55,27 @@ window.makeSupabaseDb = function (url, anonKey) {
     }
     return () => { const set = listeners.get(col); if (set) set.delete(fn); };
   }
-  // polling fallback every 30 s in case realtime is not enabled on the table
-  setInterval(() => { listeners.forEach(set => set.forEach(f => f())); }, 30000);
+  // polling fallback every 30 s in case realtime is not enabled on the table, plus a refresh when the tab wakes up
+  const refreshAll = () => { listeners.forEach(set => set.forEach(f => f())); };
+  setInterval(refreshAll, 30000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshAll(); });
+  window.addEventListener('online', refreshAll);
 
   function docRef(col, id) {
     return {
       id, path: col + '/' + id,
-      async get() { const rows = await wrap(sb.from(T).select('*').eq('collection', col).eq('id', id).limit(1)); return rows.length ? snap(rows[0]) : missing(id); },
-      async set(data) { await wrap(sb.from(T).upsert({ collection: col, id, data, updated_at: now() }, { onConflict: 'collection,id' })); },
+      async get() { const rows = await wrap(() => sb.from(T).select('*').eq('collection', col).eq('id', id).limit(1)); return rows.length ? snap(rows[0]) : missing(id); },
+      async set(data) { await wrap(() => sb.from(T).upsert({ collection: col, id, data, updated_at: now() }, { onConflict: 'collection,id' })); },
       async update(data) {
         const cur = await this.get(); if (!cur.exists) throw err('invalid_argument', 'update on missing doc');
-        await wrap(sb.from(T).upsert({ collection: col, id, data: deepMerge(cur.data(), data), updated_at: now() }, { onConflict: 'collection,id' }));
+        const merged = deepMerge(cur.data(), data);
+        await wrap(() => sb.from(T).upsert({ collection: col, id, data: merged, updated_at: now() }, { onConflict: 'collection,id' }));
       },
-      async delete() { await wrap(sb.from(T).delete().eq('collection', col).eq('id', id)); },
+      async delete() { await wrap(() => sb.from(T).delete().eq('collection', col).eq('id', id)); },
       onSnapshot(next, error) {
         let alive = true, last = null;
-        const run = async () => { try { const s = await this.get(); if (!alive) return; const key = JSON.stringify(s.exists ? s.data() : null); if (key !== last) { last = key; next(s); } } catch (e) { if (error) error(e); } };
+        let loaded = false;
+        const run = async () => { try { const s = await this.get(); if (!alive) return; loaded = true; const key = JSON.stringify(s.exists ? s.data() : null); if (key !== last) { last = key; next(s); } } catch (e) { if (!loaded && error) error(e); } };
         run(); const off = listen(col, run);
         return () => { alive = false; off(); };
       },
@@ -86,7 +101,7 @@ window.makeSupabaseDb = function (url, anonKey) {
       return q.limit(lim);
     };
     const runQuery = async () => {
-      const rows = await wrap(build());
+      const rows = await wrap(build);
       const docs = rows.map(snap);
       return docs;
     };
@@ -99,10 +114,10 @@ window.makeSupabaseDb = function (url, anonKey) {
       limit(n) { return colRef(col, filters, order, n); },
       async get() { const docs = await runQuery(); return { docs, size: docs.length, empty: !docs.length, docChanges: () => docs.map((d, i) => ({ type: 'added', doc: d, oldIndex: -1, newIndex: i })), metadata: { fromCache: false, hasPendingWrites: false } }; },
       onSnapshot(next, error) {
-        let alive = true, prev = new Map();
+        let alive = true, prev = new Map(), loaded = false;
         const run = async () => {
           try {
-            const docs = await runQuery(); if (!alive) return;
+            const docs = await runQuery(); if (!alive) return; loaded = true;
             const cur = new Map(docs.map(d => [d.id, JSON.stringify(d.data())]));
             const changes = [];
             docs.forEach((d, i) => { if (!prev.has(d.id)) changes.push({ type: 'added', doc: d, oldIndex: -1, newIndex: i }); else if (prev.get(d.id) !== cur.get(d.id)) changes.push({ type: 'modified', doc: d, oldIndex: i, newIndex: i }); });
@@ -110,7 +125,7 @@ window.makeSupabaseDb = function (url, anonKey) {
             const first = prev.size === 0 && changes.length === docs.length;
             prev = cur;
             if (changes.length || first) next({ docs, size: docs.length, empty: !docs.length, docChanges: () => changes, metadata: { fromCache: false, hasPendingWrites: false } });
-          } catch (e) { if (error) error(e); }
+          } catch (e) { if (!loaded && error) error(e); }
         };
         run(); const off = listen(col, run);
         return () => { alive = false; off(); };
