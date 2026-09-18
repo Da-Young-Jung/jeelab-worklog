@@ -44,7 +44,7 @@ missing = [n for n in active if n not in people]
 
 td = 'style="border:1px solid #ddd;padding:6px 8px"'; tdr = 'style="border:1px solid #ddd;padding:6px 8px;text-align:right"'
 html = f'<div style="font-family:-apple-system,Segoe UI,Malgun Gothic,sans-serif;max-width:720px;color:#222">'
-html += f'<h2 style="margin:0 0 4px">랩 업무일지 · {label} 요약</h2>'
+html += f'<h2 style="margin:0 0 4px">JEELAB worklog · {label} 요약</h2>'
 html += f'<p style="margin:0 0 14px;color:#555">기간 {f} – {t} · 총 {h(grand)} 시간 · {len(people)}명 기록 · {len(rows)}건</p>'
 if rows:
     html += '<table style="border-collapse:collapse;font-size:14px;width:100%"><tr style="background:#eef2f6">' + ''.join(f'<th {td} align="left">{c}</th>' for c in ['업무 종류', '총 시간', '인원', '사람별 시간', '퀘스트']) + '</tr>'
@@ -70,7 +70,7 @@ elif rows:
     html += '</table>'
 html += f'<p style="margin-top:20px;font-size:12px;color:#888">업무일지: <a href="{PAGE}">{PAGE}</a></p></div>'
 
-msg = MIMEMultipart('alternative'); msg['Subject'] = f'[랩 업무일지] {label} 요약'; msg['From'] = f'랩 업무일지 <{os.environ["GMAIL_USER"]}>'; msg['To'] = ', '.join(TO)
+msg = MIMEMultipart('alternative'); msg['Subject'] = f'[JEELAB worklog] {label} 요약'; msg['From'] = f'JEELAB worklog <{os.environ["GMAIL_USER"]}>'; msg['To'] = ', '.join(TO)
 msg.attach(MIMEText(html, 'html', 'utf-8'))
 with smtplib.SMTP_SSL('smtp.gmail.com', 465) as s:
     # app passwords are shown as 4x4 groups; strip spaces/newlines that come along when pasting
