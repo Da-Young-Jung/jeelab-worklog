@@ -2318,6 +2318,7 @@ window.__I18N = {
     };
     const P = Object.assign({}, PAL[ph] || PAL.day);
     const season = seasonNow(); applySeason(P, season);
+    P.dirt = mix(P.grassSide, [10, 30, 15], 0.4);   // the ground below the turf stays in green tones rather than brown soil
     const dim = { rain: 0.78, storm: 0.7, snow: 0.9, fog: 0.85, cloudy: 0.93 }[WX.kind] || 1; P.light *= dim;
     if (dim < 1) { P.glowA *= dim * dim; P.skyTop = mix(P.skyTop, [120, 130, 145], 1 - dim); P.skyMid = mix(P.skyMid, [150, 160, 172], 1 - dim); P.skyHor = mix(P.skyHor, [190, 196, 205], (1 - dim) * 0.8); P.cloud = WX.kind === 'cloudy' ? 'rgba(225,228,232,.95)' : 'rgba(150,158,170,.9)'; P.cloudLo = 'rgba(110,118,132,.85)'; }
     const T = terrain, J = T.jitter;
@@ -2370,7 +2371,7 @@ window.__I18N = {
           c = ripple ? P.waterHi : mix(P.water, P.skyHor, 0.12);
         } else if (y === top) c = P.grassTop;
         else if (y < top + 2) c = P.grassSide;
-        else c = mix(P.dirt, [20, 14, 10], Math.min(0.6, (y - top) / 22));
+        else c = mix(P.dirt, [6, 18, 8], Math.min(0.6, (y - top) / 22));
         const j = 1 - 0.10 * J[y * W + x];
         const warm = P.warm * Math.max(0, 1 - Math.abs(x - sunX) / (W * 0.5));
         c = [c[0] * j * P.light + 40 * warm, c[1] * j * P.light + 10 * warm, c[2] * j * P.light];
