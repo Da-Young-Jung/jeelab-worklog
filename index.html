@@ -414,6 +414,7 @@ window.makeSupabaseDb = function (url, anonKey) {
   .sheet textarea { min-height: 60px; }
   @media (max-width: 680px) {
     .dcell { min-height: 64px; padding: 3px 3px; }
+    .wk { --dnrow: 26px; }
     .ev { font-size: 11px; padding: 0 4px; line-height: 16px; }
     .wk-space { height: 24px; }
     .upcoming li { grid-template-columns: 8px 1fr; }
@@ -1098,7 +1099,8 @@ window.makeSupabaseDb = function (url, anonKey) {
       const laneEnd = []; const MAXL = 4;
       segs.forEach(sg => { let l = 0; while (l < laneEnd.length && laneEnd[l] >= sg.c1) l++; sg.lane = l; laneEnd[l] = sg.c2; });
       const lanes = Math.min(MAXL, laneEnd.length);
-      wk.style.gridTemplateRows = 'auto ' + 'minmax(20px, auto) '.repeat(lanes) + 'auto';
+      // first row reserves room for the day numbers (the day cells span every row, so 'auto' would collapse it under the bars)
+      wk.style.gridTemplateRows = '30px ' + 'minmax(20px, auto) '.repeat(lanes) + 'auto';
       for (let i = 0; i < 7; i++) {
         const ds = addDays(ws, i); const d = parse(ds);
         const c = document.createElement('div'); c.className = 'dcell' + (d.getMonth() !== CAL.m ? ' out' : '') + (ds === today ? ' today' : '') + (i === 5 ? ' sat' : i === 6 ? ' sun' : '');
