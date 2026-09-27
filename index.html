@@ -391,6 +391,9 @@ window.makeSupabaseDb = function (url, anonKey) {
   .item-row.off input { color: var(--muted); text-decoration: line-through; }
   .item-row .ops { display: flex; gap: 0; }
   .item-row .ops button { font-size: 12.5px; padding: 6px 7px; }
+  .item-row.with-hours { grid-template-columns: 1fr auto auto; }
+  .item-row .hrs { display: flex; align-items: center; gap: 4px; font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .item-row .hrs input { width: 58px; padding: 7px 6px; text-align: right; }
   .add-item { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
   .team-ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
   .team-ctl .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
@@ -716,6 +719,7 @@ window.makeSupabaseDb = function (url, anonKey) {
             <button type="submit">추가</button>
           </form>
           <p class="hint">여기 등록된 이름 중에서 각자 본인을 골라 기록합니다. 비활성화하면 선택 목록에서 빠지고 지난 기록은 남습니다.</p>
+          <p class="hint">h/일 = 하루 계약시간. 기록이 없는 근무일(평일, 공휴일 제외)은 요약 메일에 이 시간만큼 '자동기입'으로 들어갑니다. 비우면 4시간, 0이면 자동기입하지 않습니다. 사이트 기록은 바뀌지 않습니다.</p>
         </div>
         <div>
           <h3>업무 종류</h3>
@@ -799,6 +803,10 @@ window.makeSupabaseDb = function (url, anonKey) {
 
 <script>
 window.__I18N = {
+"계약시간: 기록이 없는 근무일은 요약 메일에 이 시간만큼 자동기입됩니다 (비우면 4, 0이면 안 함)": "Contract hours: blank workdays are auto-filled with this in the summary mail (empty = 4, 0 = off)",
+"하루 계약시간": "Daily contract hours",
+"h/일": "h/day",
+"h/일 = 하루 계약시간. 기록이 없는 근무일(평일, 공휴일 제외)은 요약 메일에 이 시간만큼 '자동기입'으로 들어갑니다. 비우면 4시간, 0이면 자동기입하지 않습니다. 사이트 기록은 바뀌지 않습니다.": "h/day = daily contract hours. Workdays with no entry (weekdays, excluding holidays) are auto-filled with this in the summary mail. Empty = 4 h, 0 = off. Site records are not changed.",
 " (나)": " (me)",
 " (비활성)": " (inactive)",
 " · 수정됨": " · edited",
@@ -2030,6 +2038,20 @@ window.__I18N = {
       const li = document.createElement('li'); li.className = 'item-row' + (t.active === false ? ' off' : '');
       const inp = document.createElement('input'); inp.value = t.name; inp.maxLength = 60; inp.setAttribute('aria-label', tx('이름'));
       inp.addEventListener('change', async () => { const name = inp.value.trim(); if (!name || name === t.name) { inp.value = t.name; return; } await safe(() => db.doc(col + '/' + t.id).update({ name })); });
+      // members: contract hours per workday — the summary mail auto-fills blank workdays with this (empty → 4 h, 0 → off)
+      let hrs = null;
+      if (col === 'members') {
+        li.classList.add('with-hours');
+        hrs = document.createElement('label'); hrs.className = 'hrs'; hrs.title = tx('계약시간: 기록이 없는 근무일은 요약 메일에 이 시간만큼 자동기입됩니다 (비우면 4, 0이면 안 함)');
+        const hi = document.createElement('input'); hi.type = 'number'; hi.min = '0'; hi.max = '24'; hi.step = '0.5'; hi.placeholder = '4';
+        hi.value = t.dailyHours ?? ''; hi.setAttribute('aria-label', tx('하루 계약시간'));
+        hi.addEventListener('change', async () => {
+          const v = hi.value.trim(); const n = v === '' ? null : Number(v);
+          if (n !== null && !(n >= 0 && n <= 24)) { hi.value = t.dailyHours ?? ''; return; }
+          await safe(() => db.doc(col + '/' + t.id).update({ dailyHours: n }));
+        });
+        hrs.append(hi, document.createTextNode(tx('h/일')));
+      }
       const ops = document.createElement('div'); ops.className = 'ops';
       const up = btn('↑', () => move(col, items, i, -1)); up.disabled = i === 0;
       const dn = btn('↓', () => move(col, items, i, 1)); dn.disabled = i === items.length - 1;
@@ -2039,7 +2061,7 @@ window.__I18N = {
         del.dataset.armed = '1'; del.textContent = tx('정말?'); setTimeout(() => { delete del.dataset.armed; del.textContent = tx('삭제'); }, 3000);
       }); del.classList.add('danger');
       ops.append(up, dn, tg, del);
-      li.append(inp, ops); ul.append(li);
+      li.append(inp); if (hrs) li.append(hrs); li.append(ops); ul.append(li);
     });
   }
   function btn(label, fn) { const b = document.createElement('button'); b.type = 'button'; b.className = 'ghost'; b.textContent = label; b.addEventListener('click', fn); return b; }

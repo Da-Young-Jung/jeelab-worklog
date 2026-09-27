@@ -36,17 +36,24 @@ for d in days:
         rows.append(dict(date=dd['date'], member=members.get(dd.get('memberId'), {}).get('name', '?'),
                          type=types.get(r.get('typeId'), {}).get('name', '?'), quest=r.get('quest') or '', hours=float(r.get('hours') or 0), note=r.get('note', '')))
 h = lambda x: f"{x:g}"
-# 기간 중 기록이 하나도 없는 사람 → '자동기입': 근무일(평일, 공휴일 제외, 오늘까지) × 4 h
-AUTO_H = 4
+# 근무일(평일, 공휴일 제외, 오늘까지, 작성자 등록일부터)에 기록이 없으면 '자동기입': 그날 × 계약시간
+# 계약시간 = members.dailyHours (관리자 탭에서 수정; 비어 있으면 4 h, 0이면 자동기입 안 함)
+DEFAULT_H = 4
 import holidays
 kr = holidays.KR(years={f.year, t.year})
 workdays = [f + datetime.timedelta(days=i) for i in range((min(t, today) - f).days + 1)]
 workdays = [d for d in workdays if d.weekday() < 5 and d not in kr]
-active = [m['name'] for m in members.values() if m.get('active', True) and m['name'] != '관리자']
-missing = [n for n in active if n not in {r['member'] for r in rows}]
-if workdays:
-    for n in missing:
-        rows.append(dict(date=t.isoformat(), member=n, type='자동기입', quest=f'근무일 {len(workdays)}일 × {AUTO_H} h', hours=float(AUTO_H * len(workdays)), note='기록 없음 → 자동기입'))
+logged = {(d['data'].get('memberId'), d['data']['date']) for d in days if d['data'].get('rows')}
+auto = {}  # name -> (blank days, daily hours)
+for mid, m in sorted(members.items(), key=lambda kv: kv[1].get('order', 0)):
+    if not m.get('active', True) or m['name'] == '관리자': continue
+    dh = m.get('dailyHours'); dh = DEFAULT_H if dh in (None, '') else float(dh)
+    since = (m.get('createdAt') or '')[:10]
+    blank = [d for d in workdays if d.isoformat() >= since and (mid, d.isoformat()) not in logged]
+    if dh > 0 and blank:
+        auto[m['name']] = (blank, dh)
+        for d in blank:
+            rows.append(dict(date=d.isoformat(), member=m['name'], type='자동기입', quest=f"{m['name']} · 공란 {len(blank)}일 × {h(dh)} h", hours=dh, note='기록 없음 → 자동기입'))
 grand = sum(r['hours'] for r in rows); people = {r['member'] for r in rows}
 by_type = collections.OrderedDict()
 for r in rows:
@@ -56,7 +63,8 @@ for r in rows:
 
 td = 'style="border:1px solid #ddd;padding:6px 8px"'; tdr = 'style="border:1px solid #ddd;padding:6px 8px;text-align:right"'
 n_auto = sum(r['type'] == '자동기입' for r in rows)
-who = f'{len(people) - n_auto}명 기록, {n_auto}명 자동기입' if n_auto else f'{len(people)}명 기록'
+n_rec = len({r['member'] for r in rows if r['type'] != '자동기입'})
+who = f'{n_rec}명 기록, {len(auto)}명 자동기입' if auto else f'{n_rec}명 기록'
 html = f'<div style="font-family:-apple-system,Segoe UI,Malgun Gothic,sans-serif;max-width:720px;color:#222">'
 html += f'<h2 style="margin:0 0 4px">JEELAB worklog · {label} 요약</h2>'
 html += f'<p style="margin:0 0 14px;color:#555">기간 {f} – {t} · 총 {h(grand)} 시간 · {who} · {len(rows) - n_auto}건</p>'
@@ -71,7 +79,7 @@ if rows:
     html += f'<tr style="font-weight:700;background:#f7f7f7"><td {td} colspan="2">합계</td><td {tdr}>{h(grand)} h</td><td {tdr}>{len(people)}명</td><td {td}></td></tr></table>'
 else:
     html += '<p style="color:#888">기록 없음</p>'
-if missing: html += f'<p style="color:#a8552a"><b>기록 없는 사람 (자동기입, 근무일 {len(workdays)}일 × {AUTO_H} h):</b> {", ".join(missing)}</p>'
+if auto: html += '<p style="color:#a8552a"><b>자동기입 (기록 없는 근무일 × 계약시간):</b> ' + ', '.join(f'{n} {len(b)}일 × {h(dh)} h' for n, (b, dh) in auto.items()) + '</p>'
 if period == 'day' and rows:
     html += '<h3 style="margin:18px 0 6px;font-size:15px">기록 내역</h3><table style="border-collapse:collapse;font-size:13px;width:100%"><tr style="background:#eef2f6">' + ''.join(f'<th {td} align="left">{c}</th>' for c in ['사람', '종류', '퀘스트', '시간', '한 일']) + '</tr>'
     for r in sorted(rows, key=lambda r: (r['member'], r['date'])):
@@ -79,7 +87,7 @@ if period == 'day' and rows:
     html += '</table>'
 elif rows:
     per = collections.defaultdict(lambda: {'h': 0, 'd': set()})
-    for r in rows: per[r['member']]['h'] += r['hours']; per[r['member']]['d'].update(map(str, workdays) if r['type'] == '자동기입' else [r['date']])
+    for r in rows: per[r['member']]['h'] += r['hours']; per[r['member']]['d'].add(r['date'])
     html += '<h3 style="margin:18px 0 6px;font-size:15px">사람별 총 시간</h3><table style="border-collapse:collapse;font-size:13px"><tr style="background:#eef2f6">' + ''.join(f'<th {td} align="left">{c}</th>' for c in ['이름', '시간', '기록한 날']) + '</tr>'
     for n, v in sorted(per.items(), key=lambda kv: -kv[1]['h']):
         html += f'<tr><td {td}>{n}</td><td {tdr}>{h(v["h"])} h</td><td {tdr}>{len(v["d"])}일</td></tr>'
