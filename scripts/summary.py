@@ -62,7 +62,7 @@ html += f'<h2 style="margin:0 0 4px">JEELAB worklog · {label} 요약</h2>'
 html += f'<p style="margin:0 0 14px;color:#555">기간 {f} – {t} · 총 {h(grand)} 시간 · {who} · {len(rows) - n_auto}건</p>'
 if rows:
     html += '<table style="border-collapse:collapse;font-size:14px;width:100%"><tr style="background:#eef2f6">' + ''.join(f'<th {td} align="left">{c}</th>' for c in ['업무 종류', '세부내용', '총 시간', '인원', '사람별 시간']) + '</tr>'
-    for name, g in sorted(by_type.items(), key=lambda kv: -kv[1]['hours']):
+    for name, g in sorted(by_type.items(), key=lambda kv: (kv[0] == '자동기입', -kv[1]['hours'])):  # 자동기입은 합계 바로 위
         people_t = collections.Counter()
         for q in g['quests'].values(): people_t.update(q['people'])
         qq = '<br>'.join(qn for qn, q in sorted(g['quests'].items(), key=lambda kv: -kv[1]['hours']))
