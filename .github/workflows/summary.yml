@@ -37,4 +37,4 @@ jobs:
           MAIL_TO: ${{ github.event.inputs.to || vars.MAIL_TO || 'dayoung@kist.re.kr' }}
           MAIL_TO_REPORT: ${{ !github.event.inputs.to && vars.MAIL_TO_REPORT || '' }}
           PAGE_URL: ${{ vars.PAGE_URL }}
-        run: python scripts/summary.py ${{ steps.p.outputs.period }}
+        run: pip install -q holidays && python scripts/summary.py ${{ steps.p.outputs.period }}
