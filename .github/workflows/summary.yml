@@ -9,6 +9,9 @@ on:
       period:
         description: 'day | week | month'
         default: 'day'
+      to:
+        description: '받는 사람만 지정 (테스트용; 비우면 평소 수신자)'
+        default: ''
 jobs:
   mail:
     runs-on: ubuntu-latest
@@ -31,7 +34,7 @@ jobs:
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          MAIL_TO: ${{ vars.MAIL_TO || 'dayoung@kist.re.kr' }}
-          MAIL_TO_REPORT: ${{ vars.MAIL_TO_REPORT }}
+          MAIL_TO: ${{ github.event.inputs.to || vars.MAIL_TO || 'dayoung@kist.re.kr' }}
+          MAIL_TO_REPORT: ${{ !github.event.inputs.to && vars.MAIL_TO_REPORT || '' }}
           PAGE_URL: ${{ vars.PAGE_URL }}
         run: python scripts/summary.py ${{ steps.p.outputs.period }}
