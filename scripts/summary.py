@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 period = sys.argv[1] if len(sys.argv) > 1 else 'day'
 URL, KEY = os.environ['SUPABASE_URL'].rstrip('/'), os.environ['SUPABASE_ANON_KEY']
 TO = [x.strip() for x in os.environ.get('MAIL_TO', 'dayoung@kist.re.kr').split(',') if x.strip()]
-if period in ('week', 'month'):  # 주간·월간 보고만 받는 추가 수신자
+if period == 'week':  # 주간 보고만 받는 추가 수신자
     TO += [x for x in (y.strip() for y in os.environ.get('MAIL_TO_REPORT', '').split(',')) if x and x not in TO]
 PAGE = os.environ.get('PAGE_URL', '')
 
