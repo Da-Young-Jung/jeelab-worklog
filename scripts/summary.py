@@ -55,9 +55,11 @@ for r in rows:
     g['hours'] += r['hours']; q['hours'] += r['hours']; q['people'][r['member']] += r['hours']
 
 td = 'style="border:1px solid #ddd;padding:6px 8px"'; tdr = 'style="border:1px solid #ddd;padding:6px 8px;text-align:right"'
+n_auto = sum(r['type'] == '자동기입' for r in rows)
+who = f'{len(people) - n_auto}명 기록, {n_auto}명 자동기입' if n_auto else f'{len(people)}명 기록'
 html = f'<div style="font-family:-apple-system,Segoe UI,Malgun Gothic,sans-serif;max-width:720px;color:#222">'
 html += f'<h2 style="margin:0 0 4px">JEELAB worklog · {label} 요약</h2>'
-html += f'<p style="margin:0 0 14px;color:#555">기간 {f} – {t} · 총 {h(grand)} 시간 · {len(people)}명 기록 · {len(rows)}건</p>'
+html += f'<p style="margin:0 0 14px;color:#555">기간 {f} – {t} · 총 {h(grand)} 시간 · {who} · {len(rows) - n_auto}건</p>'
 if rows:
     html += '<table style="border-collapse:collapse;font-size:14px;width:100%"><tr style="background:#eef2f6">' + ''.join(f'<th {td} align="left">{c}</th>' for c in ['업무 종류', '세부내용', '총 시간', '인원', '사람별 시간']) + '</tr>'
     for name, g in sorted(by_type.items(), key=lambda kv: -kv[1]['hours']):
