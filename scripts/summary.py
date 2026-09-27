@@ -50,13 +50,13 @@ html = f'<div style="font-family:-apple-system,Segoe UI,Malgun Gothic,sans-serif
 html += f'<h2 style="margin:0 0 4px">JEELAB worklog · {label} 요약</h2>'
 html += f'<p style="margin:0 0 14px;color:#555">기간 {f} – {t} · 총 {h(grand)} 시간 · {len(people)}명 기록 · {len(rows)}건</p>'
 if rows:
-    html += '<table style="border-collapse:collapse;font-size:14px;width:100%"><tr style="background:#eef2f6">' + ''.join(f'<th {td} align="left">{c}</th>' for c in ['업무 종류', '세부내용 (퀘스트)', '총 시간', '인원', '사람별 시간']) + '</tr>'
+    html += '<table style="border-collapse:collapse;font-size:14px;width:100%"><tr style="background:#eef2f6">' + ''.join(f'<th {td} align="left">{c}</th>' for c in ['업무 종류', '세부내용 (시간)', '총 시간', '인원', '사람별 시간']) + '</tr>'
     for name, g in sorted(by_type.items(), key=lambda kv: -kv[1]['hours']):
-        qs = sorted(g['quests'].items(), key=lambda kv: -kv[1]['hours'])
-        for k, (qn, q) in enumerate(qs):  # 업무 종류 칸은 퀘스트 행들을 묶어 한 번만
-            first = f'<td {td} rowspan="{len(qs)}" valign="top"><b>{name}</b><br><span style="color:#777;font-size:12px">{h(g["hours"])} h</span></td>' if k == 0 else ''
-            pp = ', '.join(f'{n} {h(v)}' for n, v in q['people'].most_common())
-            html += f'<tr>{first}<td {td}>{qn}</td><td {tdr}>{h(q["hours"])} h</td><td {tdr}>{len(q["people"])}명</td><td {td}>{pp}</td></tr>'
+        people_t = collections.Counter()
+        for q in g['quests'].values(): people_t.update(q['people'])
+        qq = '<br>'.join(f'{qn} ({h(q["hours"])} h)' for qn, q in sorted(g['quests'].items(), key=lambda kv: -kv[1]['hours']))
+        pp = ', '.join(f'{n} {h(v)}' for n, v in people_t.most_common())
+        html += f'<tr><td {td}>{name}</td><td {td}>{qq}</td><td {tdr}>{h(g["hours"])} h</td><td {tdr}>{len(people_t)}명</td><td {td}>{pp}</td></tr>'
     html += f'<tr style="font-weight:700;background:#f7f7f7"><td {td} colspan="2">합계</td><td {tdr}>{h(grand)} h</td><td {tdr}>{len(people)}명</td><td {td}></td></tr></table>'
 else:
     html += '<p style="color:#888">기록 없음</p>'
