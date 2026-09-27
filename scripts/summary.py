@@ -1,5 +1,5 @@
 """랩 업무일지 요약 메일 — Supabase `docs` 테이블을 읽어 하나의 표(업무 종류 | 총 시간 | 인원 | 사람별 시간 | 퀘스트)로 정리해 Gmail SMTP로 보낸다.
-Usage: python summary.py day|week|month   (env: SUPABASE_URL, SUPABASE_ANON_KEY, GMAIL_USER, GMAIL_APP_PASSWORD, MAIL_TO, PAGE_URL)"""
+Usage: python summary.py day|week|month   (env: SUPABASE_URL, SUPABASE_ANON_KEY, GMAIL_USER, GMAIL_APP_PASSWORD, MAIL_TO, MAIL_TO_REPORT, PAGE_URL)"""
 import os, sys, json, datetime, smtplib, urllib.request, urllib.parse, collections
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -8,6 +8,8 @@ from zoneinfo import ZoneInfo
 period = sys.argv[1] if len(sys.argv) > 1 else 'day'
 URL, KEY = os.environ['SUPABASE_URL'].rstrip('/'), os.environ['SUPABASE_ANON_KEY']
 TO = [x.strip() for x in os.environ.get('MAIL_TO', 'dayoung@kist.re.kr').split(',') if x.strip()]
+if period in ('week', 'month'):  # 주간·월간 보고만 받는 추가 수신자
+    TO += [x for x in (y.strip() for y in os.environ.get('MAIL_TO_REPORT', '').split(',')) if x and x not in TO]
 PAGE = os.environ.get('PAGE_URL', '')
 
 def fetch(col, extra=''):
@@ -19,9 +21,9 @@ today = datetime.datetime.now(ZoneInfo('Asia/Seoul')).date()
 if period == 'day':
     f = t = today; label = f"{today:%Y-%m-%d} ({'월화수목금토일'[today.weekday()]}) 일간"
 elif period == 'week':
-    f = today - datetime.timedelta(days=today.weekday() + 7); t = f + datetime.timedelta(days=6); label = f"{f:%m/%d} – {t:%m/%d} 주간"
+    t = today; f = today - datetime.timedelta(days=6); label = f"{f:%m/%d} – {t:%m/%d} 주간"  # 금요일 발송 → 지난 토–이번 금
 else:
-    first = today.replace(day=1); t = first - datetime.timedelta(days=1); f = t.replace(day=1); label = f"{f:%Y년 %m월} 월간"
+    f = today.replace(day=1); t = today; label = f"{f:%Y년 %m월} 월간"  # 말일 발송 → 이번 달
 
 members = {m['id']: m['data'] for m in fetch('members')}
 types = {x['id']: x['data'] for x in fetch('taskTypes')}

@@ -5,7 +5,8 @@
 - 스키마: `schema.sql` (Supabase SQL Editor에서 실행)
 - 메일: `.github/workflows/summary.yml` → `scripts/summary.py`
   - Secrets: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `GMAIL_USER`, `GMAIL_APP_PASSWORD`
-  - Variables: `MAIL_TO` (쉼표 구분), `PAGE_URL`
+  - 일정 (KST): 일간 평일 19:00 · 주간 금 19:00 (토–금) · 월간 말일 19:00 (이번 달)
+  - Variables: `MAIL_TO` (전체 메일, 쉼표 구분), `MAIL_TO_REPORT` (주간·월간만 추가 수신, 쉼표 구분), `PAGE_URL`
 - 백업: `.github/workflows/backup.yml` → `scripts/backup.py` (매주 월 04:00 KST, `backups/docs-YYYY-MM-DD.json`, 최근 12개 유지; 사진은 URL만)
   - 복구: `SUPABASE_URL=… SUPABASE_ANON_KEY=… python scripts/restore.py backups/docs-YYYY-MM-DD.json`
   - 수동 실행: `gh workflow run backup.yml`
